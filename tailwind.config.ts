@@ -8,9 +8,14 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-albert-sans)"],
+      },
+      fontSize: {
+        xxs: ["0.625rem", "0.75rem"],
+      },
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        gold: "#B59349",
       },
     },
   },

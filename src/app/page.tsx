@@ -1,101 +1,417 @@
-import Image from "next/image";
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/react";
+import {
+  IconStarFilled,
+  IconArrowLeft,
+  IconArrowRight,
+} from "@tabler/icons-react";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="flex flex-col gap-5">
+      <section className="flex w-full flex-col items-center">
+        <div className="flex w-full flex-col gap-4 px-6 pt-5 md:w-[768px]">
+          <nav className="flex flex-row justify-between text-xs font-medium text-zinc-500 underline decoration-zinc-300 underline-offset-4">
+            <div>Ceremonies</div>
+            <div className="flex flex-row gap-4">
+              <div>Academy Awards</div>
+              <div>2023 (96th)</div>
+            </div>
+          </nav>
+          <div className="flex w-full flex-row items-center justify-between">
+            <div className="flex flex-col">
+              <h1 className="text-2xl font-medium text-zinc-800">
+                96th Academy Awards
+              </h1>
+              <h2 className="text-sm font-medium text-zinc-500">
+                March 10, 2024 · Honoring films from 2023
+              </h2>
+            </div>
+            <div className="hidden flex-row gap-2 sm:flex">
+              <div className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-zinc-100 hover:bg-zinc-200">
+                <IconArrowLeft className="h-5 w-5 stroke-zinc-500" />
+              </div>
+              <div className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-zinc-100 hover:bg-zinc-200">
+                <IconArrowRight className="h-5 w-5 stroke-zinc-500" />
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+      </section>
+      <section className="flex w-full flex-col overflow-x-auto bg-gradient-to-r from-white to-zinc-100 px-6 py-5 md:items-center">
+        <div className="grid w-[720px] grid-cols-5 gap-3">
+          <Card
+            category="Best Picture"
+            title="Oppenheimer"
+            names={["Emma Thomas", "Charles Roven", "Christopher Nolan"]}
+            title_first={true}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+          <Card
+            category="Best Director"
+            title="Oppenheimer"
+            names={["Christopher Nolan"]}
+            title_first={false}
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
+          <Card
+            category="Best Actor"
+            title="Oppenheimer"
+            names={["Cillian Murphy"]}
+            title_first={false}
           />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <Card
+            category="Best Actress"
+            title="Poor Things"
+            names={["Emma Stone"]}
+            title_first={false}
+          />
+          <Card
+            category="Best Original Screenplay"
+            title="Anatomy of a Fall"
+            names={["Justine Triet", "Arthur Harari"]}
+            title_first={true}
+          />
+        </div>
+      </section>
+      <section className="flex w-full flex-col items-center">
+        <div className="flex w-full px-6 md:w-[768px]">
+          <TabGroup className="w-full">
+            <TabList className="mb-0.5 flex flex-row gap-7 text-base font-medium text-zinc-500">
+              <Tab className="decoration-zinc-500 underline-offset-[6px] data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
+                Nominations
+              </Tab>
+              <Tab className="decoration-zinc-500 underline-offset-[6px] data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
+                Statistics
+              </Tab>
+            </TabList>
+            <div className="sticky top-0 z-20 flex h-14 flex-row items-center justify-between bg-white text-sm font-medium text-zinc-500">
+              <div className="flex flex-row gap-4">
+                <div>All</div>
+                <div>Category: All</div>
+              </div>
+              <div className="font-semibold">2023 (96th)</div>
+            </div>
+            <TabPanels>
+              <TabPanel>
+                <hr />
+                <div className="flex flex-col gap-1 py-6 text-zinc-800 sm:flex-row sm:gap-5">
+                  <div className="sticky top-14 flex-1 bg-white pb-4">
+                    <h1 className="hover:text-gold sticky top-14 flex w-fit cursor-pointer text-xl font-medium leading-6 sm:text-lg sm:leading-6">
+                      Best Actor in a Leading Role
+                    </h1>
+                  </div>
+                  <div className="flex flex-1 flex-col gap-3">
+                    <Nominee
+                      winner={false}
+                      titles={["Maestro"]}
+                      names={["Bradley Cooper"]}
+                      roles={["Leonard Bernstein"]}
+                    />
+                    <Nominee
+                      winner={false}
+                      titles={["Rustin"]}
+                      names={["Colman Domingo"]}
+                      roles={["Bayard Rustin"]}
+                    />
+                    <Nominee
+                      winner={false}
+                      titles={["The Holdovers"]}
+                      names={["Paul Giamatti"]}
+                      roles={["Paul Hunham"]}
+                    />
+                    <Nominee
+                      winner={true}
+                      titles={["Oppenheimer"]}
+                      names={["Cillian Murphy"]}
+                      roles={["J. Robert Oppenheimer"]}
+                    />
+                    <Nominee
+                      winner={false}
+                      titles={["American Fiction"]}
+                      names={["Jeffrey Wright"]}
+                      roles={['Thelonius "Monk" Ellison']}
+                    />
+                  </div>
+                </div>
+                <hr />
+                <div className="flex flex-col gap-1 py-6 text-zinc-800 sm:flex-row sm:gap-5">
+                  <div className="sticky top-14 flex-1 bg-white pb-4">
+                    <h1 className="hover:text-gold sticky top-14 flex w-fit cursor-pointer text-xl font-medium leading-6 sm:text-lg sm:leading-6">
+                      Best Actor in a Supporting Role
+                    </h1>
+                  </div>
+                  <div className="flex flex-1 flex-col gap-3">
+                    <Nominee
+                      winner={false}
+                      titles={["Maestro"]}
+                      names={["Bradley Cooper"]}
+                      roles={["Leonard Bernstein"]}
+                    />
+                    <Nominee
+                      winner={false}
+                      titles={["Rustin"]}
+                      names={["Colman Domingo"]}
+                      roles={["Bayard Rustin"]}
+                    />
+                    <Nominee
+                      winner={false}
+                      titles={["The Holdovers"]}
+                      names={["Paul Giamatti"]}
+                      roles={["Paul Hunham"]}
+                    />
+                    <Nominee
+                      winner={true}
+                      titles={["Oppenheimer"]}
+                      names={["Cillian Murphy"]}
+                      roles={["J. Robert Oppenheimer"]}
+                    />
+                    <Nominee
+                      winner={false}
+                      titles={["American Fiction"]}
+                      names={["Jeffrey Wright"]}
+                      roles={['Thelonius "Monk" Ellison']}
+                    />
+                  </div>
+                </div>
+                <hr />
+                <div className="flex flex-col gap-1 py-6 text-zinc-800 sm:flex-row sm:gap-5">
+                  <div className="sticky top-14 flex-1 bg-white pb-4">
+                    <h1 className="hover:text-gold sticky top-14 flex w-fit cursor-pointer text-xl font-medium leading-6 sm:text-lg sm:leading-6">
+                      Best Screenplay Written Directly for the Screen—based on
+                      factual material or on story material not previously
+                      published or produced
+                    </h1>
+                  </div>
+                  <div className="flex flex-1 flex-col gap-3">
+                    <Nominee
+                      winner={false}
+                      titles={["Maestro"]}
+                      names={["Bradley Cooper"]}
+                      roles={["Leonard Bernstein"]}
+                    />
+                    <Nominee
+                      winner={false}
+                      titles={["Rustin"]}
+                      names={["Colman Domingo"]}
+                      roles={["Bayard Rustin"]}
+                    />
+                    <Nominee
+                      winner={false}
+                      titles={["The Holdovers"]}
+                      names={["Paul Giamatti"]}
+                      roles={["Paul Hunham"]}
+                    />
+                    <Nominee
+                      winner={true}
+                      titles={["Oppenheimer"]}
+                      names={["Cillian Murphy"]}
+                      roles={["J. Robert Oppenheimer"]}
+                    />
+                    <Nominee
+                      winner={false}
+                      titles={["American Fiction"]}
+                      names={["Jeffrey Wright"]}
+                      roles={['Thelonius "Monk" Ellison']}
+                    />
+                  </div>
+                </div>
+                <hr />
+                <div className="flex flex-col gap-1 py-6 text-zinc-800 sm:flex-row sm:gap-5">
+                  <div className="sticky top-14 flex-1 bg-white pb-4">
+                    <h1 className="hover:text-gold sticky top-14 flex w-fit cursor-pointer text-xl font-medium leading-6 sm:text-lg sm:leading-6">
+                      Best Screenplay Written Directly for the Screen—based on
+                      factual material or on story material not previously
+                      published or produced
+                    </h1>
+                  </div>
+                  <div className="flex flex-1 flex-col gap-3">
+                    <Nominee
+                      winner={false}
+                      titles={["Maestro"]}
+                      names={["Bradley Cooper"]}
+                      roles={["Leonard Bernstein"]}
+                    />
+                    <Nominee
+                      winner={false}
+                      titles={["Rustin"]}
+                      names={["Colman Domingo"]}
+                      roles={["Bayard Rustin"]}
+                    />
+                    <Nominee
+                      winner={false}
+                      titles={["The Holdovers"]}
+                      names={["Paul Giamatti"]}
+                      roles={["Paul Hunham"]}
+                    />
+                    <Nominee
+                      winner={true}
+                      titles={["Oppenheimer"]}
+                      names={["Cillian Murphy"]}
+                      roles={["J. Robert Oppenheimer"]}
+                    />
+                    <Nominee
+                      winner={false}
+                      titles={["American Fiction"]}
+                      names={["Jeffrey Wright"]}
+                      roles={['Thelonius "Monk" Ellison']}
+                    />
+                  </div>
+                </div>
+                <hr />
+                <div className="flex flex-col gap-1 py-6 text-zinc-800 sm:flex-row sm:gap-5">
+                  <div className="sticky top-14 flex-1 bg-white pb-4">
+                    <h1 className="hover:text-gold sticky top-14 flex w-fit cursor-pointer text-xl font-medium leading-6 sm:text-lg sm:leading-6">
+                      Best Screenplay Written Directly for the Screen—based on
+                      factual material or on story material not previously
+                      published or produced
+                    </h1>
+                  </div>
+                  <div className="flex flex-1 flex-col gap-3">
+                    <Nominee
+                      winner={false}
+                      titles={["Maestro"]}
+                      names={["Bradley Cooper"]}
+                      roles={["Leonard Bernstein"]}
+                    />
+                    <Nominee
+                      winner={false}
+                      titles={["Rustin"]}
+                      names={["Colman Domingo"]}
+                      roles={["Bayard Rustin"]}
+                    />
+                    <Nominee
+                      winner={false}
+                      titles={["The Holdovers"]}
+                      names={["Paul Giamatti"]}
+                      roles={["Paul Hunham"]}
+                    />
+                    <Nominee
+                      winner={true}
+                      titles={["Oppenheimer"]}
+                      names={["Cillian Murphy"]}
+                      roles={["J. Robert Oppenheimer"]}
+                    />
+                    <Nominee
+                      winner={false}
+                      titles={["American Fiction"]}
+                      names={["Jeffrey Wright"]}
+                      roles={['Thelonius "Monk" Ellison']}
+                    />
+                  </div>
+                </div>
+                <hr />
+              </TabPanel>
+              <TabPanel>content 2</TabPanel>
+            </TabPanels>
+          </TabGroup>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function Card({
+  category,
+  title,
+  names,
+  title_first,
+}: {
+  category: string;
+  title: string;
+  names: string[];
+  title_first: boolean;
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <a
+        className="text-xxs hover:text-gold w-fit max-w-full cursor-pointer truncate font-semibold text-zinc-800"
+        title={category}
+      >
+        {category.toUpperCase()}
+      </a>
+      <div className="h-48 rounded-md border border-zinc-200 bg-white"></div>
+      <div className="flex flex-col gap-1 font-medium text-zinc-800">
+        <div className="text-sm leading-4 text-zinc-800">
+          {title_first ? (
+            <a className="hover:text-gold cursor-pointer italic underline decoration-zinc-200 underline-offset-2">
+              {title}
+            </a>
+          ) : (
+            names.map((n, i) => (
+              <span key={i}>
+                <a className="hover:text-gold cursor-pointer underline decoration-zinc-200 underline-offset-2">
+                  {n}
+                </a>
+                {i != names.length - 1 && ", "}
+              </span>
+            ))
+          )}
+        </div>
+        <div className="text-xs leading-[0.875rem] text-zinc-500">
+          {title_first ? (
+            names.map((n, i) => (
+              <span key={i}>
+                <a className="hover:text-gold cursor-pointer underline decoration-zinc-200 underline-offset-2">
+                  {n}
+                </a>
+                {i != names.length - 1 && ", "}
+              </span>
+            ))
+          ) : (
+            <a className="hover:text-gold cursor-pointer italic underline decoration-zinc-200 underline-offset-2">
+              {title}
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Nominee({
+  winner,
+  titles,
+  names,
+  roles,
+}: {
+  winner: boolean;
+  titles: string[];
+  names: string[];
+  roles: string[];
+}) {
+  return (
+    <div className="flex flex-row gap-2">
+      <IconStarFilled
+        className={`${winner ? "visible" : "invisible"} fill-gold mt-1 h-4 w-4`}
+      />
+      <div className="flex flex-col gap-1">
+        <div className="text-base font-medium leading-5 text-zinc-800">
+          {names.map((n, i) => (
+            <span key={i}>
+              <a className="hover:text-gold w-fit cursor-pointer underline decoration-zinc-300 underline-offset-2">
+                {n}
+              </a>
+              {i != names.length - 1 && ", "}
+            </span>
+          ))}
+        </div>
+
+        <div className="text-sm font-normal leading-4 text-zinc-500">
+          {roles.map((t, i) => (
+            <span key={i}>
+              <a className="w-fit">{t}</a>
+              {i != names.length - 1 && ", "}
+            </span>
+          ))}
+          ,&nbsp;
+          {titles.map((t, i) => (
+            <span key={i}>
+              <a className="hover:text-gold w-fit cursor-pointer italic underline decoration-zinc-300 underline-offset-2">
+                {t}
+              </a>
+              {i != names.length - 1 && ", "}
+            </span>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
