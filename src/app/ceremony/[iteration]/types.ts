@@ -1,24 +1,25 @@
 export interface NominationsType {
   editions: CeremonyType[];
-  stats: StatsType;
+  stats: AllStatsType;
 }
 
-export interface StatsType {
+export interface AllStatsType {
   title_stats: TitleStatsType[];
   entity_stats: EntityStatsType[];
 }
 
-export interface TitleStatsType {
+export interface StatsType {
   id: number;
   imdb_id: string;
+}
+
+export interface TitleStatsType extends StatsType {
   title: string;
   noms: number;
   wins: number;
 }
 
-export interface EntityStatsType {
-  id: number;
-  imdb_id: string;
+export interface EntityStatsType extends StatsType {
   name: string;
   category_id: number;
   category_noms: number;

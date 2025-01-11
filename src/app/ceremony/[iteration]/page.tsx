@@ -1,4 +1,11 @@
-import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/react";
+import {
+  TabGroup,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+  Input,
+} from "@headlessui/react";
 import {
   IconStarFilled,
   IconArrowLeft,
@@ -8,6 +15,7 @@ import { ceremonyToTopFive, iterationToOrdinal } from "@/app/_utils/utils";
 import { CategoryType, NomineeType, NominationsType } from "./types";
 import Image from "next/image";
 import Link from "next/link";
+import Stats from "./stats";
 
 export default async function Ceremony({
   params,
@@ -50,7 +58,7 @@ export default async function Ceremony({
       <section className="flex w-full flex-col items-center">
         <div className="flex w-full flex-col gap-4 px-6 pt-5 md:w-[768px]">
           <nav className="flex flex-row justify-between text-xs font-medium text-zinc-500 underline decoration-zinc-300 underline-offset-4">
-            <div>Ceremonies</div>
+            <div>Ceremony</div>
             <div className="flex flex-row gap-4">
               <div>Academy Awards</div>
               <div>
@@ -91,7 +99,7 @@ export default async function Ceremony({
         </div>
       </section>
       <section className="flex w-full flex-col overflow-x-auto bg-gradient-to-r from-white to-zinc-100 px-6 py-5 md:items-center">
-        <div className="grid w-[720px] grid-cols-5">
+        <div className="grid w-[720px] grid-flow-col justify-between">
           {topFiveCategoryInds.map((catInd, i) => (
             <Card
               key={i}
@@ -112,23 +120,25 @@ export default async function Ceremony({
                 Statistics
               </Tab>
             </TabList>
-            <div className="sticky top-0 z-30 flex h-14 flex-row items-center justify-between bg-white text-sm font-medium text-zinc-500">
-              <div className="flex flex-row gap-4">
-                <div>All</div>
-                <div>Category: All</div>
-              </div>
-              <div className="font-semibold">
-                {ceremony.official_year} ({ordinal})
-              </div>
-            </div>
             <TabPanels>
               <TabPanel>
+                <div className="sticky top-0 z-30 flex h-14 flex-row items-center justify-between bg-white text-sm font-medium text-zinc-500">
+                  <div className="flex flex-row gap-4">
+                    <div>All</div>
+                    <div>Category: All</div>
+                  </div>
+                  <div className="font-semibold">
+                    {ceremony.official_year} ({ordinal})
+                  </div>
+                </div>
                 <hr />
                 {ceremony.categories.map((c, i) => (
                   <Category key={i} categoryInfo={c} />
                 ))}
               </TabPanel>
-              <TabPanel>content 2</TabPanel>
+              <TabPanel>
+                <Stats stats={nominations.stats} />
+              </TabPanel>
             </TabPanels>
           </TabGroup>
         </div>
@@ -149,7 +159,7 @@ function Card({
   return (
     <div className="flex w-[135px] flex-col gap-2">
       <a
-        className="text-xxs hover:text-gold w-fit max-w-full cursor-pointer truncate font-semibold text-zinc-800"
+        className="w-fit max-w-full cursor-pointer truncate text-xxs font-semibold text-zinc-800 hover:text-gold"
         title={
           category.short_name.startsWith("Unique")
             ? category.short_name
@@ -177,13 +187,13 @@ function Card({
       <div className="flex flex-col gap-1 font-medium text-zinc-800">
         <div className="text-sm leading-4 text-zinc-800">
           {!personFirst ? (
-            <a className="hover:text-gold cursor-pointer italic underline decoration-zinc-200 underline-offset-2">
+            <a className="cursor-pointer italic underline decoration-zinc-200 underline-offset-2 hover:text-gold">
               {category.nominees[0].titles[0].title}
             </a>
           ) : (
             category.nominees[0].people.map((n, i) => (
               <span key={i}>
-                <a className="hover:text-gold cursor-pointer underline decoration-zinc-200 underline-offset-2">
+                <a className="cursor-pointer underline decoration-zinc-200 underline-offset-2 hover:text-gold">
                   {n.name}
                 </a>
                 {i != category.nominees[0].people.length - 1 && ", "}
@@ -195,14 +205,14 @@ function Card({
           {!personFirst ? (
             category.nominees[0].people.map((n, i) => (
               <span key={i}>
-                <a className="hover:text-gold cursor-pointer underline decoration-zinc-200 underline-offset-2">
+                <a className="cursor-pointer underline decoration-zinc-200 underline-offset-2 hover:text-gold">
                   {n.name}
                 </a>
                 {i != category.nominees[0].people.length - 1 && ", "}
               </span>
             ))
           ) : (
-            <a className="hover:text-gold cursor-pointer italic underline decoration-zinc-200 underline-offset-2">
+            <a className="cursor-pointer italic underline decoration-zinc-200 underline-offset-2 hover:text-gold">
               {category.nominees[0].titles[0].title}
             </a>
           )}
@@ -222,7 +232,7 @@ function Nominee({
   return (
     <div className="flex flex-row gap-2.5">
       <IconStarFilled
-        className={`${nomineeInfo.winner ? "visible" : "invisible"} fill-gold mt-[3px] h-4 w-4 flex-shrink-0`}
+        className={`${nomineeInfo.winner ? "visible" : "invisible"} mt-[3px] h-4 w-4 flex-shrink-0 fill-gold`}
       />
       <div
         className={`${nomineeInfo.is_person || nomineeInfo.titles.length == 0 ? "flex-col" : "flex-col-reverse"} flex gap-1`}
@@ -234,7 +244,7 @@ function Nominee({
             <span key={i}>
               <Link
                 href={`/entity/${p.id}`}
-                className="hover:text-gold w-fit cursor-pointer underline decoration-zinc-300 underline-offset-2"
+                className="w-fit cursor-pointer underline decoration-zinc-300 underline-offset-2 hover:text-gold"
               >
                 {p.name}
               </Link>
@@ -249,7 +259,7 @@ function Nominee({
         >
           {nomineeInfo.titles.map((t, i) => {
             return (
-              <>
+              <span key={i}>
                 {t.detail.map((d, j) => (
                   <span key={j}>
                     <span className="w-fit">
@@ -261,10 +271,10 @@ function Nominee({
                     {", "}
                   </span>
                 ))}
-                <span key={t.imdb_id}>
+                <span>
                   <Link
                     href={`/title/${t.id}`}
-                    className="hover:text-gold w-fit cursor-pointer italic underline decoration-zinc-300 underline-offset-2"
+                    className="w-fit cursor-pointer italic underline decoration-zinc-300 underline-offset-2 hover:text-gold"
                   >
                     {t.title}
                   </Link>
@@ -272,7 +282,7 @@ function Nominee({
                     <span className="select-none">&nbsp;&thinsp;·&nbsp;</span>
                   )}
                 </span>
-              </>
+              </span>
             );
           })}
           {!nomineeInfo.is_person &&
@@ -289,7 +299,7 @@ function Note({ text }: { text: string }) {
     <span className="select-none">
       &nbsp;
       <span
-        className="text-gold group relative z-0 cursor-pointer align-top text-xs font-medium"
+        className="group relative z-0 cursor-pointer align-top text-xs font-medium text-gold"
         title={text}
       >
         <span className="z-0 group-hover:underline">N</span>
@@ -303,7 +313,7 @@ function Category({ categoryInfo }: { categoryInfo: CategoryType }) {
     <>
       <div className="flex flex-col gap-1 py-6 text-zinc-800 sm:flex-row sm:gap-6">
         <div className="sticky top-14 z-20 flex-1 bg-white pb-4">
-          <h1 className="hover:text-gold sticky top-14 flex w-fit cursor-pointer text-xl font-medium leading-6 sm:text-lg sm:leading-6">
+          <h1 className="sticky top-14 flex w-fit cursor-pointer text-xl font-medium leading-6 hover:text-gold sm:text-lg sm:leading-6">
             {categoryInfo.common_name}
           </h1>
         </div>

@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* html {
-  position: relative;
-  left: calc((100vw - 100%) / 2);
-} */
+html {
+  scrollbar-gutter: stable;
+}

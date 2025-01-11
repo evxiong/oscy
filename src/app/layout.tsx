@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${albertSans.variable} antialiased`}>
-      <body className="font-sans">
+      <body className="scroll-smooth font-sans text-zinc-800">
         <Navbar />
         <main>{children}</main>
       </body>

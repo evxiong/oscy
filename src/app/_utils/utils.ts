@@ -1,4 +1,3 @@
-import { title } from "process";
 import { NominationsType } from "../ceremony/[iteration]/types";
 
 interface TopFive {
