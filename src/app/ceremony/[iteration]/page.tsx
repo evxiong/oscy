@@ -86,12 +86,18 @@ export default async function Ceremony({
               </h2>
             </div>
             <div className="hidden flex-row gap-2 sm:flex">
-              <div className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-zinc-100 hover:bg-zinc-200">
+              <Link
+                href={`/ceremony/${ceremony.iteration - 1}`}
+                className={`${ceremony.iteration === 1 ? "hidden" : "flex"} h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-zinc-100 hover:bg-zinc-200`}
+              >
                 <IconArrowLeft className="h-5 w-5 stroke-zinc-500" />
-              </div>
-              <div className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-zinc-100 hover:bg-zinc-200">
+              </Link>
+              <Link
+                href={`/ceremony/${ceremony.iteration + 1}`}
+                className={`${ceremony.iteration === editions.length ? "hidden" : "flex"} h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-zinc-100 hover:bg-zinc-200`}
+              >
                 <IconArrowRight className="h-5 w-5 stroke-zinc-500" />
-              </div>
+              </Link>
             </div>
           </div>
         </div>
@@ -120,7 +126,11 @@ export default async function Ceremony({
             </TabList>
             <TabPanels>
               <TabPanel>
-                <Nominations ceremony={ceremony} ordinal={ordinal} />
+                <Nominations
+                  categories={ceremony.categories}
+                  officialYear={ceremony.official_year}
+                  ordinal={ordinal}
+                />
               </TabPanel>
               <TabPanel>
                 <Stats stats={nominations.stats} />
@@ -147,7 +157,8 @@ function Card({
   );
   return (
     <div className="flex w-[135px] flex-col gap-2">
-      <a
+      <Link
+        href={`/category/${category.category_id}`}
         className="w-fit max-w-full cursor-pointer truncate text-xxs font-semibold text-zinc-800 hover:text-gold"
         title={
           category.short_name.startsWith("Unique")
@@ -159,7 +170,7 @@ function Card({
           ? category.short_name
           : "Best " + category.short_name
         ).toUpperCase()}
-      </a>
+      </Link>
       <div className="relative h-[200px] overflow-hidden rounded-[0.25rem] border border-zinc-300 bg-zinc-50">
         <Image
           src={imageUrl}
@@ -167,7 +178,7 @@ function Card({
           alt={
             personFirst
               ? `Photo of ${category.nominees[0].people[0].name}`
-              : `Cover of ${category.nominees[0].titles[0].title}`
+              : `Poster for ${category.nominees[0].titles[0].title}`
           }
           priority={true}
           className="object-cover"
@@ -187,7 +198,7 @@ function Card({
               >
                 {n.name}
               </Link>
-              {i != category.nominees[0].people.length - 1 && ", "}
+              {i !== category.nominees[0].people.length - 1 && ", "}
             </span>
           ))}
         </div>
@@ -202,7 +213,7 @@ function Card({
               >
                 {t.title}
               </Link>
-              {i != titleWinners.length - 1 && (
+              {i !== titleWinners.length - 1 && (
                 <span className="select-none">&nbsp;&thinsp;·&nbsp;</span>
               )}
             </span>

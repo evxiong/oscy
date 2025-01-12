@@ -42,7 +42,7 @@ export function ceremonyToTopFive(nominations: NominationsType): TopFive {
       indices[ind] = i;
       if (
         ceremony.categories[i].nominees[0].is_person ||
-        ceremony.categories[i].short_name == "Director"
+        ceremony.categories[i].short_name === "Director"
       ) {
         imdb_ids[ind] = ceremony.categories[i].nominees[0].people[0].imdb_id;
       } else {

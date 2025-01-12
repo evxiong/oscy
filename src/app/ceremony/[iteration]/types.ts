@@ -55,6 +55,7 @@ export interface CeremonyType {
 }
 
 export interface CategoryType {
+  category_id: number;
   category_group: string;
   official_name: string;
   common_name: string;

@@ -8,10 +8,12 @@ import { MediumSelector } from "@/app/_components/selectors";
 import { Input } from "@headlessui/react";
 
 export default function Nominations({
-  ceremony,
+  categories,
+  officialYear,
   ordinal,
 }: {
-  ceremony: CeremonyType;
+  categories: CategoryType[];
+  officialYear: string;
   ordinal: string;
 }) {
   const searchKeys: (keyof CategoryType)[] = [
@@ -23,12 +25,11 @@ export default function Nominations({
   const winnerOptions = ["All", "Winners"];
   const [winnersOnly, setWinnersOnly] = useState(winnerOptions[0]);
   const [search, setSearch] = useState("");
-  const [filteredCategories, setFilteredCategories] = useState<CategoryType[]>(
-    ceremony.categories,
-  );
+  const [filteredCategories, setFilteredCategories] =
+    useState<CategoryType[]>(categories);
 
   useEffect(() => {
-    setFilteredCategories(filterCategories(ceremony.categories, search));
+    setFilteredCategories(filterCategories(categories, search));
   }, [search]);
 
   function filterCategories(categories: CategoryType[], search: string) {
@@ -61,7 +62,7 @@ export default function Nominations({
           </div>
         </div>
         <div className="flex-shrink-0 font-semibold">
-          {ceremony.official_year} ({ordinal})
+          {officialYear} ({ordinal})
         </div>
       </div>
       <hr />
@@ -87,9 +88,12 @@ function Category({
     <>
       <div className="flex flex-col gap-1 py-6 text-zinc-800 sm:flex-row sm:gap-6">
         <div className="sticky top-14 z-20 flex-1 bg-white pb-4">
-          <h1 className="sticky top-14 flex w-fit cursor-pointer text-xl font-medium leading-6 hover:text-gold sm:text-lg sm:leading-6">
+          <Link
+            href={`/category/${categoryInfo.category_id}`}
+            className="sticky top-14 flex w-fit cursor-pointer text-xl font-medium leading-6 hover:text-gold sm:text-lg sm:leading-6"
+          >
             {categoryInfo.common_name}
-          </h1>
+          </Link>
         </div>
         <div className="flex flex-1 flex-col gap-[0.875rem]">
           {categoryInfo.nominees.map(
@@ -116,7 +120,7 @@ function Nominee({
   category: string;
   nomineeInfo: NomineeType;
 }) {
-  const personFirst = nomineeInfo.is_person || nomineeInfo.titles.length == 0;
+  const personFirst = nomineeInfo.is_person || nomineeInfo.titles.length === 0;
   return (
     <div className="flex flex-row gap-2.5">
       <IconStarFilled
@@ -136,7 +140,7 @@ function Nominee({
               >
                 {p.name}
               </Link>
-              {i != nomineeInfo.people.length - 1 && ", "}
+              {i !== nomineeInfo.people.length - 1 && ", "}
             </span>
           ))}
           {personFirst && nomineeInfo.note && <Note text={nomineeInfo.note} />}
@@ -150,8 +154,8 @@ function Nominee({
                 {t.detail.map((d, j) => (
                   <span key={j}>
                     <span className="w-fit">
-                      {category == "Original Song" ||
-                      category == "Dance Direction"
+                      {category === "Original Song" ||
+                      category === "Dance Direction"
                         ? "“" + d + "”"
                         : d}
                     </span>
@@ -165,7 +169,7 @@ function Nominee({
                   >
                     {t.title}
                   </Link>
-                  {i != nomineeInfo.titles.length - 1 && (
+                  {i !== nomineeInfo.titles.length - 1 && (
                     <span className="select-none">&nbsp;&thinsp;·&nbsp;</span>
                   )}
                 </span>
@@ -173,7 +177,7 @@ function Nominee({
             );
           })}
           {!nomineeInfo.is_person &&
-            nomineeInfo.titles.length != 0 &&
+            nomineeInfo.titles.length !== 0 &&
             nomineeInfo.note && <Note text={nomineeInfo.note} />}
         </div>
       </div>

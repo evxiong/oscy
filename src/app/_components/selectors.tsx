@@ -7,20 +7,25 @@ import {
 import { IconChevronDown } from "@tabler/icons-react";
 import { Dispatch, SetStateAction } from "react";
 
+export interface SmallSelectorOption {
+  id: number;
+  name: string;
+}
+
 export function SmallSelector({
   state,
   setState,
   options,
 }: {
-  state: string;
-  setState: Dispatch<SetStateAction<string>>;
-  options: string[];
+  state: SmallSelectorOption;
+  setState: Dispatch<SetStateAction<SmallSelectorOption>>;
+  options: SmallSelectorOption[];
 }) {
   return (
     <div className="w-fit flex-shrink-0">
       <Listbox value={state} onChange={setState}>
         <ListboxButton className="relative h-full w-fit pr-4 text-left text-xs font-medium text-zinc-500 underline decoration-zinc-300 underline-offset-4 hover:text-zinc-600 hover:decoration-zinc-400 data-[focus]:text-zinc-600 data-[open]:text-zinc-600 data-[focus]:decoration-zinc-600 data-[open]:decoration-zinc-400">
-          {state}
+          {state.name}
           <IconChevronDown
             className="group pointer-events-none absolute right-0 top-1/2 size-3.5 -translate-y-[50%]"
             aria-hidden="true"
@@ -34,7 +39,7 @@ export function SmallSelector({
         >
           {options.map((option) => (
             <ListboxOption
-              key={option}
+              key={option.id}
               value={option}
               className="group flex cursor-pointer select-none flex-row items-center gap-2 pl-2 pr-4 text-zinc-500 data-[focus]:text-zinc-800"
             >
@@ -42,7 +47,7 @@ export function SmallSelector({
                 <div>•</div>
               </div>
               <div className="flex-shrink-0 py-1 pr-2 text-right text-sm font-medium">
-                {option}
+                {option.name}
               </div>
             </ListboxOption>
           ))}

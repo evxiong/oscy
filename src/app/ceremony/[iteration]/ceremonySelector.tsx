@@ -1,11 +1,14 @@
 "use client";
 
-import { SmallSelector } from "@/app/_components/selectors";
+import {
+  SmallSelector,
+  SmallSelectorOption,
+} from "@/app/_components/selectors";
 import { useState } from "react";
 import { AwardType, EditionType } from "./types";
 import { iterationToOrdinal } from "@/app/_utils/utils";
 import { IconArrowRight } from "@tabler/icons-react";
-import { Button } from "@headlessui/react";
+import Link from "next/link";
 
 export default function CeremonySelector({
   awardType,
@@ -16,16 +19,20 @@ export default function CeremonySelector({
   editions: EditionType[];
   currentId: number;
 }) {
-  const awardOptions = ["Oscars", "Emmys"];
-  const editionOptions = editions.map(
-    (e) => e.official_year + " (" + iterationToOrdinal(e.iteration) + ")",
-  );
+  const awardOptions: SmallSelectorOption[] = [
+    { id: AwardType.oscar, name: "Oscars" },
+    { id: AwardType.emmy, name: "Emmys" },
+  ];
+  const editionOptions: SmallSelectorOption[] = editions.map((e) => ({
+    id: e.iteration,
+    name: e.official_year + " (" + iterationToOrdinal(e.iteration) + ")",
+  }));
   const originalAward = awardOptions[awardType];
   const originalEdition =
     editionOptions[editions.findIndex((e) => e.id === currentId)];
   const [award, setAward] = useState(originalAward);
   const [edition, setEdition] = useState(originalEdition);
-  const go = award !== originalAward || edition != originalEdition;
+  const go = award.id !== originalAward.id || edition.id !== originalEdition.id;
   return (
     <div className="relative">
       <div
@@ -42,11 +49,12 @@ export default function CeremonySelector({
           options={editionOptions}
         />
       </div>
-      <Button
+      <Link
+        href={`/ceremony/${edition.id}`}
         className={`${go ? "visible opacity-100" : "invisible opacity-0"} group absolute -right-1 -top-1 cursor-pointer p-1 transition-all duration-300 ease-in-out`}
       >
         <IconArrowRight className="size-4 stroke-zinc-500 group-hover:stroke-gold" />
-      </Button>
+      </Link>
     </div>
   );
 }
