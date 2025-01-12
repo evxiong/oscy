@@ -1,3 +1,15 @@
+export enum AwardType {
+  oscar = 0,
+  emmy = 1,
+}
+
+export interface EditionType {
+  id: number;
+  iteration: number;
+  official_year: string;
+  ceremony_date: string;
+}
+
 export interface NominationsType {
   editions: CeremonyType[];
   stats: AllStatsType;
@@ -33,6 +45,7 @@ export interface EntityStatsType extends StatsType {
 }
 
 export interface CeremonyType {
+  id: number;
   iteration: number;
   official_year: string;
   ceremony_date: string;

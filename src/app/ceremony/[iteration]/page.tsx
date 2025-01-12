@@ -1,21 +1,13 @@
-import {
-  TabGroup,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
-  Input,
-} from "@headlessui/react";
-import {
-  IconStarFilled,
-  IconArrowLeft,
-  IconArrowRight,
-} from "@tabler/icons-react";
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/react";
+import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import { ceremonyToTopFive, iterationToOrdinal } from "@/app/_utils/utils";
-import { CategoryType, NomineeType, NominationsType } from "./types";
+import { AwardType, CategoryType, EditionType, NominationsType } from "./types";
 import Image from "next/image";
 import Link from "next/link";
 import Stats from "./stats";
+import Nominations from "./nominations";
+import Breadcrumbs from "@/app/_components/breadcrumbs";
+import CeremonySelector from "./ceremonySelector";
 
 export default async function Ceremony({
   params,
@@ -23,10 +15,12 @@ export default async function Ceremony({
   params: Promise<{ iteration: string }>;
 }) {
   const iteration = (await params).iteration;
-  const data = await fetch(
+  const nominationsData = await fetch(
     `http://localhost:8000/?start_edition=${iteration}&end_edition=${iteration}`,
   );
-  const nominations: NominationsType = await data.json();
+  const nominations: NominationsType = await nominationsData.json();
+  const editionsData = await fetch("http://localhost:8000/editions");
+  const editions: EditionType[] = await editionsData.json();
   const ceremony = nominations.editions[0];
   const ordinal = iterationToOrdinal(ceremony.iteration);
   const topFive = ceremonyToTopFive(nominations);
@@ -57,14 +51,18 @@ export default async function Ceremony({
     <div className="flex flex-col gap-5">
       <section className="flex w-full flex-col items-center">
         <div className="flex w-full flex-col gap-4 px-6 pt-5 md:w-[768px]">
-          <nav className="flex flex-row justify-between text-xs font-medium text-zinc-500 underline decoration-zinc-300 underline-offset-4">
-            <div>Ceremony</div>
-            <div className="flex flex-row gap-4">
-              <div>Academy Awards</div>
-              <div>
-                {ceremony.official_year} ({ordinal})
-              </div>
-            </div>
+          <nav className="flex flex-row justify-between text-xs">
+            <Breadcrumbs
+              crumbs={[
+                { name: "Home", link: "/" },
+                { name: "Ceremony", link: "" },
+              ]}
+            />
+            <CeremonySelector
+              awardType={AwardType.oscar}
+              editions={editions}
+              currentId={ceremony.id}
+            />
           </nav>
           <div className="flex w-full flex-row items-center justify-between">
             <div className="flex flex-col">
@@ -122,19 +120,7 @@ export default async function Ceremony({
             </TabList>
             <TabPanels>
               <TabPanel>
-                <div className="sticky top-0 z-30 flex h-14 flex-row items-center justify-between bg-white text-sm font-medium text-zinc-500">
-                  <div className="flex flex-row gap-4">
-                    <div>All</div>
-                    <div>Category: All</div>
-                  </div>
-                  <div className="font-semibold">
-                    {ceremony.official_year} ({ordinal})
-                  </div>
-                </div>
-                <hr />
-                {ceremony.categories.map((c, i) => (
-                  <Category key={i} categoryInfo={c} />
-                ))}
+                <Nominations ceremony={ceremony} ordinal={ordinal} />
               </TabPanel>
               <TabPanel>
                 <Stats stats={nominations.stats} />
@@ -156,6 +142,9 @@ function Card({
 }) {
   const personFirst =
     category.nominees[0].is_person || category.short_name === "Director";
+  const titleWinners = category.nominees[0].titles.filter(
+    (t) => t.title_winner,
+  );
   return (
     <div className="flex w-[135px] flex-col gap-2">
       <a
@@ -184,150 +173,42 @@ function Card({
           className="object-cover"
         />
       </div>
-      <div className="flex flex-col gap-1 font-medium text-zinc-800">
-        <div className="text-sm leading-4 text-zinc-800">
-          {!personFirst ? (
-            <a className="cursor-pointer italic underline decoration-zinc-200 underline-offset-2 hover:text-gold">
-              {category.nominees[0].titles[0].title}
-            </a>
-          ) : (
-            category.nominees[0].people.map((n, i) => (
-              <span key={i}>
-                <a className="cursor-pointer underline decoration-zinc-200 underline-offset-2 hover:text-gold">
-                  {n.name}
-                </a>
-                {i != category.nominees[0].people.length - 1 && ", "}
-              </span>
-            ))
-          )}
-        </div>
-        <div className="text-xs leading-[0.875rem] text-zinc-500">
-          {!personFirst ? (
-            category.nominees[0].people.map((n, i) => (
-              <span key={i}>
-                <a className="cursor-pointer underline decoration-zinc-200 underline-offset-2 hover:text-gold">
-                  {n.name}
-                </a>
-                {i != category.nominees[0].people.length - 1 && ", "}
-              </span>
-            ))
-          ) : (
-            <a className="cursor-pointer italic underline decoration-zinc-200 underline-offset-2 hover:text-gold">
-              {category.nominees[0].titles[0].title}
-            </a>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Nominee({
-  category,
-  nomineeInfo,
-}: {
-  category: string;
-  nomineeInfo: NomineeType;
-}) {
-  return (
-    <div className="flex flex-row gap-2.5">
-      <IconStarFilled
-        className={`${nomineeInfo.winner ? "visible" : "invisible"} mt-[3px] h-4 w-4 flex-shrink-0 fill-gold`}
-      />
       <div
-        className={`${nomineeInfo.is_person || nomineeInfo.titles.length == 0 ? "flex-col" : "flex-col-reverse"} flex gap-1`}
+        className={`${personFirst ? "flex-col" : "flex-col-reverse"} flex gap-1`}
       >
         <div
-          className={`${nomineeInfo.is_person || nomineeInfo.titles.length == 0 ? "text-base font-medium leading-5 text-zinc-800" : "text-sm font-normal leading-4 text-zinc-500"}`}
+          className={`${personFirst ? "text-sm font-medium leading-4 text-zinc-800" : "text-xs font-normal leading-[0.875rem] text-zinc-500"} `}
         >
-          {nomineeInfo.people.map((p, i) => (
+          {category.nominees[0].people.map((n, i) => (
             <span key={i}>
               <Link
-                href={`/entity/${p.id}`}
-                className="w-fit cursor-pointer underline decoration-zinc-300 underline-offset-2 hover:text-gold"
+                href={`/entity/${n.id}`}
+                className="w-fit cursor-pointer underline decoration-zinc-200 underline-offset-2 hover:text-gold"
               >
-                {p.name}
+                {n.name}
               </Link>
-              {i != nomineeInfo.people.length - 1 && ", "}
+              {i != category.nominees[0].people.length - 1 && ", "}
             </span>
           ))}
-          {(nomineeInfo.is_person || nomineeInfo.titles.length == 0) &&
-            nomineeInfo.note && <Note text={nomineeInfo.note} />}
         </div>
         <div
-          className={`${!nomineeInfo.is_person || nomineeInfo.titles.length == 0 ? "text-base font-medium leading-5 text-zinc-800" : "text-sm font-normal leading-4 text-zinc-500"}`}
+          className={`${!personFirst ? "text-sm font-medium leading-4 text-zinc-800" : "text-xs leading-[0.875rem] text-zinc-500"} `}
         >
-          {nomineeInfo.titles.map((t, i) => {
-            return (
-              <span key={i}>
-                {t.detail.map((d, j) => (
-                  <span key={j}>
-                    <span className="w-fit">
-                      {category == "Original Song" ||
-                      category == "Dance Direction"
-                        ? "“" + d + "”"
-                        : d}
-                    </span>
-                    {", "}
-                  </span>
-                ))}
-                <span>
-                  <Link
-                    href={`/title/${t.id}`}
-                    className="w-fit cursor-pointer italic underline decoration-zinc-300 underline-offset-2 hover:text-gold"
-                  >
-                    {t.title}
-                  </Link>
-                  {i != nomineeInfo.titles.length - 1 && (
-                    <span className="select-none">&nbsp;&thinsp;·&nbsp;</span>
-                  )}
-                </span>
-              </span>
-            );
-          })}
-          {!nomineeInfo.is_person &&
-            nomineeInfo.titles.length != 0 &&
-            nomineeInfo.note && <Note text={nomineeInfo.note} />}
+          {titleWinners.map((t, i) => (
+            <span key={i}>
+              <Link
+                href={`/title/${t.id}`}
+                className="w-fit cursor-pointer italic underline decoration-zinc-200 underline-offset-2 hover:text-gold"
+              >
+                {t.title}
+              </Link>
+              {i != titleWinners.length - 1 && (
+                <span className="select-none">&nbsp;&thinsp;·&nbsp;</span>
+              )}
+            </span>
+          ))}
         </div>
       </div>
     </div>
-  );
-}
-
-function Note({ text }: { text: string }) {
-  return (
-    <span className="select-none">
-      &nbsp;
-      <span
-        className="group relative z-0 cursor-pointer align-top text-xs font-medium text-gold"
-        title={text}
-      >
-        <span className="z-0 group-hover:underline">N</span>
-      </span>
-    </span>
-  );
-}
-
-function Category({ categoryInfo }: { categoryInfo: CategoryType }) {
-  return (
-    <>
-      <div className="flex flex-col gap-1 py-6 text-zinc-800 sm:flex-row sm:gap-6">
-        <div className="sticky top-14 z-20 flex-1 bg-white pb-4">
-          <h1 className="sticky top-14 flex w-fit cursor-pointer text-xl font-medium leading-6 hover:text-gold sm:text-lg sm:leading-6">
-            {categoryInfo.common_name}
-          </h1>
-        </div>
-        <div className="flex flex-1 flex-col gap-[0.875rem]">
-          {categoryInfo.nominees.map((n, i) => (
-            <Nominee
-              key={i}
-              category={categoryInfo.short_name}
-              nomineeInfo={n}
-            />
-          ))}
-        </div>
-      </div>
-      <hr />
-    </>
   );
 }
