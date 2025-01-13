@@ -1,8 +1,17 @@
+import { CategoryName } from "../category/[id]/types";
 import { NominationsType } from "../ceremony/[iteration]/types";
 
 interface TopFive {
   indices: number[];
   imdb_ids: string[];
+}
+
+interface TimelineItem {
+  start_year: number;
+  start_iteration: number;
+  end_year: number;
+  end_iteration: number;
+  name: string;
 }
 
 export function iterationToOrdinal(iteration: number): string {
@@ -73,4 +82,25 @@ export function ceremonyToTopFive(nominations: NominationsType): TopFive {
   };
 
   return topFive;
+}
+
+export function categoryNamesToTimeline(
+  categoryNames: CategoryName[],
+): TimelineItem[] {
+  // create one entry per discrete range/name combination
+  // sort desc by end of range (gtd no ties)
+  const items = categoryNames
+    .map((cn) =>
+      cn.ranges.map((r) => ({
+        start_year: 1927 + r[0],
+        start_iteration: r[0],
+        end_year: 1927 + r[1],
+        end_iteration: r[1],
+        name: cn.common_name,
+      })),
+    )
+    .flat()
+    .sort((a, b) => b.end_iteration - a.end_iteration);
+
+  return items;
 }

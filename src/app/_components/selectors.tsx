@@ -33,7 +33,7 @@ export function SmallSelector({
         </ListboxButton>
         <ListboxOptions
           modal={false}
-          anchor="bottom start"
+          anchor="bottom end"
           transition
           className="z-50 !max-h-60 w-fit rounded-md border bg-white py-1 transition duration-100 ease-in [--anchor-gap:10px] focus:outline-none data-[leave]:data-[closed]:opacity-0"
         >

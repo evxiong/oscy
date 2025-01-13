@@ -1,7 +1,7 @@
 "use client";
 
 import { IconStarFilled } from "@tabler/icons-react";
-import { CeremonyType, CategoryType, NomineeType } from "./types";
+import { CategoryType, NomineeType } from "../ceremony/[iteration]/types";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MediumSelector } from "@/app/_components/selectors";

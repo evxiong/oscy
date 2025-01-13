@@ -5,9 +5,10 @@ import { AwardType, CategoryType, EditionType, NominationsType } from "./types";
 import Image from "next/image";
 import Link from "next/link";
 import Stats from "./stats";
-import Nominations from "./nominations";
+import Nominations from "@/app/_components/nominations";
 import Breadcrumbs from "@/app/_components/breadcrumbs";
-import CeremonySelector from "./ceremonySelector";
+import AwardNavigator from "@/app/_components/awardNavigator";
+import { SmallSelectorOption } from "@/app/_components/selectors";
 
 export default async function Ceremony({
   params,
@@ -47,6 +48,13 @@ export default async function Ceremony({
     }),
   );
 
+  const awardNavigatorOptions: SmallSelectorOption[] = editions.map((e) => ({
+    id: e.iteration,
+    name: e.official_year + " (" + iterationToOrdinal(e.iteration) + ")",
+  }));
+  const originalAwardNavigatorOption: SmallSelectorOption =
+    awardNavigatorOptions[editions.findIndex((e) => e.id === ceremony.id)];
+
   return (
     <div className="flex flex-col gap-5">
       <section className="flex w-full flex-col items-center">
@@ -58,10 +66,11 @@ export default async function Ceremony({
                 { name: "Ceremony", link: "" },
               ]}
             />
-            <CeremonySelector
-              awardType={AwardType.oscar}
-              editions={editions}
-              currentId={ceremony.id}
+            <AwardNavigator
+              subdir="ceremony"
+              originalAwardType={AwardType.oscar}
+              options={awardNavigatorOptions}
+              originalOption={originalAwardNavigatorOption}
             />
           </nav>
           <div className="flex w-full flex-row items-center justify-between">

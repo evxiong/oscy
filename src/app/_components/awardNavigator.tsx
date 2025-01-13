@@ -5,34 +5,29 @@ import {
   SmallSelectorOption,
 } from "@/app/_components/selectors";
 import { useState } from "react";
-import { AwardType, EditionType } from "./types";
-import { iterationToOrdinal } from "@/app/_utils/utils";
+import { AwardType } from "../ceremony/[iteration]/types";
 import { IconArrowRight } from "@tabler/icons-react";
 import Link from "next/link";
 
-export default function CeremonySelector({
-  awardType,
-  editions,
-  currentId,
+export default function AwardNavigator({
+  subdir,
+  originalAwardType,
+  options,
+  originalOption,
 }: {
-  awardType: AwardType;
-  editions: EditionType[];
-  currentId: number;
+  subdir: string;
+  originalAwardType: AwardType;
+  options: SmallSelectorOption[];
+  originalOption: SmallSelectorOption;
 }) {
   const awardOptions: SmallSelectorOption[] = [
     { id: AwardType.oscar, name: "Oscars" },
     { id: AwardType.emmy, name: "Emmys" },
   ];
-  const editionOptions: SmallSelectorOption[] = editions.map((e) => ({
-    id: e.iteration,
-    name: e.official_year + " (" + iterationToOrdinal(e.iteration) + ")",
-  }));
-  const originalAward = awardOptions[awardType];
-  const originalEdition =
-    editionOptions[editions.findIndex((e) => e.id === currentId)];
+  const originalAward = awardOptions[originalAwardType];
   const [award, setAward] = useState(originalAward);
-  const [edition, setEdition] = useState(originalEdition);
-  const go = award.id !== originalAward.id || edition.id !== originalEdition.id;
+  const [option, setOption] = useState(originalOption);
+  const go = award.id !== originalAward.id || option.id !== originalOption.id;
   return (
     <div className="relative">
       <div
@@ -43,14 +38,10 @@ export default function CeremonySelector({
           setState={setAward}
           options={awardOptions}
         />
-        <SmallSelector
-          state={edition}
-          setState={setEdition}
-          options={editionOptions}
-        />
+        <SmallSelector state={option} setState={setOption} options={options} />
       </div>
       <Link
-        href={`/ceremony/${edition.id}`}
+        href={`/${subdir}/${option.id}`}
         className={`${go ? "visible opacity-100" : "invisible opacity-0"} group absolute -right-1 -top-1 cursor-pointer p-1 transition-all duration-300 ease-in-out`}
       >
         <IconArrowRight className="size-4 stroke-zinc-500 group-hover:stroke-gold" />
