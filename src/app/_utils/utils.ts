@@ -161,3 +161,15 @@ export function categoryNamesToTimeline(
 
   return items;
 }
+
+export function imdbIdToUrl(imdbId: string): string {
+  if (imdbId.startsWith("nm")) {
+    return "https://www.imdb.com/name/" + imdbId;
+  } else if (imdbId.startsWith("tt")) {
+    return "https://www.imdb.com/title/" + imdbId;
+  } else if (imdbId.startsWith("co")) {
+    return "https://www.imdb.com/search/title/?companies=" + imdbId;
+  } else {
+    throw new Error(`Invalid IMDb id: ${imdbId}`);
+  }
+}
