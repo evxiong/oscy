@@ -1,14 +1,18 @@
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/react";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
-import { ceremonyToTopFive, iterationToOrdinal } from "@/app/_utils/utils";
-import { AwardType, CategoryType, EditionType, NominationsType } from "./types";
-import Image from "next/image";
+import {
+  ceremonyToTopFive,
+  iterationToOrdinal,
+  topFiveToImageUrls,
+} from "@/app/_utils/utils";
+import { AwardType, EditionType, NominationsType } from "./types";
 import Link from "next/link";
-import Stats from "./stats";
+import CeremonyStats from "./stats";
 import Nominations from "@/app/_components/nominations";
 import Breadcrumbs from "@/app/_components/breadcrumbs";
 import AwardNavigator from "@/app/_components/awardNavigator";
 import { SmallSelectorOption } from "@/app/_components/selectors";
+import Card from "@/app/_components/card";
 
 export default async function Ceremony({
   params,
@@ -26,27 +30,7 @@ export default async function Ceremony({
   const ordinal = iterationToOrdinal(ceremony.iteration);
   const topFive = ceremonyToTopFive(nominations);
   const topFiveCategoryInds: number[] = topFive.indices;
-  const topFiveImageUrls: string[] = await Promise.all(
-    topFive.imdb_ids.map(async (imdb_id) => {
-      let res = await fetch(
-        `https://api.themoviedb.org/3/find/${imdb_id}?external_source=imdb_id&api_key=${process.env.TMDB_API_KEY}`,
-      );
-      res = await res.json();
-      if (imdb_id.startsWith("tt")) {
-        return (
-          "https://image.tmdb.org/t/p/w185" +
-          // @ts-ignore
-          res["movie_results"][0]["poster_path"]
-        );
-      } else {
-        return (
-          "https://image.tmdb.org/t/p/w185" +
-          // @ts-ignore
-          res["person_results"][0]["profile_path"]
-        );
-      }
-    }),
-  );
+  const topFiveImageUrls: (string | null)[] = await topFiveToImageUrls(topFive);
 
   const awardNavigatorOptions: SmallSelectorOption[] = editions.map((e) => ({
     id: e.iteration,
@@ -111,15 +95,20 @@ export default async function Ceremony({
           </div>
         </div>
       </section>
-      <section className="flex w-full flex-col overflow-x-auto bg-gradient-to-r from-white to-zinc-100 px-6 py-5 md:items-center">
-        <div className="grid w-[720px] grid-flow-col justify-between">
-          {topFiveCategoryInds.map((catInd, i) => (
-            <Card
-              key={i}
-              category={ceremony.categories[catInd]}
-              imageUrl={topFiveImageUrls[i]}
-            />
-          ))}
+      <section className="flex w-full flex-col overflow-x-auto bg-gradient-to-r from-white to-zinc-100 py-5 md:items-center">
+        <div className="w-fit px-6 md:w-[768px]">
+          <div className="flex flex-row gap-[11.25px]">
+            {topFiveCategoryInds.map((catInd, i) => (
+              <Card
+                key={i}
+                showCeremony={false}
+                ceremony={ceremony.official_year + " (" + ordinal + ")"}
+                ceremonyId={ceremony.iteration}
+                category={ceremony.categories[catInd]}
+                imageUrl={topFiveImageUrls[i]}
+              />
+            ))}
+          </div>
         </div>
       </section>
       <section className="mb-20 flex w-full flex-col items-center">
@@ -136,99 +125,25 @@ export default async function Ceremony({
             <TabPanels>
               <TabPanel>
                 <Nominations
-                  categories={ceremony.categories}
-                  officialYear={ceremony.official_year}
-                  ordinal={ordinal}
+                  showCeremony={false}
+                  editions={nominations.editions}
+                  searchHeader="Category"
+                  searchKeys={[
+                    "category_group",
+                    "official_name",
+                    "common_name",
+                    "short_name",
+                  ]}
+                  stickyHeader={ceremony.official_year + " (" + ordinal + ")"}
                 />
               </TabPanel>
               <TabPanel>
-                <Stats stats={nominations.stats} />
+                <CeremonyStats stats={nominations.stats} />
               </TabPanel>
             </TabPanels>
           </TabGroup>
         </div>
       </section>
-    </div>
-  );
-}
-
-function Card({
-  category,
-  imageUrl,
-}: {
-  category: CategoryType;
-  imageUrl: string;
-}) {
-  const personFirst =
-    category.nominees[0].is_person || category.short_name === "Director";
-  const titleWinners = category.nominees[0].titles.filter(
-    (t) => t.title_winner,
-  );
-  return (
-    <div className="flex w-[135px] flex-col gap-2">
-      <Link
-        href={`/category/${category.category_id}`}
-        className="w-fit max-w-full cursor-pointer truncate text-xxs font-semibold text-zinc-800 hover:text-gold"
-        title={
-          category.short_name.startsWith("Unique")
-            ? category.short_name
-            : "Best " + category.short_name
-        }
-      >
-        {(category.short_name.startsWith("Unique")
-          ? category.short_name
-          : "Best " + category.short_name
-        ).toUpperCase()}
-      </Link>
-      <div className="relative h-[200px] overflow-hidden rounded-[0.25rem] border border-zinc-300 bg-zinc-50">
-        <Image
-          src={imageUrl}
-          fill={true}
-          alt={
-            personFirst
-              ? `Photo of ${category.nominees[0].people[0].name}`
-              : `Poster for ${category.nominees[0].titles[0].title}`
-          }
-          priority={true}
-          className="object-cover"
-        />
-      </div>
-      <div
-        className={`${personFirst ? "flex-col" : "flex-col-reverse"} flex gap-1`}
-      >
-        <div
-          className={`${personFirst ? "text-sm font-medium leading-4 text-zinc-800" : "text-xs font-normal leading-[0.875rem] text-zinc-500"} `}
-        >
-          {category.nominees[0].people.map((n, i) => (
-            <span key={i}>
-              <Link
-                href={`/entity/${n.id}`}
-                className="w-fit cursor-pointer underline decoration-zinc-200 underline-offset-2 hover:text-gold"
-              >
-                {n.name}
-              </Link>
-              {i !== category.nominees[0].people.length - 1 && ", "}
-            </span>
-          ))}
-        </div>
-        <div
-          className={`${!personFirst ? "text-sm font-medium leading-4 text-zinc-800" : "text-xs leading-[0.875rem] text-zinc-500"} `}
-        >
-          {titleWinners.map((t, i) => (
-            <span key={i}>
-              <Link
-                href={`/title/${t.id}`}
-                className="w-fit cursor-pointer italic underline decoration-zinc-200 underline-offset-2 hover:text-gold"
-              >
-                {t.title}
-              </Link>
-              {i !== titleWinners.length - 1 && (
-                <span className="select-none">&nbsp;&thinsp;·&nbsp;</span>
-              )}
-            </span>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

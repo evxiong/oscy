@@ -32,7 +32,7 @@ export interface TitleStatsType extends StatsType {
 }
 
 export interface EntityStatsType extends StatsType {
-  name: string;
+  aliases: string[];
   category_id: number;
   category_noms: number;
   category_wins: number;

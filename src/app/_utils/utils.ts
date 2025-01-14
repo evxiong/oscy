@@ -1,5 +1,5 @@
 import { CategoryName } from "../category/[id]/types";
-import { NominationsType } from "../ceremony/[iteration]/types";
+import { CategoryType, NominationsType } from "../ceremony/[iteration]/types";
 
 interface TopFive {
   indices: number[];
@@ -82,6 +82,63 @@ export function ceremonyToTopFive(nominations: NominationsType): TopFive {
   };
 
   return topFive;
+}
+
+export function categoriesToTopFive(categories: CategoryType[]): TopFive {
+  // categories should already be reversed
+  var indices = [];
+  var imdb_ids = [];
+
+  let i = 0;
+  for (const c of categories) {
+    if (c.nominees[0].is_person || c.short_name === "Director") {
+      imdb_ids.push(
+        c.nominees[0].people[0]?.imdb_id ?? c.nominees[0].titles[0].imdb_id,
+      );
+    } else {
+      imdb_ids.push(
+        c.nominees[0].titles[0]?.imdb_id ?? c.nominees[0].people[0].imdb_id,
+      );
+    }
+    indices.push(i);
+    if (imdb_ids.length === 5) {
+      break;
+    }
+    i += 1;
+  }
+
+  let topFive: TopFive = {
+    indices: indices,
+    imdb_ids: imdb_ids,
+  };
+
+  return topFive;
+}
+
+export async function topFiveToImageUrls(
+  topFive: TopFive,
+): Promise<(string | null)[]> {
+  return Promise.all(
+    topFive.imdb_ids.map(async (imdb_id) => {
+      let res = await fetch(
+        `https://api.themoviedb.org/3/find/${imdb_id}?external_source=imdb_id&api_key=${process.env.TMDB_API_KEY}`,
+      );
+      res = await res.json();
+      if (imdb_id.startsWith("tt")) {
+        return res["movie_results"][0]["poster_path"]
+          ? "https://image.tmdb.org/t/p/w185" +
+              // @ts-ignore
+              res["movie_results"][0]["poster_path"]
+          : null;
+      } else {
+        return res["person_results"][0]["profile_path"]
+          ? "https://image.tmdb.org/t/p/w185" +
+              // @ts-ignore
+              res["person_results"][0]["profile_path"]
+          : null;
+      }
+    }),
+  );
 }
 
 export function categoryNamesToTimeline(

@@ -4,8 +4,15 @@ import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import AwardNavigator from "@/app/_components/awardNavigator";
 import { AwardType } from "@/app/ceremony/[iteration]/types";
 import { SmallSelectorOption } from "@/app/_components/selectors";
-import { categoryNamesToTimeline } from "@/app/_utils/utils";
+import {
+  categoriesToTopFive,
+  categoryNamesToTimeline,
+  iterationToOrdinal,
+  topFiveToImageUrls,
+} from "@/app/_utils/utils";
 import Nominations from "@/app/_components/nominations";
+import Card from "@/app/_components/card";
+import CategoryStats from "./stats";
 
 export default async function Category({
   params,
@@ -19,6 +26,15 @@ export default async function Category({
     `http://localhost:8000/category/${categoryId}`,
   );
   const category: Category = await categoryData.json();
+
+  const editions = category.nominations.editions.reverse();
+
+  const nominationCategories = editions.map((e) => e.categories).flat();
+
+  const topFive = categoriesToTopFive(nominationCategories);
+  const topFiveCategoryInds: number[] = topFive.indices;
+  const topFiveImageUrls: (string | null)[] = await topFiveToImageUrls(topFive);
+
   const categoryName = category.category.startsWith("Unique")
     ? category.category
     : "Best " + category.category;
@@ -37,6 +53,13 @@ export default async function Category({
 
   const timeline = categoryNamesToTimeline(category.category_names);
   const LATEST_EDITION = parseInt(process.env.LATEST_EDITION!);
+  const numCeremonies = category.category_names.reduce(
+    (acc1, cn) =>
+      acc1 + cn.ranges.reduce((acc2, r) => acc2 + r[1] - r[0] + 1, 0),
+    0,
+  );
+  const firstYear = timeline.at(-1)!.start_year;
+  const lastYear = timeline[0].end_year;
 
   return (
     <div className="flex flex-col gap-5">
@@ -68,23 +91,42 @@ export default async function Category({
                     <span className="select-none">&nbsp;·&nbsp;</span>
                   </span>
                 )}
-                <span className="text-red-500">x ceremonies</span>
+                <span>
+                  {numCeremonies}{" "}
+                  {numCeremonies > 1 ? "ceremonies" : "ceremony"}
+                </span>
                 <span className="select-none">&nbsp;·&nbsp;</span>
-                <span className="text-red-500">start-end</span>
+                <span>
+                  {lastYear === 1927 + LATEST_EDITION
+                    ? firstYear + "-present"
+                    : firstYear === lastYear
+                      ? firstYear
+                      : firstYear + "-" + lastYear}
+                </span>
               </h2>
             </div>
           </div>
         </div>
       </section>
-      <section className="flex w-full flex-col overflow-x-auto bg-gradient-to-r from-white to-zinc-100 px-6 py-5 md:items-center">
-        <div className="grid w-[720px] grid-flow-col justify-between">
-          {/* {topFiveCategoryInds.map((catInd, i) => (
-            <Card
-              key={i}
-              category={ceremony.categories[catInd]}
-              imageUrl={topFiveImageUrls[i]}
-            />
-          ))} */}
+      <section className="flex w-full flex-col overflow-x-auto bg-gradient-to-r from-white to-zinc-100 py-5 md:items-center">
+        <div className="w-fit px-6 md:w-[768px]">
+          <div className="flex flex-row gap-[11.25px]">
+            {topFiveCategoryInds.map((catInd, i) => (
+              <Card
+                key={i}
+                showCeremony={true}
+                ceremony={
+                  editions[i].official_year +
+                  " (" +
+                  iterationToOrdinal(editions[i].iteration) +
+                  ")"
+                }
+                ceremonyId={editions[i].id}
+                category={nominationCategories[catInd]}
+                imageUrl={topFiveImageUrls[i]}
+              />
+            ))}
+          </div>
         </div>
       </section>
       <section className="mb-20 flex w-full flex-col items-center">
@@ -103,20 +145,21 @@ export default async function Category({
             </TabList>
             <TabPanels>
               <TabPanel>
-                {/* Better solution: pass editions to nominations, then have noms map it, pass boolean to display year or cat */}
-                {/* Also allow passing search keys */}
                 <Nominations
-                  categories={category.nominations.editions
-                    .map((e) => e.categories)
-                    .flat()
-                    .reverse()}
-                  officialYear=""
-                  ordinal=""
+                  showCeremony={true}
+                  editions={editions}
+                  searchHeader="Ceremony"
+                  searchKeys={["year_and_ordinal", "common_name"]}
+                  stickyHeader={category.category}
                 />
               </TabPanel>
-              <TabPanel>{/* <Stats stats={nominations.stats} /> */}</TabPanel>
               <TabPanel>
-                <div className="sticky top-0 z-30 flex h-14 flex-row items-center justify-between gap-4 bg-white text-base font-medium text-zinc-500">
+                <CategoryStats
+                  entityStats={category.nominations.stats.entity_stats}
+                />
+              </TabPanel>
+              <TabPanel>
+                <div className="flex h-14 flex-row items-center justify-between gap-4 bg-white text-base font-medium text-zinc-500">
                   <div>Known as</div>
                 </div>
                 <div className="flex flex-col font-medium">
@@ -131,7 +174,7 @@ export default async function Category({
                         className={`${t.start_iteration === 1 ? "before:border-none" : i < timeline.length - 1 && t.start_iteration === timeline[i + 1].end_iteration + 1 ? "before:border-solid" : "before:border-dashed"} w-full pb-6 before:absolute before:bottom-0 before:left-0 before:top-0 before:border-l-2 before:border-zinc-300 before:content-['']`}
                       >
                         <div
-                          className={`${t.end_iteration === LATEST_EDITION ? "bg-gold" : "bg-zinc-300"} absolute -left-[5px] top-0 size-3 rounded-full`}
+                          className={`${t.end_iteration === LATEST_EDITION ? "border-4 border-gold" : "border-2 border-zinc-300"} absolute -left-[5px] top-0 size-3 rounded-full bg-white`}
                         ></div>
                         <div className="-mt-1 flex flex-col gap-0.5 pl-6">
                           <div

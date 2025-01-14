@@ -1,38 +1,59 @@
 "use client";
 
 import { IconStarFilled } from "@tabler/icons-react";
-import { CategoryType, NomineeType } from "../ceremony/[iteration]/types";
+import {
+  CategoryType,
+  CeremonyType,
+  NomineeType,
+} from "../ceremony/[iteration]/types";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MediumSelector } from "@/app/_components/selectors";
 import { Input } from "@headlessui/react";
+import { iterationToOrdinal } from "../_utils/utils";
+
+interface NominationCategoryType extends CategoryType {
+  ceremony_id: number;
+  year_and_ordinal: string;
+}
 
 export default function Nominations({
-  categories,
-  officialYear,
-  ordinal,
+  showCeremony,
+  editions,
+  searchHeader,
+  searchKeys,
+  stickyHeader,
 }: {
-  categories: CategoryType[];
-  officialYear: string;
-  ordinal: string;
+  showCeremony: boolean;
+  editions: CeremonyType[];
+  searchHeader: string;
+  searchKeys: (keyof NominationCategoryType)[];
+  stickyHeader: string;
 }) {
-  const searchKeys: (keyof CategoryType)[] = [
-    "category_group",
-    "official_name",
-    "common_name",
-    "short_name",
-  ];
+  const categories: NominationCategoryType[] = editions
+    .map((e) =>
+      e.categories.map((c) => ({
+        ...c,
+        ceremony_id: e.iteration,
+        year_and_ordinal:
+          e.official_year + " (" + iterationToOrdinal(e.iteration) + ")",
+      })),
+    )
+    .flat();
   const winnerOptions = ["All", "Winners"];
   const [winnersOnly, setWinnersOnly] = useState(winnerOptions[0]);
   const [search, setSearch] = useState("");
   const [filteredCategories, setFilteredCategories] =
-    useState<CategoryType[]>(categories);
+    useState<NominationCategoryType[]>(categories);
 
   useEffect(() => {
     setFilteredCategories(filterCategories(categories, search));
   }, [search]);
 
-  function filterCategories(categories: CategoryType[], search: string) {
+  function filterCategories(
+    categories: NominationCategoryType[],
+    search: string,
+  ) {
     const query = search.toLowerCase().trim();
     return categories.filter((c) =>
       searchKeys.some((k) => (c[k] as string).toLowerCase().includes(query)),
@@ -57,18 +78,17 @@ export default function Nominations({
               onChange={(e) => setSearch(e.target.value)}
             />
             <span className="select-none peer-focus:text-zinc-800">
-              Category:
+              {searchHeader}:
             </span>
           </div>
         </div>
-        <div className="flex-shrink-0 font-semibold">
-          {officialYear} ({ordinal})
-        </div>
+        <div className="flex-shrink-0 font-semibold">{stickyHeader}</div>
       </div>
       <hr />
       {filteredCategories.map((c, i) => (
         <Category
           key={i}
+          showCeremony={showCeremony}
           categoryInfo={c}
           winnersOnly={winnersOnly === winnerOptions[1]}
         />
@@ -78,22 +98,37 @@ export default function Nominations({
 }
 
 function Category({
+  showCeremony,
   categoryInfo,
   winnersOnly,
 }: {
-  categoryInfo: CategoryType;
+  showCeremony: boolean;
+  categoryInfo: NominationCategoryType;
   winnersOnly: boolean;
 }) {
   return (
     <>
       <div className="flex flex-col gap-1 py-6 text-zinc-800 sm:flex-row sm:gap-6">
-        <div className="sticky top-14 z-20 flex-1 bg-white pb-4">
-          <Link
-            href={`/category/${categoryInfo.category_id}`}
-            className="sticky top-14 flex w-fit cursor-pointer text-xl font-medium leading-6 hover:text-gold sm:text-lg sm:leading-6"
-          >
-            {categoryInfo.common_name}
-          </Link>
+        <div className="sticky top-14 z-10 w-full flex-1 bg-white pb-4">
+          <div className="sticky top-14 z-10">
+            <Link
+              href={
+                showCeremony
+                  ? `/ceremony/${categoryInfo.ceremony_id}`
+                  : `/category/${categoryInfo.category_id}`
+              }
+              className="w-fit cursor-pointer text-xl font-medium leading-6 hover:text-gold sm:text-lg sm:leading-6"
+            >
+              {showCeremony
+                ? categoryInfo.year_and_ordinal
+                : categoryInfo.common_name}
+            </Link>
+            {showCeremony && (
+              <div className="mt-1 text-sm font-medium leading-4 text-zinc-500">
+                {categoryInfo.common_name}
+              </div>
+            )}
+          </div>
         </div>
         <div className="flex flex-1 flex-col gap-[0.875rem]">
           {categoryInfo.nominees.map(
