@@ -57,20 +57,25 @@ export function SmallSelector({
   );
 }
 
-export function MediumSelector({
+export function MediumSelector<T>({
   state,
   setState,
   options,
+  idKey,
+  displayKey,
 }: {
-  state: string;
-  setState: Dispatch<SetStateAction<string>>;
-  options: string[];
+  state: T;
+  setState: Dispatch<SetStateAction<T>>;
+  options: T[];
+  idKey: keyof T;
+  displayKey: keyof T;
 }) {
   return (
     <div className="h-8 w-fit flex-shrink-0">
-      <Listbox value={state} onChange={setState}>
+      {/* @ts-ignore */}
+      <Listbox value={state} by={idKey} onChange={setState}>
         <ListboxButton className="relative h-full w-fit rounded-md pr-5 text-left text-sm font-medium text-zinc-500 hover:text-zinc-800 data-[focus]:text-zinc-800 data-[open]:text-zinc-800">
-          {state}
+          {state[displayKey] as string}
           <IconChevronDown
             className="group pointer-events-none absolute right-0 top-1/2 size-4 -translate-y-[50%]"
             aria-hidden="true"
@@ -84,14 +89,16 @@ export function MediumSelector({
         >
           {options.map((option) => (
             <ListboxOption
-              key={option}
+              key={option[idKey] as string}
               value={option}
               className="group flex cursor-pointer select-none flex-row items-center gap-2 pr-4 text-zinc-500 data-[focus]:text-zinc-800"
             >
               <div className="invisible flex select-none items-center justify-center pl-2 text-sm text-gold group-data-[selected]:visible">
                 <div>•</div>
               </div>
-              <div className="py-1 text-sm font-medium">{option}</div>
+              <div className="py-1 text-sm font-medium">
+                {option[displayKey] as string}
+              </div>
             </ListboxOption>
           ))}
         </ListboxOptions>

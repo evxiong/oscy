@@ -2,6 +2,7 @@ import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/react";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import {
   ceremonyToTopFive,
+  dateToString,
   iterationToOrdinal,
   topFiveToImageUrls,
 } from "@/app/_utils/utils";
@@ -63,17 +64,7 @@ export default async function Ceremony({
                 {ordinal} Academy Awards
               </h1>
               <h2 className="text-sm font-medium text-zinc-500">
-                <span>
-                  {new Date(ceremony.ceremony_date).toLocaleDateString(
-                    "en-US",
-                    {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      timeZone: "UTC",
-                    },
-                  )}
-                </span>
+                <span>{dateToString(ceremony.ceremony_date)}</span>
                 <span className="select-none">&nbsp;·&nbsp;</span>
                 <span>Honoring films from {ceremony.official_year}</span>
               </h2>

@@ -4,6 +4,8 @@ import { IconArrowUpRight } from "@tabler/icons-react";
 import { Entity } from "./types";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import Nominations from "@/app/_components/nominations";
+import AggregateNominations from "./aggNominations";
+import Rankings from "./rankings";
 
 export default async function Entity({
   params,
@@ -13,6 +15,8 @@ export default async function Entity({
   const entityId = (await params).id;
   const entityData = await fetch(`http://localhost:8000/entity/${entityId}`);
   const entity: Entity = await entityData.json();
+
+  const aliases = entity.aliases.filter((a) => a !== entity.name);
 
   const validImdbId =
     !entity.imdb_id.startsWith("cc") && entity.imdb_id[2] !== "_";
@@ -50,10 +54,13 @@ export default async function Entity({
               {entity.name}
             </h1>
             <h2 className="text-sm font-medium text-zinc-500">
-              {entity.total_noms}{" "}
-              {entity.total_noms > 1 ? "nominations" : "nomination"}
-              <span className="select-none">&nbsp;·&nbsp;</span>
-              {entity.total_wins} {entity.total_wins > 1 ? "wins" : "win"}
+              <span>
+                {entity.total_noms}&nbsp;
+                {entity.total_noms !== 1 ? "nominations" : "nomination"}
+                <span className="select-none">&nbsp;·&nbsp;</span>
+                {entity.total_wins}&nbsp;
+                {entity.total_wins !== 1 ? "wins" : "win"}
+              </span>
             </h2>
           </div>
           <div className="flex flex-1 flex-row gap-4">
@@ -63,10 +70,10 @@ export default async function Entity({
               </div>
               <div className="flex flex-col gap-0 text-xl font-medium leading-6 text-zinc-500">
                 <div>
-                  {entity.total_noms} {entity.total_noms > 1 ? "noms" : "nom"}
+                  {entity.total_noms} {entity.total_noms !== 1 ? "noms" : "nom"}
                 </div>
                 <div>
-                  {entity.total_wins} {entity.total_wins > 1 ? "wins" : "win"}
+                  {entity.total_wins} {entity.total_wins !== 1 ? "wins" : "win"}
                 </div>
               </div>
             </div>
@@ -74,9 +81,25 @@ export default async function Entity({
           </div>
         </div>
       </section>
-      <section className="flex w-full flex-col items-center">
-        <div className="flex w-full px-6 md:w-[768px]">Also known as</div>
-      </section>
+      {aliases.length > 0 && (
+        <section className="flex w-full flex-col items-center">
+          <div className="flex w-full flex-col gap-4 px-6 pb-4 md:w-[768px]">
+            <div className="flex w-full flex-col gap-2 border-zinc-200 font-medium sm:flex-row sm:gap-6">
+              <div className="flex-1 text-sm font-medium leading-4 text-zinc-500">
+                <p className="mb-1 font-semibold">Also known as</p>
+                <p>
+                  {aliases.map((a, i) => (
+                    <span key={i}>
+                      <span>{a}</span>
+                      {i < aliases.length - 1 && ", "}
+                    </span>
+                  ))}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
       <section className="mb-20 flex w-full flex-col items-center">
         <div className="flex w-full px-6 md:w-[768px]">
           <TabGroup className="w-full">
@@ -85,23 +108,25 @@ export default async function Entity({
                 Nominations
               </Tab>
               <Tab className="decoration-zinc-500 underline-offset-[6px] data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
-                Rankings
+                Statistics
               </Tab>
             </TabList>
             <TabPanels>
               <TabPanel>
-                <Nominations
-                  showCeremony={true}
+                <AggregateNominations
                   editions={entity.nominations.reverse()}
-                  searchHeader="Ceremony"
-                  searchKeys={["year_and_ordinal", "common_name"]}
+                  searchHeader="Category"
                   stickyHeader=""
                 />
               </TabPanel>
               <TabPanel>
-                {/* <CategoryStats
-                  entityStats={category.nominations.stats.entity_stats}
-                /> */}
+                <Rankings
+                  overallRankings={entity.rankings.overall_rankings}
+                  categoryRankings={entity.rankings.category_rankings}
+                  categoryGroupRankings={
+                    entity.rankings.category_group_rankings
+                  }
+                />
               </TabPanel>
             </TabPanels>
           </TabGroup>

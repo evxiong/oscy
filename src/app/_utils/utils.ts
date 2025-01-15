@@ -14,6 +14,15 @@ interface TimelineItem {
   name: string;
 }
 
+export function dateToString(date: string): string {
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
+
 export function iterationToOrdinal(iteration: number): string {
   const suffixes = ["th", "st", "nd", "rd"];
   const v = iteration % 100;
@@ -125,12 +134,14 @@ export async function topFiveToImageUrls(
       );
       res = await res.json();
       if (imdb_id.startsWith("tt")) {
+        // @ts-ignore
         return res["movie_results"][0]["poster_path"]
           ? "https://image.tmdb.org/t/p/w185" +
               // @ts-ignore
               res["movie_results"][0]["poster_path"]
           : null;
       } else {
+        // @ts-ignore
         return res["person_results"][0]["profile_path"]
           ? "https://image.tmdb.org/t/p/w185" +
               // @ts-ignore

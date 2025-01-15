@@ -12,7 +12,7 @@ import { MediumSelector } from "@/app/_components/selectors";
 import { Input } from "@headlessui/react";
 import { iterationToOrdinal } from "../_utils/utils";
 
-interface NominationCategoryType extends CategoryType {
+export interface NominationCategoryType extends CategoryType {
   ceremony_id: number;
   year_and_ordinal: string;
 }
@@ -40,7 +40,7 @@ export default function Nominations({
       })),
     )
     .flat();
-  const winnerOptions = ["All", "Winners"];
+  const winnerOptions = [{ name: "All" }, { name: "Winners" }];
   const [winnersOnly, setWinnersOnly] = useState(winnerOptions[0]);
   const [search, setSearch] = useState("");
   const [filteredCategories, setFilteredCategories] =
@@ -56,7 +56,10 @@ export default function Nominations({
   ) {
     const query = search.toLowerCase().trim();
     return categories.filter((c) =>
-      searchKeys.some((k) => (c[k] as string).toLowerCase().includes(query)),
+      searchKeys.some(
+        (k) =>
+          c[k] !== "Other" && (c[k] as string).toLowerCase().includes(query),
+      ),
     );
   }
 
@@ -68,6 +71,8 @@ export default function Nominations({
             state={winnersOnly}
             setState={setWinnersOnly}
             options={winnerOptions}
+            idKey="name"
+            displayKey="name"
           />
           <div className="flex h-8 w-full flex-row-reverse items-center gap-0.5 rounded-md">
             <Input
@@ -90,7 +95,7 @@ export default function Nominations({
           key={i}
           showCeremony={showCeremony}
           categoryInfo={c}
-          winnersOnly={winnersOnly === winnerOptions[1]}
+          winnersOnly={winnersOnly.name === winnerOptions[1].name}
         />
       ))}
     </>
@@ -109,7 +114,7 @@ function Category({
   return (
     <>
       <div className="flex flex-col gap-1 py-6 text-zinc-800 sm:flex-row sm:gap-6">
-        <div className="sticky top-14 z-10 w-full flex-1 bg-white pb-4">
+        <div className="sticky top-14 z-10 w-full flex-1 bg-white pb-4 sm:pb-0">
           <div className="sticky top-14 z-10">
             <Link
               href={
@@ -148,7 +153,7 @@ function Category({
   );
 }
 
-function Nominee({
+export function Nominee({
   category,
   nomineeInfo,
 }: {

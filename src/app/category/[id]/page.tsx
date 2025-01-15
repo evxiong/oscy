@@ -93,7 +93,7 @@ export default async function Category({
                 )}
                 <span>
                   {numCeremonies}{" "}
-                  {numCeremonies > 1 ? "ceremonies" : "ceremony"}
+                  {numCeremonies !== 1 ? "ceremonies" : "ceremony"}
                 </span>
                 <span className="select-none">&nbsp;·&nbsp;</span>
                 <span>
