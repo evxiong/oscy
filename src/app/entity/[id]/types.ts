@@ -1,6 +1,6 @@
 import { CeremonyType } from "@/app/ceremony/[iteration]/types";
 
-export interface Entity {
+export interface EntityOrTitle {
   id: number;
   imdb_id: string;
   type: string;
@@ -9,10 +9,10 @@ export interface Entity {
   total_noms: number;
   total_wins: number;
   nominations: CeremonyType[];
-  rankings: EntityRankings;
+  rankings: Rankings;
 }
 
-export interface EntityRankings {
+export interface Rankings {
   category_rankings: CategoryRankings[];
   category_group_rankings: CategoryGroupRankings[];
   overall_rankings: OverallRankings;
