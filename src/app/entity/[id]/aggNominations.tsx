@@ -160,8 +160,9 @@ function Edition({
               (!winnersOnly || c.nominees.some((n) => n.winner)) && (
                 <div key={i} className="flex flex-col gap-2">
                   <Link
+                    title={c.common_name}
                     href={`/category/${c.category_id}`}
-                    className="w-fit max-w-full cursor-pointer truncate text-xs font-semibold text-zinc-800 hover:text-gold sm:text-xxs"
+                    className="cursor-pointer text-xs font-semibold text-zinc-800 hover:text-gold sm:text-xxs"
                   >
                     {c.common_name.toUpperCase()}
                   </Link>
