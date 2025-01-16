@@ -102,48 +102,50 @@ export default function StatsTable<
   }
 
   return (
-    <table className="w-full border-collapse">
-      <thead className="sticky top-0 h-10 select-none bg-white align-middle text-xxs font-semibold text-zinc-800">
-        <tr className="h-10 border-b-2 border-zinc-300">
-          <th scope="col" className="w-8 pt-1 text-zinc-500" title="Rank">
-            #
-          </th>
-          {cols.map((c, i) => (
-            <TableHeader
-              key={i}
-              align={c.align}
-              name={c.name}
-              fullName={c.fullName}
-              selected={selectedColInd === i}
-              desc={desc}
-              colInd={i}
-              setParams={setSortParams}
-            />
-          ))}
-        </tr>
-      </thead>
-      <tbody className="w-full">
-        {sortedRows.length > 0 ? (
-          sortedRows.map((s, i) => (
-            <TableRow
-              key={i}
-              row={i + 1}
-              stat={s}
-              cols={cols}
-              searchKey={searchKey}
-            />
-          ))
-        ) : (
-          <tr>
-            <td colSpan={cols.length + 1}>
-              <div className="flex h-20 w-full select-none items-center justify-center text-xl text-zinc-500">
-                <div>No results found</div>
-              </div>
-            </td>
+    <div className="xs:overflow-x-visible xs:h-auto h-[90vh] overflow-x-auto">
+      <table className="w-full border-collapse">
+        <thead className="sticky top-0 h-10 select-none bg-white align-middle text-xxs font-semibold text-zinc-800">
+          <tr className="h-10 border-b-2 border-zinc-300">
+            <th scope="col" className="w-8 pt-1 text-zinc-500" title="Rank">
+              #
+            </th>
+            {cols.map((c, i) => (
+              <TableHeader
+                key={i}
+                align={c.align}
+                name={c.name}
+                fullName={c.fullName}
+                selected={selectedColInd === i}
+                desc={desc}
+                colInd={i}
+                setParams={setSortParams}
+              />
+            ))}
           </tr>
-        )}
-      </tbody>
-    </table>
+        </thead>
+        <tbody className="w-full">
+          {sortedRows.length > 0 ? (
+            sortedRows.map((s, i) => (
+              <TableRow
+                key={i}
+                row={i + 1}
+                stat={s}
+                cols={cols}
+                searchKey={searchKey}
+              />
+            ))
+          ) : (
+            <tr>
+              <td colSpan={cols.length + 1}>
+                <div className="flex h-20 w-full select-none items-center justify-center text-xl text-zinc-500">
+                  <div>No results found</div>
+                </div>
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

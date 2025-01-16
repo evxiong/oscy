@@ -65,7 +65,10 @@ export default function Nominations({
 
   return (
     <>
-      <div className="sticky top-0 z-30 flex h-14 flex-row items-center justify-between gap-4 bg-white text-sm font-medium text-zinc-500">
+      <div
+        id="hide-scrollbar"
+        className="sticky top-0 z-30 flex h-14 w-full flex-row items-center justify-between gap-4 overflow-x-auto bg-white text-sm font-medium text-zinc-500"
+      >
         <div className="flex w-full flex-row items-center gap-4">
           <MediumSelector
             state={winnersOnly}
@@ -74,7 +77,7 @@ export default function Nominations({
             idKey="name"
             displayKey="name"
           />
-          <div className="flex h-8 w-full flex-row-reverse items-center gap-0.5 rounded-md">
+          <div className="flex h-8 min-w-32 flex-row-reverse items-center gap-0.5 rounded-md">
             <Input
               name="Category search"
               type="text"

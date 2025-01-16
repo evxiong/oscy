@@ -54,6 +54,7 @@ export default function Card({
         {imageUrl ? (
           <Image
             src={imageUrl}
+            draggable={false}
             fill={true}
             alt={
               personFirst

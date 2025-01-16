@@ -24,7 +24,7 @@ export function SmallSelector({
   return (
     <div className="w-fit flex-shrink-0">
       <Listbox value={state} onChange={setState}>
-        <ListboxButton className="relative h-full w-fit pr-4 text-left text-xs font-medium text-zinc-500 underline decoration-zinc-300 underline-offset-4 hover:text-zinc-600 hover:decoration-zinc-400 data-[focus]:text-zinc-600 data-[open]:text-zinc-600 data-[focus]:decoration-zinc-600 data-[open]:decoration-zinc-400">
+        <ListboxButton className="xs:w-fit xs:max-w-full relative h-full max-w-16 truncate pr-4 text-left text-xs font-medium leading-5 text-zinc-500 underline decoration-zinc-300 underline-offset-4 hover:text-zinc-600 hover:decoration-zinc-400 data-[focus]:text-zinc-600 data-[open]:text-zinc-600 data-[focus]:decoration-zinc-600 data-[open]:decoration-zinc-400">
           {state.name}
           <IconChevronDown
             className="group pointer-events-none absolute right-0 top-1/2 size-3.5 -translate-y-[50%]"
@@ -74,7 +74,7 @@ export function MediumSelector<T>({
     <div className="h-8 w-fit flex-shrink-0">
       {/* @ts-ignore */}
       <Listbox value={state} by={idKey} onChange={setState}>
-        <ListboxButton className="relative h-full w-fit rounded-md pr-5 text-left text-sm font-medium text-zinc-500 hover:text-zinc-800 data-[focus]:text-zinc-800 data-[open]:text-zinc-800">
+        <ListboxButton className="xs:w-fit xs:max-w-full relative h-full max-w-40 truncate rounded-md pr-5 text-left text-sm font-medium text-zinc-500 hover:text-zinc-800 focus:outline-none data-[focus]:text-zinc-800 data-[open]:text-zinc-800">
           {state[displayKey] as string}
           <IconChevronDown
             className="group pointer-events-none absolute right-0 top-1/2 size-4 -translate-y-[50%]"
@@ -119,7 +119,7 @@ export function LargeSelector({
   return (
     <div className="h-8 w-fit">
       <Listbox value={state} onChange={setState}>
-        <ListboxButton className="relative h-full w-fit rounded-md pr-5 text-left text-xl font-medium text-zinc-800 underline decoration-zinc-400 underline-offset-4 hover:opacity-75 sm:text-lg">
+        <ListboxButton className="relative h-full w-fit rounded-md pr-5 text-left text-xl font-medium text-zinc-800 underline decoration-zinc-400 underline-offset-4 hover:opacity-75 focus:opacity-75 sm:text-lg">
           {state}
           <IconChevronDown
             className="group pointer-events-none absolute right-0 top-1/2 size-4 -translate-y-[50%]"

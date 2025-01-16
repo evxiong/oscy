@@ -110,11 +110,11 @@ export default function EntityTitle({
       <section className="mb-20 flex w-full flex-col items-center">
         <div className="flex w-full px-6 md:w-[768px]">
           <TabGroup className="w-full">
-            <TabList className="mb-0.5 flex flex-row gap-7 text-lg font-medium text-zinc-500 sm:text-base">
-              <Tab className="decoration-zinc-500 underline-offset-[6px] data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
+            <TabList className="flex flex-row gap-7 text-lg font-medium text-zinc-500 sm:text-base sm:leading-7">
+              <Tab className="decoration-zinc-500 underline-offset-[6px] focus:outline-none data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
                 Nominations
               </Tab>
-              <Tab className="decoration-zinc-500 underline-offset-[6px] data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
+              <Tab className="decoration-zinc-500 underline-offset-[6px] focus:outline-none data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
                 Statistics
               </Tab>
             </TabList>

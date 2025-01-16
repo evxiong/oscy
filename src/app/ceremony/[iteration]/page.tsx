@@ -43,7 +43,7 @@ export default async function Ceremony({
   return (
     <div className="flex flex-col gap-5">
       <section className="flex w-full flex-col items-center">
-        <div className="flex w-full flex-col gap-4 px-6 pt-5 md:w-[768px]">
+        <div className="flex w-full flex-col gap-5 px-6 pt-5 md:w-[768px]">
           <nav className="flex flex-row justify-between text-xs">
             <Breadcrumbs
               crumbs={[
@@ -59,13 +59,13 @@ export default async function Ceremony({
             />
           </nav>
           <div className="flex w-full flex-row items-center justify-between">
-            <div className="flex flex-col">
-              <h1 className="text-2xl font-medium text-zinc-800">
+            <div className="flex flex-col gap-1">
+              <h1 className="text-2xl font-medium leading-7 text-zinc-800">
                 {ordinal} Academy Awards
               </h1>
-              <h2 className="text-sm font-medium text-zinc-500">
+              <h2 className="text-sm font-medium leading-4 text-zinc-500">
                 <span>{dateToString(ceremony.ceremony_date)}</span>
-                <span className="select-none">&nbsp;·&nbsp;</span>
+                <span className="select-none">&#32;·&#32;</span>
                 <span>Honoring films from {ceremony.official_year}</span>
               </h2>
             </div>
@@ -105,11 +105,11 @@ export default async function Ceremony({
       <section className="mb-20 flex w-full flex-col items-center">
         <div className="flex w-full px-6 md:w-[768px]">
           <TabGroup className="w-full">
-            <TabList className="mb-0.5 flex flex-row gap-7 text-lg font-medium text-zinc-500 sm:text-base">
-              <Tab className="decoration-zinc-500 underline-offset-[6px] data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
+            <TabList className="flex flex-row gap-7 text-lg font-medium text-zinc-500 sm:text-base sm:leading-7">
+              <Tab className="decoration-zinc-500 underline-offset-[6px] focus:outline-none data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
                 Nominations
               </Tab>
-              <Tab className="decoration-zinc-500 underline-offset-[6px] data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
+              <Tab className="decoration-zinc-500 underline-offset-[6px] focus:outline-none data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
                 Statistics
               </Tab>
             </TabList>

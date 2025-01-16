@@ -35,12 +35,12 @@ export default function Rankings({
     categoryGroupOptions[0],
   );
   return (
-    <div className="flex flex-col gap-6 text-zinc-800 sm:flex-row sm:gap-6">
+    <div className="flex flex-col gap-6 overflow-x-auto text-zinc-800 sm:flex-row sm:gap-6">
       <table className="w-full border-collapse">
         <thead className="text-xxs font-semibold text-zinc-800">
           <tr className="h-14 border-b border-zinc-300">
             <th scope="col">
-              <div className="flex w-full flex-row items-center gap-4">
+              <div className="flex flex-row items-center gap-4 pr-4">
                 <MediumSelector
                   state={option}
                   setState={setOption}
@@ -71,13 +71,13 @@ export default function Rankings({
             </th>
             <th
               scope="col"
-              className="w-16 text-center align-middle sm:w-20 sm:pb-4 sm:align-bottom"
+              className="min-w-16 text-center align-middle sm:w-20 sm:pb-4 sm:align-bottom"
             >
               COUNT
             </th>
             <th
               scope="col"
-              className="w-16 text-center align-middle sm:w-20 sm:pb-4 sm:align-bottom"
+              className="min-w-16 text-center align-middle sm:w-20 sm:pb-4 sm:align-bottom"
             >
               RANK
             </th>

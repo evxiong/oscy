@@ -126,8 +126,8 @@ export default function SearchBar() {
   );
 
   return (
-    <div className="relative" ref={searchRef}>
-      <div className="peer flex h-9 flex-row items-center rounded-md bg-zinc-100 has-[input:focus-within]:outline has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-gold md:w-[720px]">
+    <div className="w-full max-w-[720px] sm:relative" ref={searchRef}>
+      <div className="peer flex h-9 flex-row items-center rounded-md bg-zinc-100 has-[input:focus-within]:outline has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-gold">
         <IconSearch className="mx-2 h-4 w-4 stroke-zinc-400" />
         <Input
           name="Search"
@@ -174,7 +174,7 @@ function ResultsBox({
 }) {
   return (
     <div
-      className={`${open ? "visible opacity-100" : "invisible opacity-0"} absolute z-50 mt-2 w-full rounded-md border border-zinc-200 bg-white p-4 transition-all`}
+      className={`${open ? "visible opacity-100" : "invisible opacity-0"} absolute left-6 right-6 z-50 mt-2 rounded-md border border-zinc-200 bg-white p-4 transition-all sm:left-0 sm:w-full`}
     >
       <div className="flex flex-col gap-4">
         {blankSearch ? (
@@ -202,13 +202,13 @@ function Results({
           <Link
             key={i}
             href={`/${r.subdir}/${r.id}`}
-            className="group -mx-1 flex cursor-pointer flex-col justify-start gap-0.5 rounded-md px-1 py-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800"
+            className="group -mx-1 flex cursor-pointer flex-col justify-start gap-0.5 rounded-md px-1 py-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 focus:bg-zinc-100 focus:text-zinc-800 focus:outline-none"
             onClick={() => closeResults()}
           >
             <div className="flex flex-row items-center gap-2">
               <IconArrowRight className="size-3.5 flex-shrink-0" />
               <div
-                className={`${r.type === "title" ? "italic" : ""} truncate pr-1 text-zinc-600 group-hover:text-zinc-800`}
+                className={`${r.type === "title" ? "italic" : ""} truncate pr-1 text-zinc-600 group-hover:text-zinc-800 group-focus:text-zinc-800`}
               >
                 {r.name}
               </div>
@@ -241,13 +241,13 @@ function QuickLinks({ closeResults }: { closeResults: () => void }) {
           <Link
             key={i}
             href={p.url}
-            className="group -mx-1 flex cursor-pointer flex-row items-center justify-between gap-2 rounded-md px-1 py-1 pr-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800"
+            className="group -mx-1 flex cursor-pointer flex-row items-center justify-between gap-2 rounded-md px-1 py-1 pr-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 focus:bg-zinc-100 focus:text-zinc-800 focus:outline-none"
             onClick={() => closeResults()}
           >
             <div className="flex flex-row items-center gap-2">
-              <IconArrowRight className="size-3" />
+              <IconArrowRight className="size-3 flex-shrink-0" />
               <div
-                className={`${p.type === "title" ? "italic" : ""} text-zinc-600 group-hover:text-zinc-800`}
+                className={`${p.type === "title" ? "italic" : ""} line-clamp-1 text-zinc-600 group-hover:text-zinc-800 group-focus:text-zinc-800`}
               >
                 {p.name}
               </div>
