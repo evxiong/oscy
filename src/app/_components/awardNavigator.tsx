@@ -42,7 +42,7 @@ export default function AwardNavigator({
       </div>
       <Link
         href={`/${subdir}/${option.id}`}
-        className={`${go ? "visible opacity-100" : "invisible opacity-0"} group absolute -right-1 -top-1 cursor-pointer p-1 transition-all duration-300 ease-in-out`}
+        className={`${go ? "visible opacity-100" : "invisible opacity-0"} group absolute -right-1 -top-0.5 cursor-pointer p-1 transition-all duration-300 ease-in-out`}
       >
         <IconArrowRight className="size-4 stroke-zinc-500 group-hover:stroke-gold" />
       </Link>

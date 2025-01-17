@@ -7,6 +7,7 @@ import {
   DependencyList,
   EffectCallback,
   useCallback,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -20,9 +21,11 @@ import {
   TitleResult,
 } from "../_types/types";
 import { iterationToOrdinal } from "../_utils/utils";
+import { SearchRefContext } from "./searchRefContext";
 
 export default function SearchBar() {
   const searchRef = useRef(null);
+  const inputRef = useContext(SearchRefContext);
   const [openResults, setOpenResults] = useState(false);
   const [search, setSearch] = useState("");
   const [results, setResults] = useState<Result[]>([]);
@@ -38,13 +41,21 @@ export default function SearchBar() {
   }, []);
 
   function handleClick(e: MouseEvent) {
-    if (searchRef.current && !e.composedPath().includes(searchRef.current)) {
+    if (
+      searchRef.current &&
+      !(e.target as HTMLElement).id.startsWith("explore") &&
+      !e.composedPath().includes(searchRef.current)
+    ) {
       setOpenResults(false);
     }
   }
 
   function handleFocus(e: FocusEvent) {
-    if (searchRef.current && !e.composedPath().includes(searchRef.current)) {
+    if (
+      searchRef.current &&
+      !(e.target as HTMLElement).id.startsWith("explore") &&
+      !e.composedPath().includes(searchRef.current)
+    ) {
       setOpenResults(false);
     }
   }
@@ -128,14 +139,15 @@ export default function SearchBar() {
   return (
     <div className="w-full max-w-[720px] sm:relative" ref={searchRef}>
       <div className="peer flex h-9 flex-row items-center rounded-md bg-zinc-100 has-[input:focus-within]:outline has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-gold">
-        <IconSearch className="mx-2 h-4 w-4 stroke-zinc-400" />
+        <IconSearch className="mx-2 size-4 flex-shrink-0 stroke-zinc-400" />
         <Input
           name="Search"
           type="text"
           placeholder="Search for people, titles, categories, or ceremonies"
-          className="h-9 w-full bg-transparent pr-2 text-sm text-zinc-800 outline-none"
+          className="h-full w-full bg-transparent pr-2 text-sm text-zinc-800 outline-none"
           onFocus={() => setOpenResults(true)}
           onChange={(e) => setSearch(e.target.value)}
+          ref={inputRef}
         />
       </div>
       <ResultsBox

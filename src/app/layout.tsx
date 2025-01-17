@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Albert_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "./_components/navbar";
+import SearchRefContextProvider from "./_components/searchRefContext";
 
 const albertSans = Albert_Sans({
   variable: "--font-albert-sans",
@@ -20,9 +21,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${albertSans.variable} antialiased`}>
-      <body className="scroll-smooth font-sans text-zinc-800">
-        <Navbar />
-        <main>{children}</main>
+      <body className="min-h-screen scroll-smooth font-sans text-zinc-800">
+        <SearchRefContextProvider>
+          <Navbar />
+          <main>{children}</main>
+        </SearchRefContextProvider>
       </body>
     </html>
   );
