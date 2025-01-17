@@ -1,5 +1,7 @@
+import { notFound } from "next/navigation";
 import { EntityOrTitle } from "./types";
 import EntityTitle from "@/app/_components/entityTitle";
+import fetchError from "@/app/_utils/fetchError";
 
 export default async function Entity({
   params,
@@ -7,7 +9,11 @@ export default async function Entity({
   params: Promise<{ id: string }>;
 }) {
   const entityId = (await params).id;
-  const entityData = await fetch(`http://localhost:8000/entity/${entityId}`);
-  const entity: EntityOrTitle = await entityData.json();
+  const entity: EntityOrTitle = await fetchError(
+    `http://localhost:8000/entity/${entityId}`,
+  );
+  if (entity === null) {
+    notFound();
+  }
   return <EntityTitle isTitle={false} entityOrTitle={entity} />;
 }

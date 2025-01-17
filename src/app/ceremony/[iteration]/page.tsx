@@ -14,6 +14,8 @@ import Breadcrumbs from "@/app/_components/breadcrumbs";
 import AwardNavigator from "@/app/_components/awardNavigator";
 import { SmallSelectorOption } from "@/app/_components/selectors";
 import Card from "@/app/_components/card";
+import { notFound } from "next/navigation";
+import fetchError from "@/app/_utils/fetchError";
 
 export default async function Ceremony({
   params,
@@ -21,12 +23,17 @@ export default async function Ceremony({
   params: Promise<{ iteration: string }>;
 }) {
   const iteration = (await params).iteration;
-  const nominationsData = await fetch(
+  const nominations: NominationsType = await fetchError(
     `http://localhost:8000/?start_edition=${iteration}&end_edition=${iteration}`,
   );
-  const nominations: NominationsType = await nominationsData.json();
-  const editionsData = await fetch("http://localhost:8000/editions");
-  const editions: EditionType[] = await editionsData.json();
+
+  if (nominations.editions.length === 0) {
+    notFound();
+  }
+
+  const editions: EditionType[] = await fetchError(
+    "http://localhost:8000/editions",
+  );
   const ceremony = nominations.editions[0];
   const ordinal = iterationToOrdinal(ceremony.iteration);
   const topFive = ceremonyToTopFive(nominations);

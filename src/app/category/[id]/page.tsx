@@ -13,6 +13,8 @@ import {
 import Nominations from "@/app/_components/nominations";
 import Card from "@/app/_components/card";
 import CategoryStats from "./stats";
+import { notFound } from "next/navigation";
+import fetchError from "@/app/_utils/fetchError";
 
 export default async function Category({
   params,
@@ -20,15 +22,18 @@ export default async function Category({
   params: Promise<{ id: string }>;
 }) {
   const categoryId = (await params).id;
-  const categoriesData = await fetch("http://localhost:8000/categories");
-  const categories: CategoryGroupInfo[] = await categoriesData.json();
-  const categoryData = await fetch(
+  const category: Category = await fetchError(
     `http://localhost:8000/category/${categoryId}`,
   );
-  const category: Category = await categoryData.json();
 
+  if (category === null) {
+    notFound();
+  }
+
+  const categories: CategoryGroupInfo[] = await fetchError(
+    "http://localhost:8000/categories",
+  );
   const editions = category.nominations.editions.reverse();
-
   const nominationCategories = editions.map((e) => e.categories).flat();
 
   const topFive = categoriesToTopFive(nominationCategories);
