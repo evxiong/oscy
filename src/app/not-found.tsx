@@ -1,5 +1,10 @@
 import Link from "next/link";
 import ExploreButton from "./_components/exploreButton";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Page not found | oscy",
+};
 
 export default function NotFound() {
   return (

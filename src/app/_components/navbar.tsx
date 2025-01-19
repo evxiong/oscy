@@ -9,7 +9,7 @@ export default function Navbar() {
         <div className="flex-1 select-none pb-1 pl-6 text-2xl">
           <Link
             href="/"
-            className="w-fit cursor-pointer tracking-tight text-zinc-800 hover:text-gold focus:text-gold focus:outline-none"
+            className="w-fit cursor-pointer tracking-tight text-zinc-800 hover:text-gold focus:outline-none focus-visible:text-gold"
           >
             oscy
           </Link>
@@ -22,7 +22,7 @@ export default function Navbar() {
             href="http://localhost:8000/docs"
             className="group flex h-8 w-8 cursor-pointer items-center justify-center focus:outline-none"
           >
-            <IconApi className="h-5 w-5 stroke-zinc-500 group-hover:stroke-gold group-focus:stroke-gold" />
+            <IconApi className="h-5 w-5 stroke-zinc-500 group-hover:stroke-gold group-focus-visible:stroke-gold" />
           </a>
           <a
             target="_blank"
@@ -30,7 +30,7 @@ export default function Navbar() {
             href="https://github.com/evxiong/oscy"
             className="group flex h-8 w-8 cursor-pointer items-center justify-center focus:outline-none"
           >
-            <IconBrandGithub className="h-5 w-5 stroke-zinc-500 group-hover:stroke-gold group-focus:stroke-gold" />
+            <IconBrandGithub className="h-5 w-5 stroke-zinc-500 group-hover:stroke-gold group-focus-visible:stroke-gold" />
           </a>
         </div>
       </div>

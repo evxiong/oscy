@@ -10,6 +10,7 @@ import { Dispatch, SetStateAction } from "react";
 export interface SmallSelectorOption {
   id: number;
   name: string;
+  disabled: boolean;
 }
 
 export function SmallSelector({
@@ -41,7 +42,8 @@ export function SmallSelector({
             <ListboxOption
               key={option.id}
               value={option}
-              className="group flex cursor-pointer select-none flex-row items-center gap-2 pl-2 pr-4 text-zinc-500 data-[focus]:text-zinc-800"
+              disabled={option.disabled}
+              className="group flex cursor-pointer select-none flex-row items-center gap-2 pl-2 pr-4 text-zinc-500 data-[focus]:text-zinc-800 data-[disabled]:opacity-50"
             >
               <div className="invisible flex select-none items-center justify-center text-sm text-gold group-data-[selected]:visible">
                 <div>•</div>

@@ -15,6 +15,46 @@ import Card from "@/app/_components/card";
 import CategoryStats from "./stats";
 import { notFound } from "next/navigation";
 import fetchError from "@/app/_utils/fetchError";
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const categoryId = (await params).id;
+  const category: Category = await fetchError(
+    `http://localhost:8000/category/${categoryId}`,
+  );
+
+  if (category === null) {
+    notFound();
+  }
+
+  const categoryName = category.category.startsWith("Unique")
+    ? category.category
+    : "Best " + category.category;
+
+  const title = `${categoryName} - Nominations & Statistics`;
+  const description = `Browse nominations and stats in the ${categoryName} category.`;
+
+  return {
+    title: title,
+    description: description,
+    openGraph: {
+      siteName: "oscy",
+      title: title,
+      description: description,
+      type: "article",
+      url: `/category/${category.category_id}`,
+    },
+    twitter: {
+      card: "summary",
+      title: title,
+      description: description,
+    },
+  };
+}
 
 export default async function Category({
   params,
@@ -49,6 +89,7 @@ export default async function Category({
       categoryGroup.categories.map((c) => ({
         id: c.category_id,
         name: c.category,
+        disabled: false,
       })),
     )
     .flat();

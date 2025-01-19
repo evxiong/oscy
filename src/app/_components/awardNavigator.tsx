@@ -21,8 +21,8 @@ export default function AwardNavigator({
   originalOption: SmallSelectorOption;
 }) {
   const awardOptions: SmallSelectorOption[] = [
-    { id: AwardType.oscar, name: "Oscars" },
-    { id: AwardType.emmy, name: "Emmys" },
+    { id: AwardType.oscar, name: "Oscars", disabled: false },
+    { id: AwardType.emmy, name: "Emmys", disabled: true },
   ];
   const originalAward = awardOptions[originalAwardType];
   const [award, setAward] = useState(originalAward);

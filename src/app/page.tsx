@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import ExploreButton from "./_components/exploreButton";
 import {
   IconAdjustments,
@@ -6,6 +7,26 @@ import {
   IconSparkles,
   IconTableHeart,
 } from "@tabler/icons-react";
+
+const title = "oscy - Open-source Oscars database and API";
+const description = "Use oscy in your next movie-related project.";
+
+export const metadata: Metadata = {
+  title: title,
+  description: description,
+  openGraph: {
+    siteName: "oscy",
+    title: title,
+    description: description,
+    type: "website",
+    url: "/",
+  },
+  twitter: {
+    card: "summary",
+    title: title,
+    description: description,
+  },
+};
 
 export default function Home() {
   return (

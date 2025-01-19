@@ -10,8 +10,10 @@ const albertSans = Albert_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "oscy",
-  description: "Oscars database",
+  title: {
+    template: "%s | oscy",
+    default: "oscy",
+  },
 };
 
 export default function RootLayout({

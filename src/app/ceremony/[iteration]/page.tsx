@@ -16,6 +16,42 @@ import { SmallSelectorOption } from "@/app/_components/selectors";
 import Card from "@/app/_components/card";
 import { notFound } from "next/navigation";
 import fetchError from "@/app/_utils/fetchError";
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ iteration: string }>;
+}): Promise<Metadata> {
+  const iteration = (await params).iteration;
+  const nominations: NominationsType = await fetchError(
+    `http://localhost:8000/?start_edition=${iteration}&end_edition=${iteration}`,
+  );
+  if (nominations === null || nominations.editions.length === 0) {
+    notFound();
+  }
+
+  const ordinal = iterationToOrdinal(nominations.editions[0].iteration);
+  const title = `${ordinal} Academy Awards - Nominations & Statistics`;
+  const description = `Browse nominations and stats from the ${nominations.editions[0].official_year} (${ordinal}) Academy Awards.`;
+
+  return {
+    title: title,
+    description: description,
+    openGraph: {
+      siteName: "oscy",
+      title: title,
+      description: description,
+      type: "article",
+      url: `/ceremony/${nominations.editions[0].iteration}`,
+    },
+    twitter: {
+      card: "summary",
+      title: title,
+      description: description,
+    },
+  };
+}
 
 export default async function Ceremony({
   params,
@@ -27,7 +63,7 @@ export default async function Ceremony({
     `http://localhost:8000/?start_edition=${iteration}&end_edition=${iteration}`,
   );
 
-  if (nominations.editions.length === 0) {
+  if (nominations === null || nominations.editions.length === 0) {
     notFound();
   }
 
@@ -43,6 +79,7 @@ export default async function Ceremony({
   const awardNavigatorOptions: SmallSelectorOption[] = editions.map((e) => ({
     id: e.iteration,
     name: e.official_year + " (" + iterationToOrdinal(e.iteration) + ")",
+    disabled: false,
   }));
   const originalAwardNavigatorOption: SmallSelectorOption =
     awardNavigatorOptions[editions.findIndex((e) => e.id === ceremony.id)];
