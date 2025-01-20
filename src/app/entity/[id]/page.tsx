@@ -4,6 +4,10 @@ import EntityTitle from "@/app/_components/entityTitle";
 import fetchError from "@/app/_utils/fetchError";
 import { Metadata } from "next";
 
+export async function generateStaticParams() {
+  return [];
+}
+
 export async function generateMetadata({
   params,
 }: {

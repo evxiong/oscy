@@ -3,7 +3,7 @@ import ExploreButton from "./_components/exploreButton";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Page not found | oscy",
+  title: "Page not found",
 };
 
 export default function NotFound() {

@@ -18,6 +18,16 @@ import { notFound } from "next/navigation";
 import fetchError from "@/app/_utils/fetchError";
 import { Metadata } from "next";
 
+export async function generateStaticParams() {
+  const editions: EditionType[] = await fetchError(
+    "http://localhost:8000/editions",
+  );
+  const iterations = editions.map((e) => ({
+    iteration: e.iteration.toString(),
+  }));
+  return iterations;
+}
+
 export async function generateMetadata({
   params,
 }: {

@@ -17,6 +17,20 @@ import { notFound } from "next/navigation";
 import fetchError from "@/app/_utils/fetchError";
 import { Metadata } from "next";
 
+export async function generateStaticParams() {
+  const categoryGroups: CategoryGroupInfo[] = await fetchError(
+    "http://localhost:8000/categories",
+  );
+  const categoryIds = categoryGroups
+    .map((categoryGroup) =>
+      categoryGroup.categories.map((c) => ({
+        id: c.category_id.toString(),
+      })),
+    )
+    .flat();
+  return categoryIds;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -98,7 +112,7 @@ export default async function Category({
     awardNavigatorOptions.find((e) => e.id === category.category_id)!;
 
   const timeline = categoryNamesToTimeline(category.category_names);
-  const LATEST_EDITION = parseInt(process.env.LATEST_EDITION!);
+  const LATEST_EDITION = parseInt(process.env.NEXT_PUBLIC_LATEST_EDITION!);
   const numCeremonies = category.category_names.reduce(
     (acc1, cn) =>
       acc1 + cn.ranges.reduce((acc2, r) => acc2 + r[1] - r[0] + 1, 0),
