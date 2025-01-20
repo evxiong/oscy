@@ -14,6 +14,15 @@ interface TimelineItem {
   name: string;
 }
 
+interface TMDBResults {
+  movie_results: {
+    poster_path: string;
+  }[];
+  person_results: {
+    profile_path: string;
+  }[];
+}
+
 export function dateToString(date: string): string {
   return new Date(date).toLocaleDateString("en-US", {
     year: "numeric",
@@ -33,8 +42,8 @@ export function ceremonyToTopFive(nominations: NominationsType): TopFive {
   // returns list of five category indices in ceremony, and the winner imdb ids to be used in cards
   const ceremony = nominations.editions[0];
 
-  var indices = new Array<number>(5);
-  var imdb_ids = new Array<string>(5);
+  const indices = new Array<number>(5);
+  const imdb_ids = new Array<string>(5);
 
   const writingCategories = new Set([
     "Adapted Screenplay",
@@ -51,7 +60,7 @@ export function ceremonyToTopFive(nominations: NominationsType): TopFive {
     ["Actress", 3],
   ]);
 
-  let titleIdToCategoryIndex = new Map();
+  const titleIdToCategoryIndex = new Map();
 
   // rankings: picture, director or unique picture, actor, actress, writing w/ most noms
   for (let i = 0; i < ceremony.categories.length; i++) {
@@ -85,7 +94,7 @@ export function ceremonyToTopFive(nominations: NominationsType): TopFive {
     }
   }
 
-  let topFive: TopFive = {
+  const topFive: TopFive = {
     indices: indices,
     imdb_ids: imdb_ids,
   };
@@ -95,8 +104,8 @@ export function ceremonyToTopFive(nominations: NominationsType): TopFive {
 
 export function categoriesToTopFive(categories: CategoryType[]): TopFive {
   // categories should already be reversed
-  var indices = [];
-  var imdb_ids = [];
+  const indices = [];
+  const imdb_ids = [];
 
   let i = 0;
   for (const c of categories) {
@@ -116,7 +125,7 @@ export function categoriesToTopFive(categories: CategoryType[]): TopFive {
     i += 1;
   }
 
-  let topFive: TopFive = {
+  const topFive: TopFive = {
     indices: indices,
     imdb_ids: imdb_ids,
   };
@@ -129,23 +138,21 @@ export async function topFiveToImageUrls(
 ): Promise<(string | null)[]> {
   return Promise.all(
     topFive.imdb_ids.map(async (imdb_id) => {
-      let res = await fetch(
+      const findByIdResults = await fetch(
         `https://api.themoviedb.org/3/find/${imdb_id}?external_source=imdb_id&api_key=${process.env.TMDB_API_KEY}`,
       );
-      res = await res.json();
+      const results: TMDBResults = await findByIdResults.json();
       if (imdb_id.startsWith("tt")) {
-        // @ts-ignore
-        return res["movie_results"][0]["poster_path"]
+        return results["movie_results"].length > 0 &&
+          results["movie_results"][0]["poster_path"]
           ? "https://image.tmdb.org/t/p/w185" +
-              // @ts-ignore
-              res["movie_results"][0]["poster_path"]
+              results["movie_results"][0]["poster_path"]
           : null;
       } else {
-        // @ts-ignore
-        return res["person_results"][0]["profile_path"]
+        return results["person_results"].length > 0 &&
+          results["person_results"][0]["profile_path"]
           ? "https://image.tmdb.org/t/p/w185" +
-              // @ts-ignore
-              res["person_results"][0]["profile_path"]
+              results["person_results"][0]["profile_path"]
           : null;
       }
     }),

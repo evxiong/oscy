@@ -5,7 +5,7 @@ import {
   StatsType,
   TitleStatsType,
 } from "../ceremony/[iteration]/types";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { IconCaretDownFilled, IconCaretUpFilled } from "@tabler/icons-react";
 
@@ -25,6 +25,15 @@ export interface TitleStatsTableColumn extends StatsTableColumn {
   sortKey: keyof TitleStatsType;
 }
 
+function dedupeStats<T1 extends StatsType>(stats: T1[]) {
+  const seen = new Set();
+  return stats.filter((e) => {
+    const dup = seen.has(e.id);
+    seen.add(e.id);
+    return !dup;
+  });
+}
+
 export default function StatsTable<
   T1 extends StatsType,
   T2 extends StatsTableColumn,
@@ -34,75 +43,73 @@ export default function StatsTable<
   cols,
   searchKey,
   search,
-  open,
 }: {
   stats: T1[];
   cols: T2[];
   searchKey: T3;
   search: string;
-  open: boolean;
 }) {
   // remove elements with duplicate ids
-  const seen = new Set();
-  const dedupedStats = stats.filter((e) => {
-    const dup = seen.has(e.id);
-    seen.add(e.id);
-    return !dup;
-  });
-
+  const dedupedStats = useMemo(() => dedupeStats(stats), [stats]);
   const [desc, setDesc] = useState(true);
   const [selectedColInd, setSelectedColInd] = useState(1);
   const [sortedRows, setSortedRows] = useState<T1[]>(dedupedStats);
 
+  const filterRows = useCallback(
+    (rows: T1[], search: string) => {
+      const query = search.toLowerCase().trim();
+      return rows.filter((row) =>
+        row[searchKey]!.toString().toLowerCase().includes(query),
+      );
+    },
+    [searchKey],
+  );
+
+  const sortRows = useCallback(
+    (rows: T1[], colInd: number, desc: boolean, search: string) =>
+      filterRows(
+        [...rows].sort((a, b) => {
+          if (desc) {
+            return (
+              // @ts-expect-error: sortKey always exists on T2
+              b[cols[colInd].sortKey]
+                .toString()
+                // @ts-expect-error: sortKey always exists on T2
+                .localeCompare(a[cols[colInd].sortKey].toString(), "en", {
+                  numeric: true,
+                })
+            );
+          } else {
+            return (
+              // @ts-expect-error: sortKey always exists on T2
+              a[cols[colInd].sortKey]
+                .toString()
+                // @ts-expect-error: sortKey always exists on T2
+                .localeCompare(b[cols[colInd].sortKey].toString(), "en", {
+                  numeric: true,
+                })
+            );
+          }
+        }),
+        search,
+      ),
+    [cols, filterRows],
+  );
+
   useEffect(() => {
     setSortedRows(sortRows(dedupedStats, selectedColInd, desc, search));
-  }, [search, open]);
+  }, [search, dedupedStats, selectedColInd, desc, sortRows]);
 
   function setSortParams(ind: number) {
-    let newDesc = ind !== selectedColInd ? cols[ind].default === "desc" : !desc;
+    const newDesc =
+      ind !== selectedColInd ? cols[ind].default === "desc" : !desc;
     setDesc(newDesc);
     setSelectedColInd(ind);
     setSortedRows(sortRows(dedupedStats, ind, newDesc, search));
   }
 
-  function filterRows(rows: T1[], search: string) {
-    const query = search.toLowerCase().trim();
-    return rows.filter((row) =>
-      row[searchKey]!.toString().toLowerCase().includes(query),
-    );
-  }
-
-  function sortRows(rows: T1[], colInd: number, desc: boolean, search: string) {
-    return filterRows(
-      [...rows].sort((a, b) => {
-        if (desc) {
-          return (
-            // @ts-ignore
-            b[cols[colInd].sortKey]
-              .toString()
-              // @ts-ignore
-              .localeCompare(a[cols[colInd].sortKey].toString(), "en", {
-                numeric: true,
-              })
-          );
-        } else {
-          return (
-            // @ts-ignore
-            a[cols[colInd].sortKey]
-              .toString()
-              // @ts-ignore
-              .localeCompare(b[cols[colInd].sortKey].toString(), "en", {
-                numeric: true,
-              })
-          );
-        }
-      }),
-      search,
-    );
-  }
-
   return (
-    <div className="xs:overflow-x-visible xs:h-auto h-[90vh] overflow-x-auto">
+    <div className="h-[90vh] overflow-x-auto xs:h-auto xs:overflow-x-visible">
       <table className="w-full border-collapse">
         <thead className="sticky top-0 h-10 select-none bg-white align-middle text-xxs font-semibold text-zinc-800">
           <tr className="h-10 border-b-2 border-zinc-300">
@@ -221,24 +228,24 @@ function TableRow<
           className={`${c.align === "left" ? "py-3 pl-3" : "px-3 text-center font-medium"} ${"minor" in c && c.minor ? "font-normal text-zinc-500" : ""}`}
         >
           {
-            // @ts-ignore
+            // @ts-expect-error: sortKey does exist on T2
             c.sortKey === searchKey ? (
               <Link
-                // @ts-ignore
+                prefetch={false}
                 title={
                   Array.isArray(stat[searchKey])
                     ? (stat[searchKey] as string[]).join(", ")
-                    : stat[searchKey]
+                    : (stat[searchKey] as string)
                 }
                 href={`/${(searchKey as string) === "aliases" ? "entity" : "title"}/${stat.id}`}
                 className={`${(searchKey as string) === "aliases" ? "" : "italic"} line-clamp-2 cursor-pointer font-medium text-zinc-800 underline decoration-zinc-200 underline-offset-2 hover:text-gold`}
               >
                 {Array.isArray(stat[searchKey])
-                  ? (stat[searchKey] as any[])[0]
-                  : stat[searchKey]}
+                  ? (stat[searchKey] as string[])[0]
+                  : (stat[searchKey] as string)}
               </Link>
             ) : (
-              // @ts-ignore
+              // @ts-expect-error: sortKey does exist on T2
               stat[c.sortKey]
             )
           }

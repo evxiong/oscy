@@ -1,8 +1,8 @@
 import Breadcrumbs from "@/app/_components/breadcrumbs";
-import { Category, CategoryGroupInfo } from "./types";
+import type { Category, CategoryGroupInfo } from "./types";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import AwardNavigator from "@/app/_components/awardNavigator";
-import { AwardType } from "@/app/ceremony/[iteration]/types";
+import { AwardEnum } from "@/app/ceremony/[iteration]/types";
 import { SmallSelectorOption } from "@/app/_components/selectors";
 import {
   categoriesToTopFive,
@@ -134,7 +134,7 @@ export default async function Category({
             />
             <AwardNavigator
               subdir="category"
-              originalAwardType={AwardType.oscar}
+              originalAwardType={AwardEnum.oscar}
               options={awardNavigatorOptions}
               originalOption={originalAwardNavigatorOption}
             />

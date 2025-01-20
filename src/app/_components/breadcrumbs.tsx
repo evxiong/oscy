@@ -13,6 +13,7 @@ export default function Breadcrumbs({ crumbs }: { crumbs: Breadcrumb[] }) {
         return (
           <div key={i} className="flex flex-row gap-1">
             <Link
+              prefetch={false}
               href={c.link}
               aria-disabled={isFinal}
               tabIndex={isFinal ? -1 : undefined}

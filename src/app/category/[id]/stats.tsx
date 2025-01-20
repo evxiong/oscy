@@ -77,7 +77,6 @@ export default function CategoryStats({
         cols={COLS}
         searchKey="aliases"
         search={search}
-        open={true}
       />
     </div>
   );

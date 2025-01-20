@@ -6,7 +6,7 @@ import { dateToString, iterationToOrdinal } from "@/app/_utils/utils";
 import { CategoryType, CeremonyType } from "@/app/ceremony/[iteration]/types";
 import { Input } from "@headlessui/react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function AggregateNominations({
   editions,
@@ -17,19 +17,44 @@ export default function AggregateNominations({
   searchHeader: string;
   stickyHeader: string;
 }) {
-  const searchKeys: (keyof CategoryType)[] = [
-    "category_group",
-    "official_name",
-    "common_name",
-    "short_name",
-  ];
-  const winnerOptions = [{ name: "All" }, { name: "Wins" }];
+  const searchKeys: (keyof CategoryType)[] = useMemo(
+    () => ["category_group", "official_name", "common_name", "short_name"],
+    [],
+  );
+  const winnerOptions = useMemo(() => [{ name: "All" }, { name: "Wins" }], []);
   const [winnerOption, setWinnerOption] = useState(winnerOptions[0]);
   const [search, setSearch] = useState("");
   const [filteredEditions, setFilteredEditions] =
     useState<CeremonyType[]>(editions);
 
   useEffect(() => {
+    function filterEditions(
+      editions: CeremonyType[],
+      search: string,
+      winnersOnly: boolean,
+    ) {
+      const query = search.toLowerCase().trim();
+      return editions.filter(
+        (e) =>
+          (
+            e.official_year +
+            " " +
+            e.ceremony_date.slice(0, 4) +
+            " " +
+            e.iteration.toString()
+          ).includes(query) ||
+          e.categories.some(
+            (c) =>
+              searchKeys.some(
+                (k) =>
+                  c[k] !== "Other" &&
+                  (c[k] as string).toLowerCase().includes(query),
+              ) &&
+              (!winnersOnly || c.nominees.some((n) => n.winner)),
+          ),
+      );
+    }
+
     setFilteredEditions(
       filterEditions(
         editions,
@@ -37,34 +62,7 @@ export default function AggregateNominations({
         winnerOption.name === winnerOptions[1].name,
       ),
     );
-  }, [search, winnerOption]);
-
-  function filterEditions(
-    editions: CeremonyType[],
-    search: string,
-    winnersOnly: boolean,
-  ) {
-    const query = search.toLowerCase().trim();
-    return editions.filter(
-      (e) =>
-        (
-          e.official_year +
-          " " +
-          e.ceremony_date.slice(0, 4) +
-          " " +
-          e.iteration.toString()
-        ).includes(query) ||
-        e.categories.some(
-          (c) =>
-            searchKeys.some(
-              (k) =>
-                c[k] !== "Other" &&
-                (c[k] as string).toLowerCase().includes(query),
-            ) &&
-            (!winnersOnly || c.nominees.some((n) => n.winner)),
-        ),
-    );
-  }
+  }, [editions, search, winnerOption, winnerOptions, searchKeys]);
 
   return (
     <>
@@ -128,6 +126,7 @@ function Edition({
         <div className="sticky top-14 z-10 w-full flex-1 bg-white pb-4">
           <div className="sticky top-14 z-10">
             <Link
+              prefetch={false}
               href={`/ceremony/${editionInfo.iteration}`}
               className="w-fit cursor-pointer text-xl font-medium leading-6 hover:text-gold sm:text-lg sm:leading-6"
             >
@@ -160,6 +159,7 @@ function Edition({
               (!winnersOnly || c.nominees.some((n) => n.winner)) && (
                 <div key={i} className="flex flex-col gap-2">
                   <Link
+                    prefetch={false}
                     title={c.common_name}
                     href={`/category/${c.category_id}`}
                     className="cursor-pointer text-xs font-semibold text-zinc-800 hover:text-gold sm:text-xxs"

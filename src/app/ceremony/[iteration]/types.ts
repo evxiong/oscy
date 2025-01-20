@@ -1,4 +1,4 @@
-export enum AwardType {
+export enum AwardEnum {
   oscar = 0,
   emmy = 1,
 }

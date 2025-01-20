@@ -7,7 +7,7 @@ import {
   NomineeType,
 } from "../ceremony/[iteration]/types";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MediumSelector } from "@/app/_components/selectors";
 import { Input } from "@headlessui/react";
 import { iterationToOrdinal } from "../_utils/utils";
@@ -30,16 +30,20 @@ export default function Nominations({
   searchKeys: (keyof NominationCategoryType)[];
   stickyHeader: string;
 }) {
-  const categories: NominationCategoryType[] = editions
-    .map((e) =>
-      e.categories.map((c) => ({
-        ...c,
-        ceremony_id: e.iteration,
-        year_and_ordinal:
-          e.official_year + " (" + iterationToOrdinal(e.iteration) + ")",
-      })),
-    )
-    .flat();
+  const categories: NominationCategoryType[] = useMemo(
+    () =>
+      editions
+        .map((e) =>
+          e.categories.map((c) => ({
+            ...c,
+            ceremony_id: e.iteration,
+            year_and_ordinal:
+              e.official_year + " (" + iterationToOrdinal(e.iteration) + ")",
+          })),
+        )
+        .flat(),
+    [editions],
+  );
   const winnerOptions = [{ name: "All" }, { name: "Winners" }];
   const [winnersOnly, setWinnersOnly] = useState(winnerOptions[0]);
   const [search, setSearch] = useState("");
@@ -47,21 +51,21 @@ export default function Nominations({
     useState<NominationCategoryType[]>(categories);
 
   useEffect(() => {
-    setFilteredCategories(filterCategories(categories, search));
-  }, [search]);
+    function filterCategories(
+      categories: NominationCategoryType[],
+      search: string,
+    ) {
+      const query = search.toLowerCase().trim();
+      return categories.filter((c) =>
+        searchKeys.some(
+          (k) =>
+            c[k] !== "Other" && (c[k] as string).toLowerCase().includes(query),
+        ),
+      );
+    }
 
-  function filterCategories(
-    categories: NominationCategoryType[],
-    search: string,
-  ) {
-    const query = search.toLowerCase().trim();
-    return categories.filter((c) =>
-      searchKeys.some(
-        (k) =>
-          c[k] !== "Other" && (c[k] as string).toLowerCase().includes(query),
-      ),
-    );
-  }
+    setFilteredCategories(filterCategories(categories, search));
+  }, [search, categories, searchKeys]);
 
   return (
     <>
@@ -178,6 +182,7 @@ export function Nominee({
           {nomineeInfo.people.map((p, i) => (
             <span key={i}>
               <Link
+                prefetch={false}
                 href={`/entity/${p.id}`}
                 className="w-fit cursor-pointer underline decoration-zinc-300 underline-offset-2 hover:text-gold"
               >
@@ -207,6 +212,7 @@ export function Nominee({
                 ))}
                 <span>
                   <Link
+                    prefetch={false}
                     href={`/title/${t.id}`}
                     className="w-fit cursor-pointer italic underline decoration-zinc-300 underline-offset-2 hover:text-gold"
                   >

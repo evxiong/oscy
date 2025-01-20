@@ -166,6 +166,7 @@ function useDebounce(
   deps: DependencyList,
   delay: number,
 ) {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const callback = useCallback(effect, deps);
   useEffect(() => {
     const timeout = setTimeout(callback, delay);
@@ -212,6 +213,7 @@ function Results({
       <div className="flex flex-col text-base font-medium leading-5">
         {results.map((r, i) => (
           <Link
+            prefetch={false}
             key={i}
             href={`/${r.subdir}/${r.id}`}
             className="group -mx-1 flex cursor-pointer flex-col justify-start gap-0.5 rounded-md px-1 py-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 focus:bg-zinc-100 focus:text-zinc-800 focus:outline-none"

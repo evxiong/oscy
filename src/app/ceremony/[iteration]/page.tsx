@@ -6,7 +6,7 @@ import {
   iterationToOrdinal,
   topFiveToImageUrls,
 } from "@/app/_utils/utils";
-import { AwardType, EditionType, NominationsType } from "./types";
+import { AwardEnum, EditionType, NominationsType } from "./types";
 import Link from "next/link";
 import CeremonyStats from "./stats";
 import Nominations from "@/app/_components/nominations";
@@ -107,7 +107,7 @@ export default async function Ceremony({
             />
             <AwardNavigator
               subdir="ceremony"
-              originalAwardType={AwardType.oscar}
+              originalAwardType={AwardEnum.oscar}
               options={awardNavigatorOptions}
               originalOption={originalAwardNavigatorOption}
             />

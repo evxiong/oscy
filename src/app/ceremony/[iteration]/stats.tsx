@@ -109,7 +109,6 @@ export default function CeremonyStats({ stats }: { stats: AllStatsType }) {
           cols={TITLE_COLS}
           searchKey="title"
           search={search}
-          open={selected === options[0]}
         />
       ) : (
         <StatsTable
@@ -118,7 +117,6 @@ export default function CeremonyStats({ stats }: { stats: AllStatsType }) {
           cols={ENTITY_COLS}
           searchKey="aliases"
           search={search}
-          open={selected === options[0]}
         />
       )}
     </div>

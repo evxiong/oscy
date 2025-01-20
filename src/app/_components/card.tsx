@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CategoryType } from "../ceremony/[iteration]/types";
 import Image from "next/image";
-import { IconLibraryPhoto, IconPhoto } from "@tabler/icons-react";
+import { IconLibraryPhoto } from "@tabler/icons-react";
 
 export default function Card({
   showCeremony,
@@ -84,6 +84,7 @@ export default function Card({
           {category.nominees[0].people.map((n, i) => (
             <span key={i}>
               <Link
+                prefetch={false}
                 href={`/entity/${n.id}`}
                 className="w-fit cursor-pointer underline decoration-zinc-200 underline-offset-2 hover:text-gold"
               >
@@ -106,6 +107,7 @@ export default function Card({
             : titleWinners.map((t, i) => (
                 <span key={i}>
                   <Link
+                    prefetch={false}
                     href={`/title/${t.id}`}
                     className="w-fit cursor-pointer italic underline decoration-zinc-200 underline-offset-2 hover:text-gold"
                   >
