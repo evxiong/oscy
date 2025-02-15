@@ -1,0 +1,414 @@
+Acting:
+  Actor:
+    ACTOR:
+      - 1-48
+      - Best Actor
+    ACTOR IN A LEADING ROLE:
+      - 49-present
+      - Best Actor in a Leading Role
+  Supporting Actor:
+    ACTOR IN A SUPPORTING ROLE:
+      - 9-present
+      - Best Actor in a Supporting Role
+  Actress:
+    ACTRESS:
+      - 1-48
+      - Best Actress
+    ACTRESS IN A LEADING ROLE:
+      - 49-present
+      - Best Actress in a Leading Role
+  Supporting Actress:
+    ACTRESS IN A SUPPORTING ROLE:
+      - 9-present
+      - Best Actress in a Supporting Role
+
+Cinematography:
+  Cinematography:
+    CINEMATOGRAPHY:
+      - 1-11, 30, 40-present
+      - Best Cinematography
+  Cinematography (Black-and-White):
+    CINEMATOGRAPHY (Black-and-White):
+      - 12-29, 31-39
+      - Best Cinematography (Black-and-White)
+  Cinematography (Color):
+    CINEMATOGRAPHY (Color):
+      - 12-29, 31-39
+      - Best Cinematography (Color)
+
+Costume Design:
+  Costume Design:
+    COSTUME DESIGN:
+      - 30-31, 40-present
+      - Best Costume Design
+  Costume Design (Black-and-White):
+    COSTUME DESIGN (Black-and-White):
+      - 21-29, 32-39
+      - Best Costume Design (Black-and-White)
+  Costume Design (Color):
+    COSTUME DESIGN (Color):
+      - 21-29, 32-39
+      - Best Costume Design (Color)
+
+Directing:
+  Director (Comedy Picture):
+    DIRECTING (Comedy Picture):
+      - "1"
+      - Best Director (Comedy Picture)
+  Director (Dramatic Picture):
+    DIRECTING (Dramatic Picture):
+      - "1"
+      - Best Director (Dramatic Picture)
+  Director:
+    DIRECTING:
+      - 2-present
+      - Best Director
+
+Documentary:
+  Documentary: # combined feature and short
+    DOCUMENTARY:
+      - "15"
+      - Best Documentary
+  Documentary Feature:
+    DOCUMENTARY (Feature):
+      - 16-18, 20-94
+      - Best Documentary (Feature)
+    DOCUMENTARY FEATURE FILM:
+      - 95-present
+      - Best Documentary Feature Film
+  Documentary Short:
+    DOCUMENTARY (Short Subject):
+      - 14, 16-29, 31-94
+      - Best Documentary (Short Subject)
+    DOCUMENTARY SHORT FILM:
+      - 95-present
+      - Best Documentary Short Film
+
+Music:
+  Scoring:
+    MUSIC (Scoring):
+      - 7-13, 30 # combined original and adapted; 30th anniversary combined
+      - Best Scoring
+  Original Score:
+    MUSIC (Original Score):
+      - 11-13, 43, 48-67, 72-present # from 11-13 scores can be nominated for both scoring and original score; 43 is non-musical
+      - Best Original Score
+    MUSIC (Music Score of a Dramatic Picture):
+      - "14" # split by genre - musical vs drama/comedy
+      - Best Music Score of a Dramatic Picture
+    MUSIC (Music Score of a Dramatic or Comedy Picture):
+      - 15-29, 31-34
+      - Best Music Score of a Dramatic or Comedy Picture
+    MUSIC (Music Score--substantially original):
+      - 35-38
+      - Best Music Score—substantially original
+    MUSIC (Original Music Score):
+      - 39-40
+      - Best Original Music Score
+    MUSIC (Original Score--for a motion picture [not a musical]):
+      - 41-42 # returned to split by genre - musical vs non-musical
+      - Best Original Score—for a motion picture [not a musical]
+    MUSIC (Original Dramatic Score):
+      - 44-47, 68-71
+      - Best Original Dramatic Score
+  Musical or Adaptation Score:
+    MUSIC (Scoring of a Musical Picture):
+      - 14-29, 31-34
+      - Best Scoring of a Musical Picture
+    MUSIC (Scoring of Music--adaptation or treatment):
+      - 35-40 # returned to split by original vs adapted
+      - Best Scoring of Music—adaptation or treatment
+    MUSIC (Score of a Musical Picture--original or adaptation):
+      - 41-42
+      - Best Score of a Musical Picture—original or adaptation
+    MUSIC (Original Song Score):
+      - 43, 57 # song score basically means musical
+      - Best Original Song Score
+    "MUSIC (Scoring: Adaptation and Original Song Score)":
+      - 44-45
+      - "Best Scoring: Adaptation and Original Song Score"
+    ? "MUSIC (Scoring: Original Song Score and Adaptation -or- Scoring:
+      Adaptation)"
+    : - 46-48
+      - "Best Scoring: Original Song Score and Adaptation -or- Best Scoring:
+        Adaptation"
+    MUSIC (Original Song Score and Its Adaptation or Adaptation Score):
+      - 49-50
+      - Best Original Song Score and Its Adaptation or Best Adaptation Score
+    MUSIC (Adaptation Score):
+      - "51"
+      - Best Adaptation Score
+    MUSIC (Original Song Score and Its Adaptation -or- Adaptation Score):
+      - 52, 55
+      - Best Original Song Score and Its Adaptation -or- Best Adaptation Score
+    MUSIC (Original Song Score or Adaptation Score):
+      - "56"
+      - Best Original Song Score or Best Adaptation Score
+    MUSIC (Original Musical or Comedy Score):
+      - 68-71
+      - Best Original Musical or Comedy Score
+  Original Song:
+    MUSIC (Song):
+      - 7-40, 46-47
+      - Best Song
+    MUSIC (Song--Original for the Picture):
+      - 41-45
+      - Best Song—Original for the Picture
+    MUSIC (Original Song):
+      - 48-present
+      - Best Original Song
+
+Production Design:
+  Production Design:
+    ART DIRECTION:
+      - 1-12, 30-31, 40-84
+      - Best Art Direction
+    PRODUCTION DESIGN:
+      - 85-present
+      - Best Production Design
+  Art Direction (Black-and-White):
+    ART DIRECTION (Black-and-White):
+      - 13-29, 32-39
+      - Best Art Direction (Black-and-White)
+  Art Direction (Color):
+    ART DIRECTION (Color):
+      - 13-29, 32-39
+      - Best Art Direction (Color)
+
+Short Film (Live Action):
+  Live Action Short:
+    SHORT SUBJECT (Live Action):
+      - 30-46
+      - Best Short Subject (Live Action)
+    SHORT FILM (Live Action):
+      - 47-52, 54-present
+      - Best Live Action Short Film
+    SHORT FILM (Dramatic Live Action):
+      - "53"
+      - Best Short Film (Dramatic Live Action)
+  Short Subject (Comedy):
+    SHORT SUBJECT (Comedy):
+      - 5-8
+      - Best Short Subject (Comedy)
+  Short Subject (Novelty):
+    SHORT SUBJECT (Novelty):
+      - 5-8
+      - Best Short Subject (Novelty)
+  Short Subject (Color):
+    SHORT SUBJECT (Color):
+      - 9-10
+      - Best Short Subject (Color)
+  Short Subject (One-reel):
+    SHORT SUBJECT (One-reel):
+      - 9-29
+      - Short Subject (One-reel)
+  Short Subject (Two-reel):
+    SHORT SUBJECT (Two-reel):
+      - 9-29
+      - Best Short Subject (Two-reel)
+
+Sound:
+  Sound: # combined mixing and editing
+    SOUND:
+      - 93-present
+      - Best Sound
+  Sound Mixing:
+    SOUND RECORDING:
+      - 3-30
+      - Best Sound Recording
+    SOUND:
+      - 31-75
+      - Best Sound
+    SOUND MIXING:
+      - 76-92
+      - Best Sound Mixing
+  Sound Editing:
+    SOUND EFFECTS:
+      - 36-40
+      - Best Sound Effects
+    SOUND EFFECTS EDITING:
+      - 55-56, 58-59, 61-72
+      - Best Sound Effects Editing
+    SOUND EDITING:
+      - 73-92
+      - Best Sound Editing
+    SPECIAL ACHIEVEMENT AWARD (Sound Effects):
+      - "48"
+      - Special Achievement Award (Sound Effects)
+    SPECIAL ACHIEVEMENT AWARD (Sound Effects Editing):
+      - 50, 54, 57, 60
+      - Special Achievement Award (Sound Effects Editing)
+    SPECIAL ACHIEVEMENT AWARD (Sound Editing):
+      - "52"
+      - Special Achievement Award (Sound Editing)
+
+Writing:
+  Adapted Screenplay:
+    WRITING (Adaptation):
+      - 1, 4-7
+      - Best Adaptation
+    WRITING (Screenplay):
+      - 8-20, 22-28
+      - Best Screenplay
+    WRITING (Screenplay--Adapted):
+      - "29"
+      - Best Screenplay—Adapted
+    WRITING (Screenplay--based on material from another medium):
+      - 30-46, 49-50
+      - Best Screenplay—based on material from another medium
+    WRITING (Screenplay Adapted from Other Material):
+      - 47-48
+      - Best Screenplay Adapted from Other Material
+    WRITING (Screenplay Based on Material from Another Medium):
+      - 51-63
+      - Best Screenplay Based on Material from Another Medium
+    WRITING (Screenplay Based on Material Previously Produced or Published):
+      - 64-74
+      - Best Screenplay Based on Material Previously Produced or Published
+    WRITING (Adapted Screenplay):
+      - 75-present
+      - Best Adapted Screenplay
+  Original Screenplay:
+    WRITING (Original Screenplay):
+      - 13-20, 47-48, 75-present
+      - Best Original Screenplay
+    WRITING (Story and Screenplay):
+      - 22-28
+      - Best Story and Screenplay
+    WRITING (Screenplay--Original):
+      - "29"
+      - Best Screenplay—Original
+    WRITING (Story and Screenplay--written directly for the screen):
+      - 30-41
+      - Best Story and Screenplay—written directly for the screen
+    ? WRITING (Story and Screenplay--based on material not previously published
+      or produced)
+    : - "42"
+      - Best Story and Screenplay—based on material not previously published or
+        produced
+    ? WRITING (Story and Screenplay--based on factual material or material not
+      previously published or produced)
+    : - 43-46
+      - Best Story and Screenplay—based on factual material or material not
+        previously published or produced
+    ? WRITING (Screenplay Written Directly for the Screen--based on factual
+      material or on story material not previously published or produced)
+    : - 49-50
+      - Best Screenplay Written Directly for the Screen—based on factual
+        material or on story material not previously published or produced
+    WRITING (Screenplay Written Directly for the Screen):
+      - 51-74
+      - Best Screenplay Written Directly for the Screen
+  Screenplay: # combined adapted and original
+    WRITING:
+      - 2-3
+      - Best Writing
+    WRITING (Screenplay):
+      - "21"
+      - Best Screenplay
+  Story:
+    WRITING (Original Story):
+      - 1, 4-14
+      - Best Original Story
+    WRITING (Original Motion Picture Story):
+      - 15-19
+      - Best Original Motion Picture Story
+    WRITING (Motion Picture Story):
+      - 20-29
+      - Best Motion Picture Story
+  Title Writing:
+    WRITING (Title Writing):
+      - "1"
+      - Best Title Writing
+
+Other:
+  Animated Feature:
+    ANIMATED FEATURE FILM:
+      - 74-present
+      - Best Animated Feature Film
+  Animated Short:
+    SHORT SUBJECT (Cartoon):
+      - 5-43
+      - Best Short Subject (Cartoon)
+    SHORT SUBJECT (Animated):
+      - 44-46
+      - Best Short Subject (Animated)
+    SHORT FILM (Animated):
+      - 47-present
+      - Best Animated Short Film
+  Assistant Director:
+    ASSISTANT DIRECTOR:
+      - 6-10
+      - Best Assistant Director
+  Dance Direction:
+    DANCE DIRECTION:
+      - 8-10
+      - Best Dance Direction
+  Engineering Effects:
+    ENGINEERING EFFECTS:
+      - "1"
+      - Best Engineering Effects
+  Film Editing:
+    FILM EDITING:
+      - 7-present
+      - Best Film Editing
+  International Feature:
+    SPECIAL AWARD:
+      - "20"
+      - Special Award
+    SPECIAL FOREIGN LANGUAGE FILM AWARD:
+      - 21-22
+      - Special Foreign Language Film Award
+    HONORARY FOREIGN LANGUAGE FILM AWARD:
+      - 23-25, 27-28
+      - Honorary Foreign Language Film Award
+    FOREIGN LANGUAGE FILM:
+      - 29-91
+      - Best Foreign Language Film
+    INTERNATIONAL FEATURE FILM:
+      - 92-present
+      - Best International Feature Film
+  Makeup:
+    MAKEUP:
+      - 54-55, 57-84
+      - Best Makeup
+    MAKEUP AND HAIRSTYLING:
+      - 85-present
+      - Best Makeup and Hairstyling
+  Picture:
+    OUTSTANDING PICTURE:
+      - 1-2
+      - Outstanding Picture
+    OUTSTANDING PRODUCTION:
+      - 3-13
+      - Outstanding Production
+    OUTSTANDING MOTION PICTURE:
+      - 14-16
+      - Outstanding Motion Picture
+    BEST MOTION PICTURE:
+      - 17-34
+      - Best Motion Picture
+    BEST PICTURE:
+      - 35-present
+      - Best Picture
+  Special Effects:
+    SPECIAL EFFECTS:
+      - 12-35
+      - Best Special Effects
+  Unique and Artistic Picture:
+    UNIQUE AND ARTISTIC PICTURE:
+      - "1"
+      - Unique and Artistic Picture
+  Visual Effects:
+    SPECIAL EFFECTS:
+      - "36"
+      - Best Special Effects
+    SPECIAL VISUAL EFFECTS:
+      - 37-44
+      - Best Special Visual Effects
+    SPECIAL ACHIEVEMENT AWARD (Visual Effects):
+      - 45, 47-49, 51, 53, 56, 63
+      - Special Achievement Award (Visual Effects)
+    VISUAL EFFECTS:
+      - 50, 52, 54-55, 57-62, 64-present
+      - Best Visual Effects
