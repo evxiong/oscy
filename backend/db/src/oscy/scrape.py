@@ -9,7 +9,8 @@ import os
 import re
 import requests
 import time
-from .data import OfficialCategory, OfficialNominee
+from .data import OfficialCategory, OfficialNominee, Edition
+from datetime import datetime
 from dotenv import load_dotenv, find_dotenv
 from lxml import html
 from tqdm import tqdm
@@ -171,6 +172,48 @@ def scrape_official_page(edition: int) -> list[OfficialCategory]:
         )
 
     return categories
+
+
+def scrape_editions(start: int | None = None, end: int | None = None) -> list[Edition]:
+    if start is None:
+        start = 1
+        if end is None:
+            end = int(os.getenv("CURRENT_EDITION"))  # type: ignore
+    else:
+        if end is None:
+            end = start
+
+    editions: list[Edition] = []
+
+    for edition in range(start, end + 1):
+        if edition < 7:
+            year = str(1926 + edition) + "/" + str(1927 + edition)[2:]
+        else:
+            year = str(1927 + edition)
+
+        r = requests.get(
+            f"https://www.oscars.org/oscars/ceremonies/{1928 + edition}",
+            headers=HEADERS,
+        )
+        if r.status_code != 200:
+            raise Exception("Failed to scrape data: status code", r.status_code)
+
+        doc = html.fromstring(r.content)
+        date_string = doc.xpath("//div[@class='field--name-field-date-time']")[
+            0
+        ].text.strip()
+        date_string = date_string[date_string.find(",") + 2 :]
+        date = datetime.strptime(date_string, "%B %d, %Y").date()
+        editions.append(
+            Edition(
+                award="oscar",
+                iteration=edition,
+                official_year=year,
+                ceremony_date=date,
+            )
+        )
+
+    return editions
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import date
 
 
 @dataclass
@@ -55,3 +56,11 @@ class MatchedNominee:
 class MatchedCategory:
     category: str
     nominees: list[MatchedNominee]
+
+
+@dataclass
+class Edition:
+    award: str  # oscar or emmy
+    iteration: int
+    official_year: str
+    ceremony_date: date
