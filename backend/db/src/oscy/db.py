@@ -224,7 +224,7 @@ def insert_categories():
                             r = g.split("-")
                             if len(r) == 2:
                                 if r[1] == "present":
-                                    r[1] = 96
+                                    r[1] = int(os.getenv("CURRENT_EDITION"))  # type: ignore
                                 eds += [i for i in range(int(r[0]), int(r[1]) + 1)]
                             else:
                                 eds.append(int(r[0]))

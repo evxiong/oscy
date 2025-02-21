@@ -95,7 +95,8 @@ def save_imdb(
 
     Args:
         start (int, optional): first ceremony edition to include. Defaults to 1.
-        end (int, optional): last ceremony edition to include. Defaults to 96.
+        end (int, optional): last ceremony edition to include. Defaults to
+            `CURRENT_EDITION` specified in top-level `.config`.
         sleep (int, optional): time (s) between IMDb requests. Defaults to 1.
     """
     if start < 1 or end < start:
