@@ -176,59 +176,65 @@ export function Nominee({
       <div
         className={`${personFirst ? "flex-col" : "flex-col-reverse"} flex gap-1`}
       >
-        <div
-          className={`${personFirst ? "text-base font-medium leading-5 text-zinc-800" : "text-sm font-normal leading-4 text-zinc-500"}`}
-        >
-          {nomineeInfo.people.map((p, i) => (
-            <span key={i}>
-              <Link
-                prefetch={false}
-                href={`/entity/${p.id}`}
-                className="w-fit cursor-pointer underline decoration-zinc-300 underline-offset-2 hover:text-gold"
-              >
-                {p.name}
-              </Link>
-              {i !== nomineeInfo.people.length - 1 && ", "}
-            </span>
-          ))}
-          {personFirst && nomineeInfo.note && <Note text={nomineeInfo.note} />}
-        </div>
-        <div
-          className={`${!personFirst ? "text-base font-medium leading-5 text-zinc-800" : "text-sm font-normal leading-4 text-zinc-500"}`}
-        >
-          {nomineeInfo.titles.map((t, i) => {
-            return (
+        {nomineeInfo.people.length > 0 && (
+          <div
+            className={`${personFirst ? "text-base font-medium leading-5 text-zinc-800" : "text-sm font-normal leading-4 text-zinc-500"}`}
+          >
+            {nomineeInfo.people.map((p, i) => (
               <span key={i}>
-                {t.detail.map((d, j) => (
-                  <span key={j}>
-                    <span className="w-fit">
-                      {category === "Original Song" ||
-                      category === "Dance Direction"
-                        ? "“" + d + "”"
-                        : d}
-                    </span>
-                    {", "}
-                  </span>
-                ))}
-                <span>
-                  <Link
-                    prefetch={false}
-                    href={`/title/${t.id}`}
-                    className="w-fit cursor-pointer italic underline decoration-zinc-300 underline-offset-2 hover:text-gold"
-                  >
-                    {t.title}
-                  </Link>
-                  {i !== nomineeInfo.titles.length - 1 && (
-                    <span className="select-none">&nbsp;&thinsp;·&nbsp;</span>
-                  )}
-                </span>
+                <Link
+                  prefetch={false}
+                  href={`/entity/${p.id}`}
+                  className="w-fit cursor-pointer underline decoration-zinc-300 underline-offset-2 hover:text-gold"
+                >
+                  {p.name}
+                </Link>
+                {i !== nomineeInfo.people.length - 1 && ", "}
               </span>
-            );
-          })}
-          {!nomineeInfo.is_person &&
-            nomineeInfo.titles.length !== 0 &&
-            nomineeInfo.note && <Note text={nomineeInfo.note} />}
-        </div>
+            ))}
+            {personFirst && nomineeInfo.note && (
+              <Note text={nomineeInfo.note} />
+            )}
+          </div>
+        )}
+        {nomineeInfo.titles.length > 0 && (
+          <div
+            className={`${!personFirst ? "text-base font-medium leading-5 text-zinc-800" : "text-sm font-normal leading-4 text-zinc-500"}`}
+          >
+            {nomineeInfo.titles.map((t, i) => {
+              return (
+                <span key={i}>
+                  {t.detail.map((d, j) => (
+                    <span key={j}>
+                      <span className="w-fit">
+                        {category === "Original Song" ||
+                        category === "Dance Direction"
+                          ? "“" + d + "”"
+                          : d}
+                      </span>
+                      {", "}
+                    </span>
+                  ))}
+                  <span>
+                    <Link
+                      prefetch={false}
+                      href={`/title/${t.id}`}
+                      className="w-fit cursor-pointer italic underline decoration-zinc-300 underline-offset-2 hover:text-gold"
+                    >
+                      {t.title}
+                    </Link>
+                    {i !== nomineeInfo.titles.length - 1 && (
+                      <span className="select-none">&nbsp;&thinsp;·&nbsp;</span>
+                    )}
+                  </span>
+                </span>
+              );
+            })}
+            {!nomineeInfo.is_person &&
+              nomineeInfo.titles.length !== 0 &&
+              nomineeInfo.note && <Note text={nomineeInfo.note} />}
+          </div>
+        )}
       </div>
     </div>
   );

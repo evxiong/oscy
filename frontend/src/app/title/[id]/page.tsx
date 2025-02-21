@@ -15,7 +15,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const titleId = (await params).id;
   const title: EntityOrTitle = await fetchError(
-    `http://localhost:8000/title/${titleId}`,
+    `http://localhost:8000/titles/${titleId}`,
   );
   if (title === null) {
     notFound();
@@ -49,7 +49,7 @@ export default async function Title({
 }) {
   const titleId = (await params).id;
   const title: EntityOrTitle = await fetchError(
-    `http://localhost:8000/title/${titleId}`,
+    `http://localhost:8000/titles/${titleId}`,
   );
   if (title === null) {
     notFound();

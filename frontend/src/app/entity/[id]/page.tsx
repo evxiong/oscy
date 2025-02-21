@@ -15,7 +15,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const entityId = (await params).id;
   const entity: EntityOrTitle = await fetchError(
-    `http://localhost:8000/entity/${entityId}`,
+    `http://localhost:8000/entities/${entityId}`,
   );
   if (entity === null) {
     notFound();
@@ -49,7 +49,7 @@ export default async function Entity({
 }) {
   const entityId = (await params).id;
   const entity: EntityOrTitle = await fetchError(
-    `http://localhost:8000/entity/${entityId}`,
+    `http://localhost:8000/entities/${entityId}`,
   );
   if (entity === null) {
     notFound();

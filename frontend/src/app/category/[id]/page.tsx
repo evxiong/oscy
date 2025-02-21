@@ -38,7 +38,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const categoryId = (await params).id;
   const category: Category = await fetchError(
-    `http://localhost:8000/category/${categoryId}`,
+    `http://localhost:8000/categories/${categoryId}`,
   );
 
   if (category === null) {
@@ -77,7 +77,7 @@ export default async function Category({
 }) {
   const categoryId = (await params).id;
   const category: Category = await fetchError(
-    `http://localhost:8000/category/${categoryId}`,
+    `http://localhost:8000/categories/${categoryId}`,
   );
 
   if (category === null) {

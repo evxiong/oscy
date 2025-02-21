@@ -20,7 +20,7 @@ import { Metadata } from "next";
 
 export async function generateStaticParams() {
   const editions: EditionType[] = await fetchError(
-    "http://localhost:8000/editions",
+    "http://localhost:8000/ceremonies",
   );
   const iterations = editions.map((e) => ({
     iteration: e.iteration.toString(),
@@ -78,7 +78,7 @@ export default async function Ceremony({
   }
 
   const editions: EditionType[] = await fetchError(
-    "http://localhost:8000/editions",
+    "http://localhost:8000/ceremonies",
   );
   const ceremony = nominations.editions[0];
   const ordinal = iterationToOrdinal(ceremony.iteration);
