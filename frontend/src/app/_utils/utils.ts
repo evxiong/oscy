@@ -38,9 +38,15 @@ export function iterationToOrdinal(iteration: number): string {
   return iteration + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
 }
 
-export function ceremonyToTopFive(nominations: NominationsType): TopFive {
+export function ceremonyToTopFive(
+  nominations: NominationsType,
+): TopFive | null {
   // returns list of five category indices in ceremony, and the winner imdb ids to be used in cards
   const ceremony = nominations.editions[0];
+
+  if (ceremony.categories[0].nominees[0].pending) {
+    return null;
+  }
 
   const indices = new Array<number>(5);
   const imdb_ids = new Array<string>(5);
@@ -109,6 +115,10 @@ export function categoriesToTopFive(categories: CategoryType[]): TopFive {
 
   let i = 0;
   for (const c of categories) {
+    if (c.nominees[0].pending) {
+      i += 1;
+      continue;
+    }
     if (c.nominees[0].is_person || c.short_name === "Director") {
       imdb_ids.push(
         c.nominees[0].people[0]?.imdb_id ?? c.nominees[0].titles[0].imdb_id,

@@ -74,6 +74,7 @@ export interface NomineeType {
   note: string;
   official: boolean;
   stat: boolean;
+  pending: boolean;
 }
 
 export interface TitleType {

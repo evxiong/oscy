@@ -240,8 +240,8 @@ function Results({
 function QuickLinks({ closeResults }: { closeResults: () => void }) {
   const pages = [
     {
-      url: "/ceremony/96",
-      name: "2023 (96th) Academy Awards",
+      url: "/ceremony/97",
+      name: "2024 (97th) Academy Awards",
       type: "ceremony",
     },
     { url: "/category/1", name: "Best Actor", type: "category" },

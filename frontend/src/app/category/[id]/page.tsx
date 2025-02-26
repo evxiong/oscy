@@ -176,12 +176,12 @@ export default async function Category({
                 key={i}
                 showCeremony={true}
                 ceremony={
-                  editions[i].official_year +
+                  editions[catInd].official_year +
                   " (" +
-                  iterationToOrdinal(editions[i].iteration) +
+                  iterationToOrdinal(editions[catInd].iteration) +
                   ")"
                 }
-                ceremonyId={editions[i].id}
+                ceremonyId={editions[catInd].id}
                 category={nominationCategories[catInd]}
                 imageUrl={topFiveImageUrls[i]}
               />

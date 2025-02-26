@@ -1,5 +1,9 @@
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/react";
-import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconLaurelWreath,
+} from "@tabler/icons-react";
 import {
   ceremonyToTopFive,
   dateToString,
@@ -83,8 +87,9 @@ export default async function Ceremony({
   const ceremony = nominations.editions[0];
   const ordinal = iterationToOrdinal(ceremony.iteration);
   const topFive = ceremonyToTopFive(nominations);
-  const topFiveCategoryInds: number[] = topFive.indices;
-  const topFiveImageUrls: (string | null)[] = await topFiveToImageUrls(topFive);
+  const topFiveImageUrls: (string | null)[] = topFive
+    ? await topFiveToImageUrls(topFive)
+    : [null, null, null, null, null];
 
   const awardNavigatorOptions: SmallSelectorOption[] = editions.map((e) => ({
     id: e.iteration,
@@ -141,20 +146,29 @@ export default async function Ceremony({
         </div>
       </section>
       <section className="flex w-full flex-col overflow-x-auto bg-gradient-to-r from-white to-zinc-100 py-5 md:items-center">
-        <div className="w-fit px-6 md:w-[768px]">
-          <div className="flex flex-row gap-[11.25px]">
-            {topFiveCategoryInds.map((catInd, i) => (
-              <Card
-                key={i}
-                showCeremony={false}
-                ceremony={ceremony.official_year + " (" + ordinal + ")"}
-                ceremonyId={ceremony.iteration}
-                category={ceremony.categories[catInd]}
-                imageUrl={topFiveImageUrls[i]}
-              />
-            ))}
+        {topFive ? (
+          <div className="w-fit px-6 md:w-[768px]">
+            <div className="flex flex-row gap-[11.25px]">
+              {topFive.indices.map((catInd, i) => (
+                <Card
+                  key={i}
+                  showCeremony={false}
+                  ceremony={ceremony.official_year + " (" + ordinal + ")"}
+                  ceremonyId={ceremony.iteration}
+                  category={ceremony.categories[catInd]}
+                  imageUrl={topFiveImageUrls[i]}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex min-h-56 items-center justify-center px-6 md:w-[768px]">
+            <div className="flex select-none flex-row items-center gap-2 rounded-md border border-gray-200 px-4 py-2 text-sm font-medium text-gray-400">
+              <IconLaurelWreath className="size-5" />
+              <div>Winners TBD</div>
+            </div>
+          </div>
+        )}
       </section>
       <section className="mb-20 flex w-full flex-col items-center">
         <div className="flex w-full px-6 md:w-[768px]">
