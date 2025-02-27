@@ -15,7 +15,7 @@ async def lifespan(instance: FastAPI):
 
 
 summary = """
-API for querying Oscar nomination stats. Last updated: Feb. 20, 2025.
+API for querying Oscar nomination stats. Last updated: Feb. 27, 2025.
 """
 
 description = """
@@ -23,11 +23,12 @@ description = """
 [https://github.com/evxiong/oscy](https://github.com/evxiong/oscy).**
 
 The oscy API is designed to abstract away most common types of nomination
-queries. More complex queries should be run directly against the database.
+queries, and provide structured responses. More complex queries should be [run
+directly against the database](https://github.com/evxiong/oscy/wiki/Database).
 
 ### Nominations
 * Get nominations and aggregate stats across multiple consecutive ceremonies,
-with optional sorting/filtering. (_sorting not implemented_)
+with optional sorting/filtering.
 
 ### Categories
 
@@ -50,8 +51,7 @@ Entities can be people, companies, or countries.
 ### Search
 
 * Perform a paginated text search across titles, entities, categories, and
-ceremonies, with optional sorting/filtering for titles and entities. (_sorting
-not implemented_)
+ceremonies, with optional filtering for titles and entities.
 """
 
 
@@ -60,7 +60,10 @@ app = FastAPI(
     summary=summary,
     description=description,
     version="1.0.0",
-    license_info={"name": "MIT License", "identifier": "MIT"},
+    license_info={
+        "name": "MIT License",
+        "url": "https://github.com/evxiong/oscy/blob/main/LICENSE",
+    },
     lifespan=lifespan,
     swagger_ui_parameters={"defaultModelsExpandDepth": -1},
 )

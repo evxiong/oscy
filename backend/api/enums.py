@@ -6,6 +6,11 @@ class AwardType(str, Enum):
     emmy = "emmy"
 
 
+class SortType(str, Enum):
+    ASC = "asc"
+    DESC = "desc"
+
+
 class FilterAwardType(str, Enum):
     all = "all"
     oscar = "oscar"
@@ -16,6 +21,8 @@ class FilterType(str, Enum):
     all = "all"
     title_ = "title"
     entity = "entity"
+    category = "category"
+    ceremony = "ceremony"
 
 
 class FilterEntityType(str, Enum):

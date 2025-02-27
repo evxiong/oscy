@@ -65,16 +65,27 @@ class SearchGroup(BaseModel):
     next_page: int | None
     page_size: int
     length: int
-    results: (
-        list[EntityResult]
-        | list[TitleResult]
-        | list[CategoryResult]
-        | list[CeremonyResult]
-    )
+    results: list
+
+
+class TitleSearchGroup(SearchGroup):
+    results: list[TitleResult]
+
+
+class EntitySearchGroup(SearchGroup):
+    results: list[EntityResult]
+
+
+class CategorySearchGroup(SearchGroup):
+    results: list[CategoryResult]
+
+
+class CeremonySearchGroup(SearchGroup):
+    results: list[CeremonyResult]
 
 
 class SearchResults(BaseModel):
-    titles: SearchGroup | None
-    entities: SearchGroup | None
-    categories: SearchGroup | None
-    ceremonies: SearchGroup | None
+    titles: TitleSearchGroup
+    entities: EntitySearchGroup
+    categories: CategorySearchGroup
+    ceremonies: CeremonySearchGroup

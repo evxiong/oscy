@@ -4,6 +4,10 @@ from ..enums import FilterAwardType, FilterType, FilterEntityType
 from ..models.search import (
     SearchResults,
     SearchGroup,
+    TitleSearchGroup,
+    EntitySearchGroup,
+    CategorySearchGroup,
+    CeremonySearchGroup,
     TitleResult,
     EntityResult,
     CategoryResult,
@@ -12,7 +16,7 @@ from ..models.search import (
 )
 from fastapi import APIRouter, Query
 from psycopg.rows import class_row
-from typing import Annotated
+from typing import Annotated, Type
 
 router = APIRouter(prefix="/search", tags=["search"])
 
@@ -22,57 +26,129 @@ router = APIRouter(prefix="/search", tags=["search"])
 @router.get("", summary="Search titles, entities, categories, and ceremonies")
 async def search_all(
     page: int = Query(default=1, ge=1),
-    award: FilterAwardType = FilterAwardType.all,
-    type: FilterType = FilterType.all,
-    entity_type: FilterEntityType = FilterEntityType.all,
     query: str | None = None,
-    min_noms: int = Query(default=0, ge=0),
-    max_noms: int | None = Query(default=None, ge=0),
-    min_wins: int = Query(default=0, ge=0),
-    max_wins: int | None = Query(default=None, ge=0),
-    noms_eq_wins: bool | None = None,
-    noms_in_categories: str | None = None,
-    # comma-separated list of categories. to be returned, the entity/title must have received
-    # at least one nomination in each category
-    no_noms_in_categories: str | None = None,
-    # comma-separated list of categories. to be returned, the entity/title must have received
-    # zero nominations in each category
-    wins_in_categories: str | None = None,
-    # comma-separated list of categories. to be returned, the entity/title must have
-    # at least one win in each category
-    no_wins_in_categories: str | None = None,
-    # comma-separated list of categories. to be returned, the entity/title must have
-    # zero wins in each category
-    single_ceremony: bool = False,
-    # requires that all of the above conditions (min_noms to no_wins_in_categories) occur in single ceremony
-    # (only impacts results of entity search)
-    # pre-filtering
-    start_edition: int = Query(default=1, ge=1),
-    end_edition: int = int(os.getenv("CURRENT_EDITION")),  # type: ignore
-    categories: Annotated[  # usage: search for all ppl with min_noms=1 across Actor,Director (this is diff from noms_in_categories, which requires at least 1 nom per category)
+    award: FilterAwardType = FilterAwardType.all,
+    type: Annotated[
+        FilterType, Query(description="Only include results from specified type.")
+    ] = FilterType.all,
+    entity_type: Annotated[
+        FilterEntityType, Query(description="Filter entity results by specified type.")
+    ] = FilterEntityType.all,
+    # Pre-filtering
+    start_edition: int = Query(
+        default=1,
+        ge=1,
+        description=(
+            """(inclusive) Restrict search to nominations at or after this
+            edition."""
+        ),
+    ),
+    end_edition: int = Query(
+        default=int(os.getenv("CURRENT_EDITION")),  # type: ignore
+        description=(
+            """(inclusive) Restrict search to nominations at or before this
+            edition."""
+        ),
+    ),
+    categories: Annotated[
         str | None,
         Query(
-            description="Comma-separated list of categories to filter by (must match `/categories`), ex. `Actor,International Feature,Actress`. Defaults to all categories. ",
+            description=(
+                """Restrict search to nominations within this comma-separated
+                list of categories (must match `/categories`), ex.
+                `Actor,International Feature,Actress`. Defaults to all
+                categories."""
+            ),
         ),
     ] = None,
+    # Example usage: search for all ppl with min_noms=1 across Actor,Director
+    # (this is different from noms_in_categories, which requires at least 1 nom
+    # per category)
     category_groups: Annotated[
         str | None,
         Query(
-            description="Comma-separated list of category groups to filter by (must match `/categories`), ex. `Acting,Directing`. Defaults to all category groups.",
+            description=(
+                """Restrict search to nominations within this comma-separated
+                list of category groups (must match `/categories`), ex.
+                `Acting,Directing`. Defaults to all category groups."""
+            ),
         ),
     ] = None,
-    # sort results by
-    # sort_search_results_by: SortByResults = SortByResults.default,
-    # sort nominations by
-    # sort_editions_by: SortByDate = SortByDate.asc,
-    # sort_categories_by: SortByName = SortByName.asc,
-    # sort_nominees_by: SortByName = SortByName.id,
-    # sort_winners_first: bool = True,
+    min_noms: int = Query(default=0, ge=0),
+    max_noms: int | None = Query(default=None),
+    min_wins: int = Query(default=0, ge=0),
+    max_wins: int | None = Query(default=None),
+    noms_eq_wins: bool | None = None,
+    noms_in_categories: Annotated[
+        str | None,
+        Query(
+            description=(
+                """Comma-separated list of categories (must match
+                `/categories`), ex. `Actor,International Feature,Actress`. To be
+                returned, the entity or title must have at least 1 nomination in
+                each category."""
+            )
+        ),
+    ] = None,
+    no_noms_in_categories: Annotated[
+        str | None,
+        Query(
+            description=(
+                """Comma-separated list of categories (must match
+                `/categories`), ex. `Actor,International Feature,Actress`. To be
+                returned, the entity or title must have 0 nominations in each
+                category."""
+            )
+        ),
+    ] = None,
+    wins_in_categories: Annotated[
+        str | None,
+        Query(
+            description=(
+                """Comma-separated list of categories (must match
+                `/categories`), ex. `Actor,International Feature,Actress`. To be
+                returned, the entity or title must have at least 1 win in each
+                category."""
+            )
+        ),
+    ] = None,
+    no_wins_in_categories: Annotated[
+        str | None,
+        Query(
+            description=(
+                """Comma-separated list of categories (must match
+                `/categories`), ex. `Actor,International Feature,Actress`. To be
+                returned, the entity or title must have 0 wins in each
+                category."""
+            )
+        ),
+    ] = None,
+    single_ceremony: Annotated[
+        bool,
+        Query(
+            description=(
+                """Requires that all of the above conditions (`min_noms` to
+                `no_wins_in_categories`) occur in a single ceremony."""
+            )
+        ),
+    ] = False,
 ) -> SearchResults:
     """
-    Results are sorted primarily by text match. Each page has up to 10 results.
+    **All parameters below `type` apply to titles and entities only.**
+
+    Searching for titles and entities does not require a query; searching for
+    categories and ceremonies does.
+
+    Results are sorted primarily by query text similarity. Each page has up to
+    10 results.
+
+    Within each results group, `next_page` is `null` if there are no more
+    results, `length` is the number of results in the current page, and
+    `page_size` is always 10.
 
     Example use cases:
+    - Search for people whose name is similar to 'brad' and have at least 1 win.
+    > /search?query=brad&type=entity&entity_type=person&min_wins=1
     - Get people who have received at least 2 nominations in a single ceremony.
     > /search?award=oscar&type=entity&entity_type=person&min_noms=2&single_ceremony=true
     - Get films that won all of their nominations.
@@ -114,7 +190,7 @@ async def search_all(
 
         async with con.cursor(row_factory=class_row(TitleResult)) as cur:  # type: ignore
             titles_res: list[TitleResult] = []
-            if type != FilterType.entity:
+            if type == FilterType.all or type == FilterType.title_:
                 await cur.execute(
                     """
                     SELECT
@@ -188,7 +264,7 @@ async def search_all(
 
         async with con.cursor(row_factory=class_row(EntityResultRow)) as cur:  # type: ignore
             entities_res: list[EntityResult] = []
-            if type != FilterType.title_:
+            if type == FilterType.all or type == FilterType.entity:
                 await cur.execute(
                     """
                     WITH a AS (
@@ -300,7 +376,9 @@ async def search_all(
 
         async with con.cursor(row_factory=class_row(CategoryResult)) as cur:  # type: ignore
             categories_res: list[CategoryResult] = []
-            if query is not None:
+            if (
+                type == FilterType.all or type == FilterType.category
+            ) and query is not None:
                 await cur.execute(
                     """
                     WITH a AS (
@@ -338,7 +416,9 @@ async def search_all(
 
         async with con.cursor(row_factory=class_row(CeremonyResult)) as cur:  # type: ignore
             ceremonies_res: list[CeremonyResult] = []
-            if query is not None:
+            if (
+                type == FilterType.all or type == FilterType.ceremony
+            ) and query is not None:
                 await cur.execute(
                     """
                     SELECT
@@ -362,8 +442,8 @@ async def search_all(
                 )
                 ceremonies_res = await cur.fetchall()  # type: ignore
 
-        def res_to_search_group(res: list) -> SearchGroup:
-            return SearchGroup(
+        def res_to_search_group(search_group: Type[SearchGroup], res: list):
+            return search_group(
                 page=page,
                 next_page=page + 1 if len(res) == PAGE_SIZE + 1 else None,
                 page_size=PAGE_SIZE,
@@ -371,17 +451,31 @@ async def search_all(
                 results=(res[:-1] if len(res) == PAGE_SIZE + 1 else res),
             )
 
-        titles_obj = (
-            res_to_search_group(titles_res) if type != FilterType.entity else None
+        titles_obj: TitleSearchGroup = res_to_search_group(  # type: ignore
+            TitleSearchGroup,
+            titles_res if type == FilterType.all or type == FilterType.title_ else [],
         )
-        entities_obj = (
-            res_to_search_group(entities_res) if type != FilterType.title_ else None
+        entities_obj: EntitySearchGroup = res_to_search_group(  # type: ignore
+            EntitySearchGroup,
+            entities_res if type == FilterType.all or type == FilterType.entity else [],
         )
-        categories_obj = (
-            res_to_search_group(categories_res) if query is not None else None
+        categories_obj: CategorySearchGroup = res_to_search_group(  # type: ignore
+            CategorySearchGroup,
+            (
+                categories_res
+                if (type == FilterType.all or type == FilterType.category)
+                and query is not None
+                else []
+            ),
         )
-        ceremonies_obj = (
-            res_to_search_group(ceremonies_res) if query is not None else None
+        ceremonies_obj: CeremonySearchGroup = res_to_search_group(  # type: ignore
+            CeremonySearchGroup,
+            (
+                ceremonies_res
+                if (type == FilterType.all or type == FilterType.ceremony)
+                and query is not None
+                else []
+            ),
         )
 
         res = SearchResults(

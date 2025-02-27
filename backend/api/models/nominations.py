@@ -26,6 +26,7 @@ class Nominee(BaseModel):
     note: str
     official: bool
     stat: bool
+    pending: bool
 
 
 class Category(BaseModel):
@@ -109,3 +110,4 @@ class EditionRow(BaseModel):
     note: str
     official: bool
     stat: bool
+    pending: bool

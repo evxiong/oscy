@@ -124,7 +124,8 @@ async def get_entity_by_id(id: int) -> EntityOrTitle | None:
                     n.is_person,
                     n.note,
                     n.official,
-                    n.stat
+                    n.stat,
+                    n.pending
                 FROM category_names cn
                 JOIN categories c ON c.id = cn.category_id
                 JOIN category_groups cg ON cg.id = c.category_group_id
@@ -281,7 +282,8 @@ async def get_title_by_id(id: int) -> EntityOrTitle | None:
                     n.is_person,
                     n.note,
                     n.official,
-                    n.stat
+                    n.stat,
+                    n.pending
                 FROM category_names cn
                 JOIN categories c ON c.id = cn.category_id
                 JOIN category_groups cg ON cg.id = c.category_group_id

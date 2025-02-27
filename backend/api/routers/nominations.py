@@ -1,5 +1,6 @@
 import os
 from ..dependencies import pool
+from ..enums import FilterAwardType, SortType
 from ..models.nominations import (
     Nominations,
     Edition,
@@ -12,9 +13,9 @@ from ..models.nominations import (
     NomineePerson,
     NomineeTitle,
 )
-from ..enums import FilterAwardType
 from collections import defaultdict
 from fastapi import APIRouter, Query
+from psycopg import sql
 from psycopg.rows import class_row
 from typing import Annotated
 
@@ -26,30 +27,63 @@ router = APIRouter(tags=["nominations"])
 async def get_nominations(
     award: FilterAwardType = FilterAwardType.all,
     start_edition: Annotated[int, Query(ge=1, description="(inclusive)")] = 1,
-    end_edition: Annotated[int, Query(description="(inclusive)")] = int(os.getenv("CURRENT_EDITION")),  # type: ignore
+    end_edition: Annotated[int, Query(description="(inclusive)")] = int(
+        os.getenv("CURRENT_EDITION")  # type: ignore
+    ),
     winners_only: bool = False,
     pending: Annotated[
         bool | None,
         Query(
-            description="Include both pending and decided nominations (default), only pending (true), or only decided (false)"
+            description=(
+                """Include both pending and decided nominations (default), only
+                pending (true), or only decided (false)."""
+            )
         ),
     ] = None,
     categories: Annotated[
         str | None,
         Query(
-            description="Comma-separated list of categories to filter by (must match `/categories`), ex. `Actor,International Feature,Actress`. Defaults to all categories. ",
+            description=(
+                """Comma-separated list of categories to filter by (must match
+                `/categories`), ex. `Actor,International Feature,Actress`.
+                Defaults to all categories."""
+            ),
         ),
     ] = None,
     category_groups: Annotated[
         str | None,
         Query(
-            description="Comma-separated list of category groups to filter by (must match `/categories`), ex. `Acting,Directing`. Defaults to all category groups.",
+            description=(
+                """Comma-separated list of category groups to filter by (must
+                match `/categories`), ex. `Acting,Directing`. Defaults to all
+                category groups."""
+            ),
         ),
     ] = None,
+    sort_editions: Annotated[
+        SortType,
+        Query(description=("Controls order of editions in returned object.")),
+    ] = SortType.ASC,
+    sort_categories: Annotated[
+        SortType,
+        Query(
+            description=(
+                """Controls order of categories within each edition in returned
+                object. Sorting uses official category names, such as `WRITING
+                (Original Screenplay)`."""
+            )
+        ),
+    ] = SortType.ASC,
 ) -> Nominations:
     """
     Returned stats include all titles and entities matching the filtering
     criteria (no limit/pagination).
+
+    `stats.title_stats` contains one element per title and is sorted by `noms`,
+    then `wins`.
+
+    `stats.entity_stats` contains one element per unique entity/category
+    combination and is sorted by `total_noms`, then `total_wins`.
 
     Example use cases:
     - Who's won the most Oscars for Acting since 2000?
@@ -71,55 +105,80 @@ async def get_nominations(
                 if category_groups
                 else None
             )
+
+            order_clause = sql.SQL(
+                "ORDER BY {}, n.winner DESC, n.id ASC, ne.statement_ind ASC, nt.winner DESC"
+            ).format(
+                sql.SQL(", ").join(
+                    [
+                        sql.SQL(" ").join(
+                            [
+                                sql.Identifier("e", "iteration"),
+                                sql.SQL(sort_editions.name),
+                            ]
+                        ),
+                        sql.SQL(" ").join(
+                            [
+                                sql.Identifier("cn", "official_name"),
+                                sql.SQL(sort_categories.name),
+                            ]
+                        ),
+                    ]
+                )
+            )
+
             await cur.execute(
-                """
-                SELECT
-                    e.id AS edition_id,
-                    e.iteration,
-                    e.official_year,
-                    e.ceremony_date,
-                    c.id AS category_id,
-                    cn.id AS category_name_id,
-                    cg.name AS category_group,
-                    cn.official_name,
-                    cn.common_name,
-                    c.name AS short_name,
-                    n.id AS nominee_id,
-                    n.winner,
-                    t.id AS title_id,
-                    t.title,
-                    t.imdb_id AS title_imdb_id,
-                    nt.detail,
-                    nt.winner AS title_winner,
-                    en.id AS person_id,
-                    ne.name,
-                    en.imdb_id AS person_imdb_id,
-                    ne.statement_ind,
-                    n.statement,
-                    n.is_person,
-                    n.note,
-                    n.official,
-                    n.stat
-                FROM category_names cn
-                JOIN categories c ON c.id = cn.category_id
-                JOIN category_groups cg ON cg.id = c.category_group_id
-                JOIN editions_category_names ecn ON cn.id = ecn.category_name_id
-                JOIN editions e ON e.id = ecn.edition_id
-                JOIN nominees n ON n.edition_id = e.id AND n.category_name_id = cn.id
-                LEFT JOIN nominees_entities ne ON ne.nominee_id = n.id
-                LEFT JOIN entities en ON en.id = ne.entity_id
-                LEFT JOIN nominees_titles nt ON nt.nominee_id = n.id -- some nominations have no associated title
-                LEFT JOIN titles t ON nt.title_id = t.id
-                WHERE
-                    (%(award)s::award_type IS NULL OR n.award = %(award)s) AND
-                    e.iteration >= %(start_edition)s AND
-                    e.iteration <= %(end_edition)s AND
-                    (%(winners_only)s = FALSE OR n.winner = TRUE) AND
-                    (%(filter_c_bool)s = FALSE OR c.name = ANY(%(filter_c)s)) AND
-                    (%(filter_cg_bool)s = FALSE OR cg.name = ANY(%(filter_cg)s)) AND
-                    (%(pending)s::boolean IS NULL OR (%(pending)s = FALSE AND n.pending = FALSE) OR (%(pending)s = TRUE AND n.pending = TRUE))
-                ORDER BY e.iteration ASC, cn.official_name ASC, n.winner DESC, n.id ASC, ne.statement_ind ASC, nt.winner DESC;
-                """,
+                sql.SQL(
+                    """
+                    SELECT
+                        e.id AS edition_id,
+                        e.iteration,
+                        e.official_year,
+                        e.ceremony_date,
+                        c.id AS category_id,
+                        cn.id AS category_name_id,
+                        cg.name AS category_group,
+                        cn.official_name,
+                        cn.common_name,
+                        c.name AS short_name,
+                        n.id AS nominee_id,
+                        n.winner,
+                        t.id AS title_id,
+                        t.title,
+                        t.imdb_id AS title_imdb_id,
+                        nt.detail,
+                        nt.winner AS title_winner,
+                        en.id AS person_id,
+                        ne.name,
+                        en.imdb_id AS person_imdb_id,
+                        ne.statement_ind,
+                        n.statement,
+                        n.is_person,
+                        n.note,
+                        n.official,
+                        n.stat,
+                        n.pending
+                    FROM category_names cn
+                    JOIN categories c ON c.id = cn.category_id
+                    JOIN category_groups cg ON cg.id = c.category_group_id
+                    JOIN editions_category_names ecn ON cn.id = ecn.category_name_id
+                    JOIN editions e ON e.id = ecn.edition_id
+                    JOIN nominees n ON n.edition_id = e.id AND n.category_name_id = cn.id
+                    LEFT JOIN nominees_entities ne ON ne.nominee_id = n.id
+                    LEFT JOIN entities en ON en.id = ne.entity_id
+                    LEFT JOIN nominees_titles nt ON nt.nominee_id = n.id -- some nominations have no associated title
+                    LEFT JOIN titles t ON nt.title_id = t.id
+                    WHERE
+                        (%(award)s::award_type IS NULL OR n.award = %(award)s) AND
+                        e.iteration >= %(start_edition)s AND
+                        e.iteration <= %(end_edition)s AND
+                        (%(winners_only)s = FALSE OR n.winner = TRUE) AND
+                        (%(filter_c_bool)s = FALSE OR c.name = ANY(%(filter_c)s)) AND
+                        (%(filter_cg_bool)s = FALSE OR cg.name = ANY(%(filter_cg)s)) AND
+                        (%(pending)s::boolean IS NULL OR (%(pending)s = FALSE AND n.pending = FALSE) OR (%(pending)s = TRUE AND n.pending = TRUE))
+                    {}
+                    """
+                ).format(order_clause),
                 {
                     "award": award if award != FilterAwardType.all else None,
                     "start_edition": start_edition,
@@ -297,6 +356,7 @@ def edition_rows_to_editions(rows: list[EditionRow], imdb_id: str) -> list[Editi
                         note=n_row_0.note,
                         official=n_row_0.official,
                         stat=n_row_0.stat,
+                        pending=n_row_0.pending,
                     )
                 )
                 if n_row_0.stat:
