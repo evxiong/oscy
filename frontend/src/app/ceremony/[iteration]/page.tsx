@@ -24,7 +24,7 @@ import { Metadata } from "next";
 
 export async function generateStaticParams() {
   const editions: EditionType[] = await fetchError(
-    "http://localhost:8000/ceremonies",
+    "/api/ceremonies",
   );
   const iterations = editions.map((e) => ({
     iteration: e.iteration.toString(),
@@ -39,7 +39,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const iteration = (await params).iteration;
   const nominations: NominationsType = await fetchError(
-    `http://localhost:8000/?start_edition=${iteration}&end_edition=${iteration}`,
+    `/api/?start_edition=${iteration}&end_edition=${iteration}`,
   );
   if (nominations === null || nominations.editions.length === 0) {
     notFound();
@@ -74,7 +74,7 @@ export default async function Ceremony({
 }) {
   const iteration = (await params).iteration;
   const nominations: NominationsType = await fetchError(
-    `http://localhost:8000/?start_edition=${iteration}&end_edition=${iteration}`,
+    `/api/?start_edition=${iteration}&end_edition=${iteration}`,
   );
 
   if (nominations === null || nominations.editions.length === 0) {
@@ -82,7 +82,7 @@ export default async function Ceremony({
   }
 
   const editions: EditionType[] = await fetchError(
-    "http://localhost:8000/ceremonies",
+    "/api/ceremonies",
   );
   const ceremony = nominations.editions[0];
   const ordinal = iterationToOrdinal(ceremony.iteration);

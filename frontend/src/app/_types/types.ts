@@ -1,8 +1,8 @@
 export interface SearchResults {
-  titles: SearchGroup | null;
-  entities: SearchGroup | null;
-  categories: SearchGroup | null;
-  ceremonies: SearchGroup | null;
+  titles: SearchGroup;
+  entities: SearchGroup;
+  categories: SearchGroup;
+  ceremonies: SearchGroup;
 }
 
 export interface Result {

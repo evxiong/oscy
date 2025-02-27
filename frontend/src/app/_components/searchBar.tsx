@@ -69,7 +69,7 @@ export default function SearchBar() {
       setResults([]);
       return;
     }
-    const data = await fetch(`http://localhost:8000/search?query=${search}`);
+    const data = await fetch(`/api/search?query=${search}`);
     const searchResults: SearchResults = await data.json();
     const r: Result[] = [];
     if (searchResults.titles) {

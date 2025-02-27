@@ -18,9 +18,8 @@ import fetchError from "@/app/_utils/fetchError";
 import { Metadata } from "next";
 
 export async function generateStaticParams() {
-  const categoryGroups: CategoryGroupInfo[] = await fetchError(
-    "http://localhost:8000/categories",
-  );
+  const categoryGroups: CategoryGroupInfo[] =
+    await fetchError("/api/categories");
   const categoryIds = categoryGroups
     .map((categoryGroup) =>
       categoryGroup.categories.map((c) => ({
@@ -37,9 +36,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const categoryId = (await params).id;
-  const category: Category = await fetchError(
-    `http://localhost:8000/categories/${categoryId}`,
-  );
+  const category: Category = await fetchError(`/api/categories/${categoryId}`);
 
   if (category === null) {
     notFound();
@@ -76,17 +73,13 @@ export default async function Category({
   params: Promise<{ id: string }>;
 }) {
   const categoryId = (await params).id;
-  const category: Category = await fetchError(
-    `http://localhost:8000/categories/${categoryId}`,
-  );
+  const category: Category = await fetchError(`/api/categories/${categoryId}`);
 
   if (category === null) {
     notFound();
   }
 
-  const categories: CategoryGroupInfo[] = await fetchError(
-    "http://localhost:8000/categories",
-  );
+  const categories: CategoryGroupInfo[] = await fetchError("/api/categories");
   const editions = category.nominations.editions.reverse();
   const nominationCategories = editions.map((e) => e.categories).flat();
 
@@ -112,7 +105,7 @@ export default async function Category({
     awardNavigatorOptions.find((e) => e.id === category.category_id)!;
 
   const timeline = categoryNamesToTimeline(category.category_names);
-  const LATEST_EDITION = parseInt(process.env.NEXT_PUBLIC_LATEST_EDITION!);
+  const LATEST_EDITION = parseInt(process.env.NEXT_PUBLIC_CURRENT_EDITION!);
   const numCeremonies = category.category_names.reduce(
     (acc1, cn) =>
       acc1 + cn.ranges.reduce((acc2, r) => acc2 + r[1] - r[0] + 1, 0),

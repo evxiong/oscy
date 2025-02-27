@@ -19,7 +19,7 @@ export default function Navbar() {
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href="http://localhost:8000/docs"
+            href="/api/docs"
             className="group flex h-8 w-8 cursor-pointer items-center justify-center focus:outline-none"
           >
             <IconApi className="h-5 w-5 stroke-zinc-500 group-hover:stroke-gold group-focus-visible:stroke-gold" />
