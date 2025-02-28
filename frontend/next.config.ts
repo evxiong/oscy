@@ -20,16 +20,16 @@ const nextConfig: NextConfig = {
       {
         source: "/openapi.json",
         destination:
-          process.env.NODE_ENV === "development"
-            ? "http://127.0.0.1:8000/openapi.json"
-            : "https://oscy-api.vercel.app/openapi.json",
+          process.env.VERCEL_ENV === "production"
+            ? "https://oscy-api.vercel.app/openapi.json"
+            : "http://localhost:8000/openapi.json",
       },
       {
         source: "/api/:path*",
         destination:
-          process.env.NODE_ENV === "development"
-            ? "http://127.0.0.1:8000/:path*"
-            : "https://oscy-api.vercel.app/:path*",
+          process.env.VERCEL_ENV === "production"
+            ? "https://oscy-api.vercel.app/:path*"
+            : "http://localhost:8000/:path*",
       },
     ];
   },

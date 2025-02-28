@@ -12,6 +12,7 @@
     "@headlessui/react": "^2.2.0",
     "@next/env": "^15.2.0",
     "@tabler/icons-react": "^3.28.1",
+    "fetch-retry": "^6.0.0",
     "next": "15.1.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

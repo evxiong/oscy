@@ -15,9 +15,9 @@ export const metadata: Metadata = {
     default: "oscy",
   },
   metadataBase:
-    process.env.NODE_ENV === "production"
+    process.env.VERCEL_ENV === "production"
       ? new URL("https://oscy.vercel.app")
-      : new URL(`http://localhost:${process.env.PORT}`),
+      : new URL(`http://localhost:3000`),
 };
 
 export default function RootLayout({

@@ -1,5 +1,6 @@
 import { CategoryName } from "../category/[id]/types";
 import { CategoryType, NominationsType } from "../ceremony/[iteration]/types";
+import fetchRetryWrapper from "fetch-retry";
 
 interface TopFive {
   indices: number[];
@@ -146,26 +147,46 @@ export function categoriesToTopFive(categories: CategoryType[]): TopFive {
 export async function topFiveToImageUrls(
   topFive: TopFive,
 ): Promise<(string | null)[]> {
+  const fetchRetry = fetchRetryWrapper(fetch);
   return Promise.all(
-    topFive.imdb_ids.map(async (imdb_id) => {
-      const findByIdResults = await fetch(
-        `https://api.themoviedb.org/3/find/${imdb_id}?external_source=imdb_id&api_key=${process.env.TMDB_API_KEY}`,
-      );
-      const results: TMDBResults = await findByIdResults.json();
-      if (imdb_id.startsWith("tt")) {
-        return results["movie_results"].length > 0 &&
-          results["movie_results"][0]["poster_path"]
-          ? "https://image.tmdb.org/t/p/w185" +
+    process.env.TMDB_API_KEY
+      ? topFive.imdb_ids.map(async (imdb_id) => {
+          const findByIdResults = await fetchRetry(
+            `https://api.themoviedb.org/3/find/${imdb_id}?external_source=imdb_id&api_key=${process.env.TMDB_API_KEY}`,
+            {
+              retryOn: (attempt, error, response) => {
+                if (attempt < 3 && (!response || !response.ok)) {
+                  console.log(
+                    `Retrying after ${error?.message}: attempt ${attempt + 1}`,
+                  );
+                  return true;
+                }
+                return false;
+              },
+              retryDelay: 5000,
+            },
+          );
+          if (!findByIdResults.ok) {
+            throw new Error(
+              `Failed to connect to TMDB API: check validity of TMDB_API_KEY in .env: ${process.env.TMDB_API_KEY}`,
+            );
+          }
+          const results: TMDBResults = await findByIdResults.json();
+          if (imdb_id.startsWith("tt")) {
+            return results["movie_results"].length > 0 &&
               results["movie_results"][0]["poster_path"]
-          : null;
-      } else {
-        return results["person_results"].length > 0 &&
-          results["person_results"][0]["profile_path"]
-          ? "https://image.tmdb.org/t/p/w185" +
+              ? "https://image.tmdb.org/t/p/w185" +
+                  results["movie_results"][0]["poster_path"]
+              : null;
+          } else {
+            return results["person_results"].length > 0 &&
               results["person_results"][0]["profile_path"]
-          : null;
-      }
-    }),
+              ? "https://image.tmdb.org/t/p/w185" +
+                  results["person_results"][0]["profile_path"]
+              : null;
+          }
+        })
+      : [null, null, null, null, null],
   );
 }
 
