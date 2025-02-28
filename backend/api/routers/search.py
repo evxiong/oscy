@@ -426,10 +426,10 @@ async def search_all(
                         iteration,
                         official_year,
                         ceremony_date,
-                        %(query)s <<-> (iteration || ' ' || iteration || 'th ' || iteration || 'rd ' || iteration || 'nd ' || iteration || 'st ' || official_year || to_char(ceremony_date, ' YYYY')) AS word_dist,
-                        %(query)s <-> (iteration || ' ' || iteration || 'th ' || iteration || 'rd ' || iteration || 'nd ' || iteration || 'st ' || official_year || to_char(ceremony_date, ' YYYY')) AS dist
+                        %(query)s <<-> (integer_to_ordinal(iteration) || to_char(ceremony_date, ' YYYY ') || official_year || ' Academy Awards') AS word_dist,
+                        %(query)s <-> (integer_to_ordinal(iteration) || to_char(ceremony_date, ' YYYY ') || official_year || ' Academy Awards') AS dist
                     FROM editions
-                    WHERE word_similarity(%(query)s, (iteration || ' ' || iteration || 'th ' || iteration || 'rd ' || iteration || 'nd ' || iteration || 'st ' || official_year || to_char(ceremony_date, ' YYYY'))) > 0.4
+                    WHERE word_similarity(%(query)s, (integer_to_ordinal(iteration) || to_char(ceremony_date, ' YYYY ') || official_year || ' Academy Awards')) > 0.4
                     ORDER BY word_dist, dist
                     LIMIT %(limit)s
                     OFFSET %(offset)s;

@@ -1,16 +1,24 @@
+import csv
 import dataclasses
 import os
 import psycopg
 import yaml
 from . import match, scrape
-from dotenv import load_dotenv, find_dotenv
+from .data import MatchedCategory
+from dotenv import load_dotenv
 from psycopg import sql
+from psycopg.rows import dict_row
 from tqdm import tqdm
 
 load_dotenv()
-load_dotenv(find_dotenv(".config"))
 
 DB_NAME = os.getenv("PG_DBNAME") or ""
+
+# official oscars ceremony page category name -> official name
+OFFICIAL_PAGE_CONVERSIONS = {
+    "Animated Short Film": "short film (animated)",
+    "Live Action Short Film": "short film (live action)",
+}
 
 
 def create_db():
@@ -29,6 +37,21 @@ def create_db():
             cur.execute("""CREATE TYPE award_type AS ENUM ('oscar', 'emmy')""")
             cur.execute(
                 """CREATE TYPE entity_type AS ENUM ('person', 'company', 'country', 'network')"""
+            )
+            cur.execute(
+                """
+                CREATE OR REPLACE FUNCTION integer_to_ordinal(num integer) RETURNS text AS $$
+                    SELECT 
+                        num::text ||
+                        CASE
+                            WHEN num % 100 IN (11,12,13) THEN 'th'
+                            WHEN num % 10 = 1 THEN 'st'
+                            WHEN num % 10 = 2 THEN 'nd'
+                            WHEN num % 10 = 3 THEN 'rd'
+                            ELSE 'th'
+                        END;
+                $$ LANGUAGE SQL;
+                """
             )
             cur.execute("""CREATE EXTENSION IF NOT EXISTS pg_trgm""")
 
@@ -169,6 +192,20 @@ def create_tables():
             )
 
 
+def create_indexes():
+    with psycopg.connect(
+        f"dbname={DB_NAME} user={os.getenv("PG_USER")} password={os.getenv("PG_PASSWORD")}",
+        autocommit=True,
+    ) as con:
+        with con.cursor() as cur:
+            cur.execute(
+                "CREATE INDEX title_trgm_idx ON titles USING GIST (title gist_trgm_ops)"
+            )
+            cur.execute(
+                "CREATE INDEX entity_trgm_idx ON entities USING GIST (name gist_trgm_ops)"
+            )
+
+
 def insert_editions(start: int | None = None, end: int | None = None) -> None:
     editions = scrape.scrape_editions(start, end)
     values = [dataclasses.asdict(e) for e in editions]
@@ -258,9 +295,47 @@ def insert_categories():
                         )
 
 
-def insert_nominees():
-    data = match.match_categories()
+def insert_editions_category_names(
+    edition: int, data: dict[int, list[MatchedCategory]]
+):
+    with psycopg.connect(
+        f"dbname={DB_NAME} user={os.getenv("PG_USER")} password={os.getenv("PG_PASSWORD")}",
+        autocommit=True,
+    ) as con:
+        cur = con.cursor()
+        with con.transaction():
+            cur.execute(
+                """
+                SELECT id
+                FROM editions
+                WHERE award = 'oscar' AND iteration = %s
+                """,
+                (edition,),
+            )
+            edition_id = cur.fetchone()[0]  # type: ignore
+            category_names = [
+                {
+                    "category_name": OFFICIAL_PAGE_CONVERSIONS.get(
+                        c.category, c.category
+                    ).lower(),
+                    "edition_id": edition_id,
+                }
+                for c in data[edition]
+            ]
+            cur.executemany(
+                """
+                INSERT INTO editions_category_names (edition_id, category_name_id)
+                SELECT %(edition_id)s, id
+                FROM category_names
+                WHERE award = 'oscar' AND LOWER(official_name) = %(category_name)s
+                ORDER BY id
+                LIMIT 1
+                """,
+                category_names,
+            )
 
+
+def insert_nominees(data: dict[int, list[MatchedCategory]]):
     # flatten to list of MatchedNominee dicts across all editions
     nominees = [
         dataclasses.asdict(n) for ed in data for c in data[ed] for n in c.nominees
@@ -273,6 +348,9 @@ def insert_nominees():
         cur = con.cursor()
         with con.transaction():
             for nominee in tqdm(nominees):
+                nominee["category_name"] = OFFICIAL_PAGE_CONVERSIONS.get(
+                    nominee["category_name"], nominee["category_name"]
+                ).lower()
                 # insert nominee
                 cur.execute(
                     """
@@ -291,7 +369,7 @@ def insert_nominees():
                     FROM editions e
                     JOIN editions_category_names ecn ON e.id = ecn.edition_id
                     JOIN category_names cn ON cn.id = ecn.category_name_id
-                    WHERE e.award = 'oscar' AND e.iteration = %(edition)s AND cn.official_name = %(category_name)s
+                    WHERE e.award = 'oscar' AND e.iteration = %(edition)s AND LOWER(cn.official_name) = %(category_name)s
                     RETURNING id;
                     """,
                     nominee,
@@ -371,13 +449,64 @@ def insert_nominees():
                     )
 
 
+def get_category_names_official() -> list[str]:
+    with psycopg.connect(
+        f"dbname={DB_NAME} user={os.getenv("PG_USER")} password={os.getenv("PG_PASSWORD")}",
+        autocommit=True,
+    ) as con:
+        with con.cursor() as cur:
+            cur.execute("SELECT official_name FROM category_names")
+            return [r[0] for r in cur.fetchall()]
+
+
+def nominations_to_csv():
+    with psycopg.connect(
+        f"dbname={DB_NAME} user={os.getenv("PG_USER")} password={os.getenv("PG_PASSWORD")}",
+        autocommit=True,
+    ) as con:
+        with con.cursor(row_factory=dict_row) as cur:
+            cur.execute(
+                """
+                SELECT
+                    e.iteration, e.official_year, e.ceremony_date,
+                    cg.name AS category_group, c.name AS category, official_name, common_name,
+                    n.id AS nomination_id, n.statement, n.pending, n.winner, n.official, n.stat,
+                    ne.name AS statement_name, ne.statement_ind,
+                    en.imdb_id AS entity_imdb_id, en.type AS entity_type, en.name,
+                    t.imdb_id AS title_imdb_id, t.title,
+                    nt.detail, nt.winner AS title_winner, n.note
+                FROM category_names cn
+                JOIN categories c ON c.id = cn.category_id
+                JOIN category_groups cg ON cg.id = c.category_group_id
+                JOIN editions_category_names ecn ON ecn.category_name_id = cn.id
+                JOIN editions e ON e.id = ecn.edition_id
+                JOIN nominees n ON n.edition_id = e.id AND n.category_name_id = cn.id
+                LEFT JOIN nominees_entities ne ON ne.nominee_id = n.id
+                LEFT JOIN entities en ON en.id = ne.entity_id
+                LEFT JOIN nominees_titles nt ON nt.nominee_id = n.id
+                LEFT JOIN titles t ON t.id = nt.title_id
+                WHERE n.award = 'oscar'
+                ORDER BY e.iteration, c.id, n.winner DESC, n.id ASC                
+                """
+            )
+            results: list[dict] = cur.fetchall()
+
+    with open(
+        "../../data/oscars.csv", "w", encoding="utf-8", newline=""
+    ) as output_file:
+        dict_writer = csv.DictWriter(output_file, list(results[0].keys()))
+        dict_writer.writeheader()
+        dict_writer.writerows(results)
+
+
 def init_db():
     drop_db()
     create_db()
     create_tables()
+    create_indexes()
     insert_editions()
     insert_categories()
-    insert_nominees()
+    insert_nominees(match.match_categories())
 
 
 if __name__ == "__main__":

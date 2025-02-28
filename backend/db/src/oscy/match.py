@@ -14,11 +14,12 @@ from .data import (
     IMDbCategory,
     IMDbNominee,
 )
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 from rapidfuzz import process, fuzz
 from tqdm import tqdm
+from typing import Callable
 
-load_dotenv(find_dotenv(".config"))
+load_dotenv()
 
 # hard-coded category equivalents that fuzzy matching doesn't handle well...put
 # this in a yaml file
@@ -513,6 +514,9 @@ def match_nominees(
     warnings: list[tuple[str, str]] = []
 
     for o, i in [(official_winners, imdb_winners), (official_nominees, imdb_nominees)]:
+        if not o or not i:  # in case no winners yet
+            continue
+
         # Calculate similarity for titles and people separately
         # Add scores and take lowest for best match, then match ids
 
@@ -844,12 +848,12 @@ def match_ids(
     official.nomination = nom
 
     person_nominees = {
-        "ACTOR",
-        "ACTOR IN A LEADING ROLE",
-        "ACTOR IN A SUPPORTING ROLE",
-        "ACTRESS",
-        "ACTRESS IN A LEADING ROLE",
-        "ACTRESS IN A SUPPORTING ROLE",
+        "actor",
+        "actor in a leading role",
+        "actor in a supporting role",
+        "actress",
+        "actress in a leading role",
+        "actress in a supporting role",
     }
 
     # MatchedNominee stat is whether nomination should count towards aggregated nomination stats, not winner stats
@@ -877,7 +881,7 @@ def match_ids(
         statement=nom,
         films=[],
         people=[],
-        is_person=category_name in person_nominees,
+        is_person=category_name.lower() in person_nominees,
         note=official.note,
         official=official_nomination,
         stat=official_nomination and competitive,
@@ -954,6 +958,7 @@ def match_ids(
         "Musical Settings: ",
         "Interior Decoration: ",
         "in collaboration with ",
+        "In collaboration with ",
     ]
 
     # parse names from official nomination stmt:
@@ -1024,10 +1029,15 @@ def match_ids(
                 inexact_matches.append((name, imdb.people[matches[i]][0]))
 
             final_name = NOMINATION_TO_PERSON.get(name, name)
+            imdb_id = COUNTRY_CODES.get(final_name, imdb.people[matches[i]][1])
+            if imdb_id == "":
+                raise Exception(
+                    "Empty IMDb id in match_ids:", category_name, official, imdb
+                )
             result.people.append(
                 (
                     final_name,
-                    COUNTRY_CODES.get(final_name, imdb.people[matches[i]][1]),
+                    imdb_id,
                     official.nomination.find(final_name),
                     "",
                 )
@@ -2146,6 +2156,7 @@ def match_categories(
     pending: bool = False,
     suppress: bool = True,
     show_warnings: bool = False,
+    official_parser: Callable[[int], list[OfficialCategory]] = parse.parse_official,
 ) -> dict[int, list[MatchedCategory]]:
     """Matches official and IMDb categories for multiple editions.
 
@@ -2154,14 +2165,16 @@ def match_categories(
             include. If None, starts from 1st edition. Defaults to None.
         end (int | None, optional): edition of last Oscar ceremony to include.
             If None, ends at `start` if specified; otherwise, ends at
-            `CURRENT_EDITION` specified in top-level `.config`. Defaults to
-            None.
+            `CURRENT_EDITION` specified in top-level `.env`. Defaults to None.
         pending (bool, optional): True if ceremony hasn't occurred yet;
             otherwise, False. Defaults to False.
         suppress (bool, optional): if True, suppress printing matched entries.
             Defaults to True.
         show_warnings (bool, optional): if True, print warnings. Defaults to
             False.
+        official_parser (Callable[[int], list[OfficialCategory]], optional):
+            function that accepts edition number and returns that edition's
+            parsed list of OfficialCategory. Defaults to parse.parse_official.
 
     Returns:
         dict[int, list[MatchedCategory]]: edition -> matched categories
@@ -2180,7 +2193,7 @@ def match_categories(
     results: dict[int, list[MatchedCategory]] = {}
     for ed in tqdm(range(start, end + 1)):
         try:
-            official_categories = parse.parse_official(ed)
+            official_categories = official_parser(ed)
             imdb_categories = parse.parse_imdb(scrape.scrape_imdb(ed))
             pre_matched: list[tuple[OfficialCategory, IMDbCategory]] = []
 

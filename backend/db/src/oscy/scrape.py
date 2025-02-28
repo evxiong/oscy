@@ -11,11 +11,11 @@ import requests
 import time
 from .data import OfficialCategory, OfficialNominee, Edition
 from datetime import datetime
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 from lxml import html
 from tqdm import tqdm
 
-load_dotenv(find_dotenv(".config"))
+load_dotenv()
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:135.0) Gecko/20100101 Firefox/135.0"
@@ -96,7 +96,7 @@ def save_imdb(
     Args:
         start (int, optional): first ceremony edition to include. Defaults to 1.
         end (int, optional): last ceremony edition to include. Defaults to
-            `CURRENT_EDITION` specified in top-level `.config`.
+            `CURRENT_EDITION` specified in top-level `.env`.
         sleep (int, optional): time (s) between IMDb requests. Defaults to 1.
     """
     if start < 1 or end < start:
