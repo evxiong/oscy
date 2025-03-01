@@ -23,13 +23,14 @@ import fetchError from "@/app/_utils/fetchError";
 import { Metadata } from "next";
 
 export async function generateStaticParams() {
-  const editions: EditionType[] = await fetchError(
-    "/api/ceremonies",
-  );
-  const iterations = editions.map((e) => ({
-    iteration: e.iteration.toString(),
-  }));
-  return iterations;
+  // const editions: EditionType[] = await fetchError(
+  //   "/api/ceremonies",
+  // );
+  // const iterations = editions.map((e) => ({
+  //   iteration: e.iteration.toString(),
+  // }));
+  // return iterations;
+  return [];
 }
 
 export async function generateMetadata({

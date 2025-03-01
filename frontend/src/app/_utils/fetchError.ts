@@ -10,7 +10,7 @@ export default async function fetchError(url: string) {
         : process.env.VERCEL_URL
           ? `https://${process.env.VERCEL_URL}`
           : localProductionBuild
-            ? "http://localhost:8000"
+            ? `http://${process.env.API_HOST}:8000`
             : "http://localhost:3000";
 
     const finalUrl = localProductionBuild ? url.slice(4) : url;

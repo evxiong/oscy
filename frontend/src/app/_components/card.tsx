@@ -29,6 +29,7 @@ export default function Card({
   return (
     <div className="flex w-[135px] flex-shrink-0 flex-col gap-2">
       <Link
+        prefetch={false}
         href={
           showCeremony
             ? `/ceremony/${ceremonyId}`

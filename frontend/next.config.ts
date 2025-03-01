@@ -1,9 +1,8 @@
 import type { NextConfig } from "next";
-import { loadEnvConfig } from "@next/env";
-
-loadEnvConfig("../");
 
 const nextConfig: NextConfig = {
+  // Uncomment next line if using Docker
+  output: "standalone",
   images: {
     remotePatterns: [
       {
@@ -14,24 +13,6 @@ const nextConfig: NextConfig = {
         search: "",
       },
     ],
-  },
-  async rewrites() {
-    return [
-      {
-        source: "/openapi.json",
-        destination:
-          process.env.VERCEL_ENV === "production"
-            ? "https://oscy-api.vercel.app/openapi.json"
-            : "http://localhost:8000/openapi.json",
-      },
-      {
-        source: "/api/:path*",
-        destination:
-          process.env.VERCEL_ENV === "production"
-            ? "https://oscy-api.vercel.app/:path*"
-            : "http://localhost:8000/:path*",
-      },
-    ];
   },
 };
 

@@ -18,16 +18,17 @@ import fetchError from "@/app/_utils/fetchError";
 import { Metadata } from "next";
 
 export async function generateStaticParams() {
-  const categoryGroups: CategoryGroupInfo[] =
-    await fetchError("/api/categories");
-  const categoryIds = categoryGroups
-    .map((categoryGroup) =>
-      categoryGroup.categories.map((c) => ({
-        id: c.category_id.toString(),
-      })),
-    )
-    .flat();
-  return categoryIds;
+  // const categoryGroups: CategoryGroupInfo[] =
+  //   await fetchError("/api/categories");
+  // const categoryIds = categoryGroups
+  //   .map((categoryGroup) =>
+  //     categoryGroup.categories.map((c) => ({
+  //       id: c.category_id.toString(),
+  //     })),
+  //   )
+  //   .flat();
+  // return categoryIds;
+  return [];
 }
 
 export async function generateMetadata({

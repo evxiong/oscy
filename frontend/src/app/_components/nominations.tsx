@@ -124,6 +124,7 @@ function Category({
         <div className="sticky top-14 z-10 w-full flex-1 bg-white pb-4 sm:pb-0">
           <div className="sticky top-14 z-10">
             <Link
+              prefetch={false}
               href={
                 showCeremony
                   ? `/ceremony/${categoryInfo.ceremony_id}`
