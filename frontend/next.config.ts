@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import { loadEnvConfig } from "@next/env";
+
+loadEnvConfig("..");
 
 const nextConfig: NextConfig = {
   // Uncomment next line if using Docker
