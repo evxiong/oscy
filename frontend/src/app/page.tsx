@@ -49,7 +49,7 @@ export default function Home() {
             </h3>
           </div>
 
-          <div className="xs:flex xs:flex-row xs:gap-4 hidden">
+          <div className="hidden xs:flex xs:flex-row xs:gap-4">
             <a
               target="_blank"
               rel="noopener noreferrer"
@@ -61,7 +61,7 @@ export default function Home() {
             </a>
             <ExploreButton id="explore-1" text="Explore database" />
           </div>
-          <div className="xs:hidden flex flex-row gap-4">
+          <div className="flex flex-row gap-4 xs:hidden">
             <a
               target="_blank"
               rel="noopener noreferrer"
@@ -111,7 +111,15 @@ export default function Home() {
               No SQL, no problem
             </h2>
             <h3 className="mt-1 text-base font-medium leading-5 tracking-tight text-zinc-500">
-              User-friendly API handles most common queries.
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="/api/docs"
+                className="underline decoration-zinc-300 underline-offset-4 hover:decoration-zinc-500"
+              >
+                User-friendly API
+              </a>{" "}
+              handles most common queries.
             </h3>
           </div>
           <div className="flex flex-col rounded-md border p-4">

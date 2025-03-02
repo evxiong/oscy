@@ -27,9 +27,13 @@ pool = AsyncConnectionPool(conninfo, open=False)
 @asynccontextmanager
 async def connect():
     """Context manager that yields async db connection."""
-    if os.getenv("VERCEL_ENV") == "production" or os.getenv("VERCEL_ENV") == "preview":
+    if (
+        os.getenv("VERCEL_ENV") == "production"
+        or os.getenv("VERCEL_ENV") == "preview"
+        or os.getenv("PG_SSLMODE") == "require"
+    ):
         async with await psycopg.AsyncConnection.connect(conninfo) as aconn:
-            print("Vercel: Creating normal connection")
+            print("Creating normal connection")
             yield aconn
     else:
         try:
