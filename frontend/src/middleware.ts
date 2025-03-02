@@ -10,7 +10,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(
       process.env.VERCEL_ENV === "production"
         ? "https://oscy-api.vercel.app/docs"
-        : `http://${process.env.API_HOST}:8000/docs`,
+        : `http://localhost:8000/docs`,
     );
   }
   if (request.nextUrl.pathname === "/openapi.json") {
