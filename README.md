@@ -129,7 +129,7 @@ will be ~1.1 GB.
 2. Copy `.env.example` to a new file called `.env` and fill in the missing
    values. `TMDB_API_KEY` is optional (used to fetch images in the web app).
 
-3. Uncomment line 5 in [`frontend/next.config.ts`](/frontend/next.config.ts) so
+3. Uncomment line 8 in [`frontend/next.config.ts`](/frontend/next.config.ts) so
    that `output` is set to `"standalone"`.
 
 4. Build and run (make sure you are in the root project folder):
