@@ -100,17 +100,19 @@ example docs and web app are not designed to handle large amounts of traffic.
 installed, download [`data/db.sql`](data/db.sql) and run the following commands
 to create a new database called `oscy` containing the data:
 
-```bash
-$ createdb -U <username> oscy
+```shell
+# Create new database called 'oscy'
+createdb -U <username> oscy
 
-$ psql -X -U <username> -d oscy -f <path to db.sql>
+# Load data into database
+psql -X -U <username> -d oscy -f <path to db.sql>
 ```
 
 ### With Docker
 
-This will create three containers: one for the Postgres db, one for the API, and
-one for the Next.js frontend. The total size of the container images will be
-~1.1 GB.
+This will create three containers: one for the Postgres database, one for the
+API, and one for the Next.js frontend. The total size of the container images
+will be ~1.1 GB.
 
 #### Requirements
 
@@ -118,7 +120,11 @@ one for the Next.js frontend. The total size of the container images will be
 
 #### Instructions
 
-1. Run `git clone https://github.com/evxiong/oscy.git && cd oscy`
+1. Clone the repo:
+
+   ```shell
+   git clone https://github.com/evxiong/oscy.git && cd oscy
+   ```
 
 2. Copy `.env.example` to a new file called `.env` and fill in the missing
    values. `TMDB_API_KEY` is optional (used to fetch images in the web app).
@@ -126,14 +132,18 @@ one for the Next.js frontend. The total size of the container images will be
 3. Uncomment line 5 in [`frontend/next.config.ts`](/frontend/next.config.ts) so
    that `output` is set to `"standalone"`.
 
-4. Run `docker compose up` from the root project folder.
+4. Build and run (make sure you are in the root project folder):
+
+   ```shell
+   docker compose up
+   ```
 
 It may take several minutes to build the images. All three components (database,
-API, web app) should now be running:
+API, web app) should now be running and accessible from outside the containers:
 
-- Postgres db is accessible at `localhost:5433` (**NOT 5432**)
-- API is accessible at `localhost:8000`, docs are at `localhost:8000/docs`
-- Web app is accessible at `localhost:3000`
+- Postgres db at `localhost:5433` (**NOT 5432**)
+- API at `localhost:8000`, docs are at `localhost:8000/docs`
+- Web app at `localhost:3000`
 
 ### Without Docker
 
@@ -145,25 +155,57 @@ API, web app) should now be running:
 
 #### Instructions
 
-1. Run `git clone https://github.com/evxiong/oscy.git && cd oscy`
-2. Copy `.env.example` to a new file called `.env` and fill in the missing
-   values. `TMDB_API_KEY` is optional (used to fetch images in the web app).
-3. Create database:
+1. Clone the repo:
 
-   ```bash
-   $ createdb -U <username> oscy
-
-   $ psql -X -U <username> -d oscy -f data/db.sql
+   ```shell
+   git clone https://github.com/evxiong/oscy.git && cd oscy
    ```
 
-4. Set up frontend: `cd frontend && npm ci && npm run build && cd ..`
-5. Set up backend:
-   1. Create venv: `cd backend && python -m venv .venv && cd .venv`
-   2. [Activate venv](https://docs.python.org/3/library/venv.html#how-venvs-work):
-      - Linux/macOS: `source bin/activate`
-      - Windows: `source Scripts/activate`
-      - `which python` should now return a path containing `.venv`
-   3. `cd .. && pip install -r requirements.txt && cd ..`
+2. Copy `.env.example` to a new file called `.env` and fill in the missing
+   values. `TMDB_API_KEY` is optional (used to fetch images in the web app).
+
+3. Run the following commands to create the database:
+
+   ```shell
+   # Create new database called 'oscy'
+   createdb -U <username> oscy
+
+   # Load data into database
+   psql -X -U <username> -d oscy -f data/db.sql
+   ```
+
+4. Run the following commands to set up the frontend:
+
+   ```shell
+   cd frontend
+
+   # Install dependencies
+   npm ci
+
+   # Create optimized build
+   npm run build
+
+   cd ..
+   ```
+
+5. Run the following commands to set up the backend:
+
+   ```shell
+   cd backend
+
+   # Create virtual env
+   python -m venv .venv
+
+   # Activate virtual env
+   # (See https://docs.python.org/3/library/venv.html#how-venvs-work
+   # for platform-specific instructions)
+   source .venv/Scripts/activate
+
+   # Install required packages
+   pip install -r requirements.txt
+
+   cd ..
+   ```
 
 All three components (database, API, web app) can now be run:
 

@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Uncomment next line if using Docker
-  output: "standalone",
+  // output: "standalone",
   images: {
     remotePatterns: [
       {
