@@ -4,7 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from .routers import categories, ceremonies, nominations, entities_titles, search
 from .dependencies import pool
 
-ALLOWED_ORIGINS = ["http://localhost:3000", "http://localhost:3001"]
+ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://oscy.vercel.app",
+]
 
 
 @asynccontextmanager

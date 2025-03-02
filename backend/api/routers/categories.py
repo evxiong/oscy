@@ -1,4 +1,4 @@
-from ..dependencies import pool
+from ..dependencies import connect
 from ..models.category import (
     CategoryGroup,
     CategoryCategory,
@@ -34,7 +34,7 @@ async def get_category_hierarchy() -> list[CategoryGroup]:
     This hierarchy allows oscy to compute aggregate stats at each level, and
     reconstruct a category's name history.
     """
-    async with pool.connection() as con:
+    async with connect() as con:
         async with con.cursor(row_factory=class_row(CategoryRow)) as cur:  # type: ignore
             await cur.execute(
                 """
@@ -95,7 +95,7 @@ async def get_category_hierarchy() -> list[CategoryGroup]:
 
 @router.get("/{id}", summary="Get category by id")
 async def get_category_by_id(id: int) -> CategoryInfo | None:
-    async with pool.connection() as con:
+    async with connect() as con:
         async with con.cursor(row_factory=class_row(CategoryInfoRow)) as cur:  # type: ignore
             await cur.execute(
                 """

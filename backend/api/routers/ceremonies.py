@@ -1,4 +1,4 @@
-from ..dependencies import pool
+from ..dependencies import connect
 from ..models.ceremony import CeremonyInfo
 from ..models.nominations import Nominations
 from .nominations import get_nominations
@@ -11,7 +11,7 @@ router = APIRouter(prefix="/ceremonies", tags=["ceremonies"])
 
 @router.get("", summary="Get all ceremonies")
 async def list_ceremonies() -> list[CeremonyInfo]:
-    async with pool.connection() as con:
+    async with connect() as con:
         async with con.cursor(row_factory=class_row(CeremonyInfo)) as cur:  # type: ignore
             await cur.execute(
                 """
@@ -26,7 +26,7 @@ async def list_ceremonies() -> list[CeremonyInfo]:
 
 @router.get("/{id}", summary="Get ceremony by id")
 async def get_ceremony_by_id(id: int) -> Nominations | None:
-    async with pool.connection() as con:
+    async with connect() as con:
         async with con.cursor(row_factory=dict_row) as cur:  # type: ignore
             await cur.execute(
                 """

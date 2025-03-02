@@ -1,4 +1,4 @@
-from ..dependencies import pool
+from ..dependencies import connect
 from ..models.entity_title import (
     EntityOrTitle,
     Rankings,
@@ -17,7 +17,7 @@ router = APIRouter(tags=["entities and titles"])
 
 @router.get("/entities/{id}", summary="Get entity by id")
 async def get_entity_by_id(id: int) -> EntityOrTitle | None:
-    async with pool.connection() as con:
+    async with connect() as con:
         async with con.cursor(row_factory=class_row(RankingsRow)) as cur:  # type: ignore
             await cur.execute(
                 """
@@ -175,7 +175,7 @@ async def get_entity_by_id(id: int) -> EntityOrTitle | None:
 
 @router.get("/titles/{id}", summary="Get title by id")
 async def get_title_by_id(id: int) -> EntityOrTitle | None:
-    async with pool.connection() as con:
+    async with connect() as con:
         async with con.cursor(row_factory=class_row(RankingsRow)) as cur:  # type: ignore
             await cur.execute(
                 """
@@ -330,7 +330,7 @@ async def get_title_by_id(id: int) -> EntityOrTitle | None:
 
 @router.get("/imdb/{imdb_id}", summary="Get entity or title by IMDb id")
 async def get_entity_or_title_by_imdb_id(imdb_id: str) -> EntityOrTitle | None:
-    async with pool.connection() as con:
+    async with connect() as con:
         async with con.cursor() as cur:
             if imdb_id.startswith("tt"):
                 await cur.execute(

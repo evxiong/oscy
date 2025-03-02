@@ -1,5 +1,5 @@
 import os
-from ..dependencies import pool
+from ..dependencies import connect
 from ..enums import FilterAwardType, FilterType, FilterEntityType
 from ..models.search import (
     SearchResults,
@@ -156,7 +156,7 @@ async def search_all(
     - Get films nominated for Best Picture but not Best Director since 2000.
     > /search?award=oscar&type=title&noms_in_categories=Picture&no_noms_in_categories=Director&start_edition=72
     """
-    async with pool.connection() as con:
+    async with connect() as con:
         PAGE_SIZE = 10
 
         filter_c = (

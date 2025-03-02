@@ -1,5 +1,5 @@
 import os
-from ..dependencies import pool
+from ..dependencies import connect
 from ..enums import FilterAwardType, SortType
 from ..models.nominations import (
     Nominations,
@@ -93,7 +93,7 @@ async def get_nominations(
     - Get winners from the 96th Academy Awards.
     > /?award=oscar&start_edition=96&end_edition=96&winners_only=true
     """
-    async with pool.connection() as con:
+    async with connect() as con:
         async with con.cursor(row_factory=class_row(EditionRow)) as cur:  # type: ignore
             filter_c_bool = True if categories else False
             filter_c = (
