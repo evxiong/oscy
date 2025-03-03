@@ -2,11 +2,11 @@
 
 <div align="center">
 
-**Open-source Oscars database and API, designed for querying nomination stats**
+_Open-source Oscars database and API, designed for querying nomination stats_
 
-🎭 _pronounced OS-kee, a portmanteau of Oscar and Emmy_ 🎭
+<!-- 🎭 _pronounced OS-kee, a portmanteau of Oscar and Emmy_ 🎭 -->
 
-**Data last updated Feb. 2025 (includes 97th Oscars nominations)**
+**Data last updated Mar. 3, 2025 (includes 97th Oscars results)**
 
 [Website](https://oscy.vercel.app)&nbsp;&nbsp;·&nbsp;&nbsp;
 [Running locally](#running-locally)&nbsp;&nbsp;·&nbsp;&nbsp;

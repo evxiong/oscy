@@ -21299,126 +21299,126 @@ COPY public.nominees (id, award, edition_id, category_name_id, statement, is_per
 10573	oscar	96	73	Written by Bradley Cooper & Josh Singer	f	f	f		t	t
 10574	oscar	96	73	Screenplay by Samy Burch; Story by Samy Burch & Alex Mechanik	f	f	f		t	t
 10575	oscar	96	73	Written by Celine Song	f	f	f		t	t
-10661	oscar	97	87	Gints Zilbalodis, Matīss Kaža, Ron Dyens and Gregory Zalcman	f	t	f		t	t
-10662	oscar	97	87	Kelsey Mann and Mark Nielsen	f	t	f		t	t
-10663	oscar	97	87	Adam Elliot and Liz Kearney	f	t	f		t	t
-10664	oscar	97	87	Nick Park, Merlin Crossingham and Richard Beek	f	t	f		t	t
-10665	oscar	97	87	Chris Sanders and Jeff Hermann	f	t	f		t	t
-10666	oscar	97	90	Nicolas Keppens and Brecht Van Elslande	f	t	f		t	t
-10667	oscar	97	90	Shirin Sohani and Hossein Molayemi	f	t	f		t	t
-10668	oscar	97	90	Daisuke Nishio and Takashi Washio	f	t	f		t	t
-10669	oscar	97	90	Nina Gantz and Stienette Bosklopper	f	t	f		t	t
-10670	oscar	97	90	Loïc Espuche and Juliette Marquet	f	t	f		t	t
-10671	oscar	97	7	Lol Crawley	f	t	f		t	t
-10672	oscar	97	7	Greig Fraser	f	t	f		t	t
-10673	oscar	97	7	Paul Guilhaume	f	t	f		t	t
-10674	oscar	97	7	Ed Lachman	f	t	f		t	t
-10675	oscar	97	7	Jarin Blaschke	f	t	f		t	t
-10676	oscar	97	10	Arianne Phillips	f	t	f		t	t
-10677	oscar	97	10	Lisy Christl	f	t	f		t	t
-10678	oscar	97	10	Janty Yates and Dave Crossman	f	t	f		t	t
-10679	oscar	97	10	Linda Muir	f	t	f		t	t
-10680	oscar	97	10	Paul Tazewell	f	t	f		t	t
-10681	oscar	97	15	Sean Baker	f	t	f		t	t
-10682	oscar	97	15	Brady Corbet	f	t	f		t	t
-10683	oscar	97	15	James Mangold	f	t	f		t	t
-10684	oscar	97	15	Jacques Audiard	f	t	f		t	t
-10685	oscar	97	15	Coralie Fargeat	f	t	f		t	t
-10686	oscar	97	18	Shiori Ito, Eric Nyari and Hanna Aqvilin	f	t	f		t	t
-10687	oscar	97	18	Basel Adra, Rachel Szor, Hamdan Ballal and Yuval Abraham	f	t	f		t	t
-10688	oscar	97	18	Brendan Bellomo, Slava Leontyev, Aniela Sidorska and Paula DuPre' Pesmen	f	t	f		t	t
-10689	oscar	97	18	Johan Grimonprez, Daan Milius and Rémi Grellety	f	t	f		t	t
-10690	oscar	97	18	Julian Brave NoiseCat, Emily Kassie and Kellen Quinn	f	t	f		t	t
-10691	oscar	97	20	Kim A. Snyder and Janique L. Robillard	f	t	f		t	t
-10692	oscar	97	20	Smriti Mundhra and Maya Gnyp	f	t	f		t	t
-10693	oscar	97	20	Bill Morrison and Jamie Kalven	f	t	f		t	t
-10694	oscar	97	20	Ema Ryan Yamazaki and Eric Nyari	f	t	f		t	t
-10695	oscar	97	20	Molly O’Brien and Lisa Remington	f	t	f		t	t
-10696	oscar	97	94	Sean Baker	f	t	f		t	t
-10697	oscar	97	94	David Jancso	f	t	f		t	t
-10698	oscar	97	94	Nick Emerson	f	t	f		t	t
-10699	oscar	97	94	Juliette Welfling	f	t	f		t	t
-10700	oscar	97	94	Myron Kerstein	f	t	f		t	t
-10701	oscar	97	99	Brazil	f	t	f		t	t
-10702	oscar	97	99	Denmark	f	t	f		t	t
-10703	oscar	97	99	France	f	t	f		t	t
-10704	oscar	97	99	Germany	f	t	f		t	t
-10705	oscar	97	99	Latvia	f	t	f		t	t
-10706	oscar	97	101	Mike Marino, David Presto and Crystal Jurado	f	t	f		t	t
-10707	oscar	97	101	Julia Floch Carbonel, Emmanuel Janvier and Jean-Christophe Spadaccini	f	t	f		t	t
-10708	oscar	97	101	David White, Traci Loader and Suzanne Stokes-Munton	f	t	f		t	t
-10709	oscar	97	101	Pierre-Olivier Persin, Stéphanie Guillon and Marilyne Scarselli	f	t	f		t	t
-10710	oscar	97	101	Frances Hannon, Laura Blount and Sarah Nuth	f	t	f		t	t
-10711	oscar	97	22	Daniel Blumberg	f	t	f		t	t
-10712	oscar	97	22	Volker Bertelmann	f	t	f		t	t
-10713	oscar	97	22	Clément Ducol and Camille	f	t	f		t	t
-10714	oscar	97	22	John Powell and Stephen Schwartz	f	t	f		t	t
-10715	oscar	97	22	Kris Bowers	f	t	f		t	t
-10716	oscar	97	42	Music by Clément Ducol and Camille; Lyric by Clément Ducol, Camille and Jacques Audiard	f	t	f		t	t
-10717	oscar	97	42	Music and Lyric by Diane Warren	f	t	f		t	t
-10718	oscar	97	42	Music and Lyric by Abraham Alexander and Adrian Quesada	f	t	f		t	t
-10719	oscar	97	42	Music and Lyric by Camille and Clément Ducol	f	t	f		t	t
-10720	oscar	97	42	Music and Lyric by Elton John, Brandi Carlile, Andrew Watt and Bernie Taupin	f	t	f		t	t
-10721	oscar	97	106	Alex Coco, Samantha Quan and Sean Baker, Producers	f	t	f		t	t
-10722	oscar	97	106	Nick Gordon, Brian Young, Andrew Morrison, D.J. Gugenheim and Brady Corbet, Producers	f	t	f		t	t
-10723	oscar	97	106	Fred Berger, James Mangold and Alex Heineman, Producers	f	t	f		t	t
-10724	oscar	97	106	Tessa Ross, Juliette Howell and Michael A. Jackman, Producers	f	t	f		t	t
-10725	oscar	97	106	Mary Parent, Cale Boyter, Tanya Lapointe and Denis Villeneuve, Producers	f	t	f		t	t
-10726	oscar	97	106	Pascal Caucheteux and Jacques Audiard, Producers	f	t	f		t	t
-10727	oscar	97	106	Maria Carlota Bruno and Rodrigo Teixeira, Producers	f	t	f		t	t
-10728	oscar	97	106	Dede Gardner, Jeremy Kleiner and Joslyn Barnes, Producers	f	t	f		t	t
-10729	oscar	97	106	Coralie Fargeat and Tim Bevan & Eric Fellner, Producers	f	t	f		t	t
-10730	oscar	97	106	Marc Platt, Producer	f	t	f		t	t
-10731	oscar	97	44	Production Design: Judy Becker; Set Decoration: Patricia Cuccia	f	t	f		t	t
-10732	oscar	97	44	Production Design: Suzie Davies; Set Decoration: Cynthia Sleiter	f	t	f		t	t
-10733	oscar	97	44	Production Design: Patrice Vermette; Set Decoration: Shane Vieau	f	t	f		t	t
-10734	oscar	97	44	Production Design: Craig Lathrop; Set Decoration: Beatrice Brentnerová	f	t	f		t	t
-10735	oscar	97	44	Production Design: Nathan Crowley; Set Decoration: Lee Sandales	f	t	f		t	t
-10736	oscar	97	48	Sam Cutler-Kreutz and David Cutler-Kreutz	f	t	f		t	t
-10737	oscar	97	48	Adam J. Graves and Suchitra Mattai	f	t	f		t	t
-10738	oscar	97	48	Victoria Warmerdam and Trent	f	t	f		t	t
-10739	oscar	97	48	Cindy Lee and Darwin Shaw	f	t	f		t	t
-10740	oscar	97	48	Nebojša Slijepčević and Danijel Pek	f	t	f		t	t
-10741	oscar	97	55	Tod A. Maitland, Donald Sylvester, Ted Caplan, Paul Massey and David Giammarco	f	t	f		t	t
-10742	oscar	97	55	Gareth John, Richard King, Ron Bartlett and Doug Hemphill	f	t	f		t	t
-10743	oscar	97	55	Erwan Kerzanet, Aymeric Devoldère, Maxence Dussère, Cyril Holtz and Niels Barletta	f	t	f		t	t
-10744	oscar	97	55	Simon Hayes, Nancy Nugent Title, Jack Dolman, Andy Nelson and John Marquis	f	t	f		t	t
-10745	oscar	97	55	Randy Thom, Brian Chumney, Gary A. Rizzo and Leff Lefferts	f	t	f		t	t
-10746	oscar	97	112	Eric Barba, Nelson Sepulveda-Fauser, Daniel Macarin and Shane Mahan	f	t	f		t	t
-10747	oscar	97	112	Luke Millar, David Clayton, Keith Herft and Peter Stubbs	f	t	f		t	t
-10748	oscar	97	112	Paul Lambert, Stephen James, Rhys Salcombe and Gerd Nefzer	f	t	f		t	t
-10749	oscar	97	112	Erik Winquist, Stephen Unterfranz, Paul Story and Rodney Burke	f	t	f		t	t
-10750	oscar	97	112	Pablo Helman, Jonathan Fawkner, David Shirk and Paul Corbould	f	t	f		t	t
-10751	oscar	97	72	Screenplay by James Mangold and Jay Cocks	f	t	f		t	t
-10752	oscar	97	72	Screenplay by Peter Straughan	f	t	f		t	t
-10753	oscar	97	72	Screenplay by Jacques Audiard; In collaboration with Thomas Bidegain, Léa Mysius and Nicolas Livecchi	f	t	f		t	t
-10754	oscar	97	72	Screenplay by RaMell Ross & Joslyn Barnes	f	t	f		t	t
-10755	oscar	97	72	Screenplay by Clint Bentley, Greg Kwedar; Story by Clint Bentley, Greg Kwedar, Clarence Maclin, John "Divine G" Whitfield	f	t	f		t	t
-10756	oscar	97	73	Written by Sean Baker	f	t	f		t	t
-10757	oscar	97	73	Written by Brady Corbet, Mona Fastvold	f	t	f		t	t
-10758	oscar	97	73	Written by Jesse Eisenberg	f	t	f		t	t
-10759	oscar	97	73	Written by Moritz Binder, Tim Fehlbaum; Co-Written by Alex David	f	t	f		t	t
-10760	oscar	97	73	Written by Coralie Fargeat	f	t	f		t	t
-10641	oscar	97	2	Adrien Brody	t	t	f		t	t
-10642	oscar	97	2	Timothée Chalamet	t	t	f		t	t
-10643	oscar	97	2	Colman Domingo	t	t	f		t	t
-10644	oscar	97	2	Ralph Fiennes	t	t	f		t	t
-10645	oscar	97	2	Sebastian Stan	t	t	f		t	t
-10646	oscar	97	3	Yura Borisov	t	t	f		t	t
-10647	oscar	97	3	Kieran Culkin	t	t	f		t	t
-10648	oscar	97	3	Edward Norton	t	t	f		t	t
-10649	oscar	97	3	Guy Pearce	t	t	f		t	t
-10650	oscar	97	3	Jeremy Strong	t	t	f		t	t
-10651	oscar	97	5	Cynthia Erivo	t	t	f		t	t
-10652	oscar	97	5	Karla Sofía Gascón	t	t	f		t	t
-10653	oscar	97	5	Mikey Madison	t	t	f		t	t
-10654	oscar	97	5	Demi Moore	t	t	f		t	t
-10655	oscar	97	5	Fernanda Torres	t	t	f		t	t
-10656	oscar	97	6	Monica Barbaro	t	t	f		t	t
-10657	oscar	97	6	Ariana Grande	t	t	f		t	t
-10658	oscar	97	6	Felicity Jones	t	t	f		t	t
-10659	oscar	97	6	Isabella Rossellini	t	t	f		t	t
-10660	oscar	97	6	Zoe Saldaña	t	t	f		t	t
+10709	oscar	97	101	Pierre-Olivier Persin, Stéphanie Guillon and Marilyne Scarselli	f	f	t		t	t
+10662	oscar	97	87	Kelsey Mann and Mark Nielsen	f	f	f		t	t
+10663	oscar	97	87	Adam Elliot and Liz Kearney	f	f	f		t	t
+10664	oscar	97	87	Nick Park, Merlin Crossingham and Richard Beek	f	f	f		t	t
+10665	oscar	97	87	Chris Sanders and Jeff Hermann	f	f	f		t	t
+10666	oscar	97	90	Nicolas Keppens and Brecht Van Elslande	f	f	f		t	t
+10711	oscar	97	22	Daniel Blumberg	f	f	t		t	t
+10668	oscar	97	90	Daisuke Nishio and Takashi Washio	f	f	f		t	t
+10669	oscar	97	90	Nina Gantz and Stienette Bosklopper	f	f	f		t	t
+10670	oscar	97	90	Loïc Espuche and Juliette Marquet	f	f	f		t	t
+10716	oscar	97	42	Music by Clément Ducol and Camille; Lyric by Clément Ducol, Camille and Jacques Audiard	f	f	t		t	t
+10672	oscar	97	7	Greig Fraser	f	f	f		t	t
+10673	oscar	97	7	Paul Guilhaume	f	f	f		t	t
+10674	oscar	97	7	Ed Lachman	f	f	f		t	t
+10675	oscar	97	7	Jarin Blaschke	f	f	f		t	t
+10676	oscar	97	10	Arianne Phillips	f	f	f		t	t
+10677	oscar	97	10	Lisy Christl	f	f	f		t	t
+10678	oscar	97	10	Janty Yates and Dave Crossman	f	f	f		t	t
+10679	oscar	97	10	Linda Muir	f	f	f		t	t
+10721	oscar	97	106	Alex Coco, Samantha Quan and Sean Baker, Producers	f	f	t		t	t
+10682	oscar	97	15	Brady Corbet	f	f	f		t	t
+10683	oscar	97	15	James Mangold	f	f	f		t	t
+10684	oscar	97	15	Jacques Audiard	f	f	f		t	t
+10685	oscar	97	15	Coralie Fargeat	f	f	f		t	t
+10686	oscar	97	18	Shiori Ito, Eric Nyari and Hanna Aqvilin	f	f	f		t	t
+10688	oscar	97	18	Brendan Bellomo, Slava Leontyev, Aniela Sidorska and Paula DuPre' Pesmen	f	f	f		t	t
+10689	oscar	97	18	Johan Grimonprez, Daan Milius and Rémi Grellety	f	f	f		t	t
+10690	oscar	97	18	Julian Brave NoiseCat, Emily Kassie and Kellen Quinn	f	f	f		t	t
+10691	oscar	97	20	Kim A. Snyder and Janique L. Robillard	f	f	f		t	t
+10692	oscar	97	20	Smriti Mundhra and Maya Gnyp	f	f	f		t	t
+10693	oscar	97	20	Bill Morrison and Jamie Kalven	f	f	f		t	t
+10694	oscar	97	20	Ema Ryan Yamazaki and Eric Nyari	f	f	f		t	t
+10697	oscar	97	94	David Jancso	f	f	f		t	t
+10698	oscar	97	94	Nick Emerson	f	f	f		t	t
+10699	oscar	97	94	Juliette Welfling	f	f	f		t	t
+10700	oscar	97	94	Myron Kerstein	f	f	f		t	t
+10702	oscar	97	99	Denmark	f	f	f		t	t
+10703	oscar	97	99	France	f	f	f		t	t
+10704	oscar	97	99	Germany	f	f	f		t	t
+10705	oscar	97	99	Latvia	f	f	f		t	t
+10706	oscar	97	101	Mike Marino, David Presto and Crystal Jurado	f	f	f		t	t
+10707	oscar	97	101	Julia Floch Carbonel, Emmanuel Janvier and Jean-Christophe Spadaccini	f	f	f		t	t
+10708	oscar	97	101	David White, Traci Loader and Suzanne Stokes-Munton	f	f	f		t	t
+10710	oscar	97	101	Frances Hannon, Laura Blount and Sarah Nuth	f	f	f		t	t
+10712	oscar	97	22	Volker Bertelmann	f	f	f		t	t
+10713	oscar	97	22	Clément Ducol and Camille	f	f	f		t	t
+10714	oscar	97	22	John Powell and Stephen Schwartz	f	f	f		t	t
+10715	oscar	97	22	Kris Bowers	f	f	f		t	t
+10717	oscar	97	42	Music and Lyric by Diane Warren	f	f	f		t	t
+10718	oscar	97	42	Music and Lyric by Abraham Alexander and Adrian Quesada	f	f	f		t	t
+10719	oscar	97	42	Music and Lyric by Camille and Clément Ducol	f	f	f		t	t
+10720	oscar	97	42	Music and Lyric by Elton John, Brandi Carlile, Andrew Watt and Bernie Taupin	f	f	f		t	t
+10661	oscar	97	87	Gints Zilbalodis, Matīss Kaža, Ron Dyens and Gregory Zalcman	f	f	t		t	t
+10667	oscar	97	90	Shirin Sohani and Hossein Molayemi	f	f	t		t	t
+10671	oscar	97	7	Lol Crawley	f	f	t		t	t
+10680	oscar	97	10	Paul Tazewell	f	f	t		t	t
+10681	oscar	97	15	Sean Baker	f	f	t		t	t
+10687	oscar	97	18	Basel Adra, Rachel Szor, Hamdan Ballal and Yuval Abraham	f	f	t		t	t
+10695	oscar	97	20	Molly O’Brien and Lisa Remington	f	f	t		t	t
+10696	oscar	97	94	Sean Baker	f	f	t		t	t
+10701	oscar	97	99	Brazil	f	f	t		t	t
+10756	oscar	97	73	Written by Sean Baker	f	f	t		t	t
+10642	oscar	97	2	Timothée Chalamet	t	f	f		t	t
+10643	oscar	97	2	Colman Domingo	t	f	f		t	t
+10644	oscar	97	2	Ralph Fiennes	t	f	f		t	t
+10645	oscar	97	2	Sebastian Stan	t	f	f		t	t
+10646	oscar	97	3	Yura Borisov	t	f	f		t	t
+10648	oscar	97	3	Edward Norton	t	f	f		t	t
+10649	oscar	97	3	Guy Pearce	t	f	f		t	t
+10650	oscar	97	3	Jeremy Strong	t	f	f		t	t
+10651	oscar	97	5	Cynthia Erivo	t	f	f		t	t
+10652	oscar	97	5	Karla Sofía Gascón	t	f	f		t	t
+10654	oscar	97	5	Demi Moore	t	f	f		t	t
+10655	oscar	97	5	Fernanda Torres	t	f	f		t	t
+10656	oscar	97	6	Monica Barbaro	t	f	f		t	t
+10657	oscar	97	6	Ariana Grande	t	f	f		t	t
+10658	oscar	97	6	Felicity Jones	t	f	f		t	t
+10659	oscar	97	6	Isabella Rossellini	t	f	f		t	t
+10722	oscar	97	106	Nick Gordon, Brian Young, Andrew Morrison, D.J. Gugenheim and Brady Corbet, Producers	f	f	f		t	t
+10723	oscar	97	106	Fred Berger, James Mangold and Alex Heineman, Producers	f	f	f		t	t
+10724	oscar	97	106	Tessa Ross, Juliette Howell and Michael A. Jackman, Producers	f	f	f		t	t
+10725	oscar	97	106	Mary Parent, Cale Boyter, Tanya Lapointe and Denis Villeneuve, Producers	f	f	f		t	t
+10726	oscar	97	106	Pascal Caucheteux and Jacques Audiard, Producers	f	f	f		t	t
+10727	oscar	97	106	Maria Carlota Bruno and Rodrigo Teixeira, Producers	f	f	f		t	t
+10728	oscar	97	106	Dede Gardner, Jeremy Kleiner and Joslyn Barnes, Producers	f	f	f		t	t
+10729	oscar	97	106	Coralie Fargeat and Tim Bevan & Eric Fellner, Producers	f	f	f		t	t
+10730	oscar	97	106	Marc Platt, Producer	f	f	f		t	t
+10731	oscar	97	44	Production Design: Judy Becker; Set Decoration: Patricia Cuccia	f	f	f		t	t
+10732	oscar	97	44	Production Design: Suzie Davies; Set Decoration: Cynthia Sleiter	f	f	f		t	t
+10733	oscar	97	44	Production Design: Patrice Vermette; Set Decoration: Shane Vieau	f	f	f		t	t
+10734	oscar	97	44	Production Design: Craig Lathrop; Set Decoration: Beatrice Brentnerová	f	f	f		t	t
+10736	oscar	97	48	Sam Cutler-Kreutz and David Cutler-Kreutz	f	f	f		t	t
+10737	oscar	97	48	Adam J. Graves and Suchitra Mattai	f	f	f		t	t
+10739	oscar	97	48	Cindy Lee and Darwin Shaw	f	f	f		t	t
+10740	oscar	97	48	Nebojša Slijepčević and Danijel Pek	f	f	f		t	t
+10741	oscar	97	55	Tod A. Maitland, Donald Sylvester, Ted Caplan, Paul Massey and David Giammarco	f	f	f		t	t
+10743	oscar	97	55	Erwan Kerzanet, Aymeric Devoldère, Maxence Dussère, Cyril Holtz and Niels Barletta	f	f	f		t	t
+10744	oscar	97	55	Simon Hayes, Nancy Nugent Title, Jack Dolman, Andy Nelson and John Marquis	f	f	f		t	t
+10745	oscar	97	55	Randy Thom, Brian Chumney, Gary A. Rizzo and Leff Lefferts	f	f	f		t	t
+10746	oscar	97	112	Eric Barba, Nelson Sepulveda-Fauser, Daniel Macarin and Shane Mahan	f	f	f		t	t
+10747	oscar	97	112	Luke Millar, David Clayton, Keith Herft and Peter Stubbs	f	f	f		t	t
+10749	oscar	97	112	Erik Winquist, Stephen Unterfranz, Paul Story and Rodney Burke	f	f	f		t	t
+10750	oscar	97	112	Pablo Helman, Jonathan Fawkner, David Shirk and Paul Corbould	f	f	f		t	t
+10751	oscar	97	72	Screenplay by James Mangold and Jay Cocks	f	f	f		t	t
+10753	oscar	97	72	Screenplay by Jacques Audiard; In collaboration with Thomas Bidegain, Léa Mysius and Nicolas Livecchi	f	f	f		t	t
+10754	oscar	97	72	Screenplay by RaMell Ross & Joslyn Barnes	f	f	f		t	t
+10755	oscar	97	72	Screenplay by Clint Bentley, Greg Kwedar; Story by Clint Bentley, Greg Kwedar, Clarence Maclin, John "Divine G" Whitfield	f	f	f		t	t
+10757	oscar	97	73	Written by Brady Corbet, Mona Fastvold	f	f	f		t	t
+10758	oscar	97	73	Written by Jesse Eisenberg	f	f	f		t	t
+10759	oscar	97	73	Written by Moritz Binder, Tim Fehlbaum; Co-Written by Alex David	f	f	f		t	t
+10760	oscar	97	73	Written by Coralie Fargeat	f	f	f		t	t
+10641	oscar	97	2	Adrien Brody	t	f	t		t	t
+10647	oscar	97	3	Kieran Culkin	t	f	t		t	t
+10653	oscar	97	5	Mikey Madison	t	f	t		t	t
+10660	oscar	97	6	Zoe Saldaña	t	f	t		t	t
+10735	oscar	97	44	Production Design: Nathan Crowley; Set Decoration: Lee Sandales	f	f	t		t	t
+10738	oscar	97	48	Victoria Warmerdam and Trent	f	f	t		t	t
+10742	oscar	97	55	Gareth John, Richard King, Ron Bartlett and Doug Hemphill	f	f	t		t	t
+10748	oscar	97	112	Paul Lambert, Stephen James, Rhys Salcombe and Gerd Nefzer	f	f	t		t	t
+10752	oscar	97	72	Screenplay by Peter Straughan	f	f	t		t	t
 \.
 
 
@@ -48321,93 +48321,81 @@ COPY public.nominees_titles (id, nominee_id, title_id, detail, winner) FROM stdi
 10567	10573	10452	{}	f
 10568	10574	10568	{}	f
 10569	10575	10537	{}	f
-10635	10641	10635	{}	f
 10636	10642	10636	{}	f
 10637	10643	10637	{}	f
 10638	10644	10638	{}	f
 10639	10645	10639	{}	f
 10640	10646	10640	{}	f
-10641	10647	10641	{}	f
 10642	10648	10636	{}	f
 10643	10649	10635	{}	f
 10644	10650	10639	{}	f
 10645	10651	10645	{}	f
 10646	10652	10646	{}	f
-10647	10653	10640	{}	f
 10648	10654	10648	{}	f
 10649	10655	10649	{}	f
 10650	10656	10636	{}	f
 10651	10657	10645	{}	f
 10652	10658	10635	{}	f
-10653	10659	10638	{}	f
-10654	10660	10646	{}	f
-10655	10661	10655	{}	f
 10656	10662	10656	{}	f
 10657	10663	10657	{}	f
 10658	10664	10658	{}	f
 10659	10665	10659	{}	f
-10660	10666	10660	{}	f
-10661	10667	10661	{}	f
 10662	10668	10662	{}	f
 10663	10669	10663	{}	f
 10664	10670	10664	{}	f
-10665	10671	10635	{}	f
 10666	10672	10666	{}	f
-10667	10673	10646	{}	f
 10668	10674	10668	{}	f
 10669	10675	10669	{}	f
 10670	10676	10636	{}	f
-10671	10677	10638	{}	f
 10672	10678	10672	{}	f
 10673	10679	10669	{}	f
-10674	10680	10645	{}	f
-10675	10681	10640	{}	f
 10676	10682	10635	{}	f
 10677	10683	10636	{}	f
 10678	10684	10646	{}	f
 10679	10685	10648	{}	f
-10680	10686	10680	{}	f
-10681	10687	10681	{}	f
 10682	10688	10682	{}	f
 10683	10689	10683	{}	f
 10684	10690	10684	{}	f
 10685	10691	10685	{}	f
 10686	10692	10686	{}	f
-10687	10693	10687	{}	f
 10688	10694	10688	{}	f
-10689	10695	10689	{}	f
-10690	10696	10640	{}	f
 10691	10697	10635	{}	f
 10692	10698	10638	{}	f
+10647	10653	10640	{}	t
+10661	10667	10661	{}	t
+10681	10687	10681	{}	t
+10635	10641	10635	{}	t
+10653	10659	10638	{}	f
+10654	10660	10646	{}	t
+10655	10661	10655	{}	t
+10660	10666	10660	{}	f
+10665	10671	10635	{}	t
+10667	10673	10646	{}	f
+10671	10677	10638	{}	f
+10674	10680	10645	{}	t
+10675	10681	10640	{}	t
+10680	10686	10680	{}	f
+10687	10693	10687	{}	f
+10689	10695	10689	{}	t
+10690	10696	10640	{}	t
 10693	10699	10646	{}	f
 10694	10700	10645	{}	f
-10695	10701	10649	{}	f
-10696	10702	10696	{}	f
 10697	10703	10646	{}	f
 10698	10704	10698	{}	f
 10699	10705	10655	{}	f
 10700	10706	10700	{}	f
-10701	10707	10646	{}	f
 10702	10708	10669	{}	f
-10703	10709	10648	{}	f
 10704	10710	10645	{}	f
-10705	10711	10635	{}	f
 10706	10712	10638	{}	f
 10707	10713	10646	{}	f
 10708	10714	10645	{}	f
-10709	10715	10659	{}	f
-10710	10716	10646	{"El Mal"}	f
-10711	10717	10711	{"The Journey"}	f
 10712	10718	10637	{"Like A Bird"}	f
 10713	10719	10646	{"Mi Camino"}	f
 10714	10720	10714	{"Never Too Late"}	f
-10715	10721	10640	{}	f
-10716	10722	10635	{}	f
 10717	10723	10636	{}	f
 10718	10724	10638	{}	f
 10719	10725	10666	{}	f
 10720	10726	10646	{}	f
-10721	10727	10649	{}	f
 10722	10728	10722	{}	f
 10723	10729	10648	{}	f
 10724	10730	10645	{}	f
@@ -48415,32 +48403,44 @@ COPY public.nominees_titles (id, nominee_id, title_id, detail, winner) FROM stdi
 10726	10732	10638	{}	f
 10727	10733	10666	{}	f
 10728	10734	10669	{}	f
-10729	10735	10645	{}	f
 10730	10736	10730	{}	f
 10731	10737	10731	{}	f
-10732	10738	10732	{}	f
 10733	10739	10733	{}	f
 10734	10740	10734	{}	f
-10735	10741	10636	{}	f
-10736	10742	10666	{}	f
 10737	10743	10646	{}	f
-10738	10744	10645	{}	f
 10739	10745	10659	{}	f
 10740	10746	10740	{}	f
 10741	10747	10741	{}	f
-10742	10748	10666	{}	f
 10743	10749	10743	{}	f
 10744	10750	10645	{}	f
 10745	10751	10636	{}	f
-10746	10752	10638	{}	f
 10747	10753	10646	{}	f
-10748	10754	10722	{}	f
 10749	10755	10637	{}	f
-10750	10756	10640	{}	f
 10751	10757	10635	{}	f
-10752	10758	10641	{}	f
 10753	10759	10753	{}	f
 10754	10760	10648	{}	f
+10641	10647	10641	{}	t
+10695	10701	10649	{}	t
+10742	10748	10666	{}	t
+10696	10702	10696	{}	f
+10701	10707	10646	{}	f
+10703	10709	10648	{}	t
+10705	10711	10635	{}	t
+10709	10715	10659	{}	f
+10710	10716	10646	{"El Mal"}	t
+10711	10717	10711	{"The Journey"}	f
+10715	10721	10640	{}	t
+10716	10722	10635	{}	f
+10721	10727	10649	{}	f
+10729	10735	10645	{}	t
+10732	10738	10732	{}	t
+10735	10741	10636	{}	f
+10738	10744	10645	{}	f
+10746	10752	10638	{}	t
+10748	10754	10722	{}	f
+10750	10756	10640	{}	t
+10752	10758	10641	{}	f
+10736	10742	10666	{}	t
 \.
 
 

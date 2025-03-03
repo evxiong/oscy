@@ -1,17 +1,16 @@
 # data
 
-Last updated Feb. 2025 to include nominations for the 97th Academy Awards.
-
 ## db.sql
 
 Result of calling `pg_dump -O -U <username> <dbname> > db.sql`. To copy this
-dumped data to your own database, create a new database (called `oscy` in the
-following example), then reload `db.sql` into the new database:
+dumped data to your own database, run the following commands:
 
-```bash
-$ createdb -U <username> oscy
+```shell
+# Create new database called 'oscy'
+createdb -U <username> oscy
 
-$ psql -X -U <username> -d oscy -f <path to db.sql>
+# Load data into database
+psql -X -U <username> -d oscy -f <path to db.sql>
 ```
 
 ## oscars.csv
