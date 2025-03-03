@@ -10,7 +10,7 @@ from psycopg import sql
 from psycopg.rows import dict_row
 from tqdm import tqdm
 
-load_dotenv()
+load_dotenv(override=True)
 
 DB_NAME = os.getenv("PG_DBNAME") or ""
 
@@ -486,7 +486,7 @@ def nominations_to_csv():
                 LEFT JOIN nominees_titles nt ON nt.nominee_id = n.id
                 LEFT JOIN titles t ON t.id = nt.title_id
                 WHERE n.award = 'oscar'
-                ORDER BY e.iteration, c.id, n.winner DESC, n.id ASC                
+                ORDER BY e.iteration, c.id, n.winner DESC, n.id ASC, ne.statement_ind ASC, nt.winner DESC
                 """
             )
             results: list[dict] = cur.fetchall()

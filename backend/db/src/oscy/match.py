@@ -19,7 +19,7 @@ from rapidfuzz import process, fuzz
 from tqdm import tqdm
 from typing import Callable
 
-load_dotenv()
+load_dotenv(override=True)
 
 # hard-coded category equivalents that fuzzy matching doesn't handle well...put
 # this in a yaml file
