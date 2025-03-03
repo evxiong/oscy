@@ -69,7 +69,7 @@ export function ceremonyToTopFive(
 
   const titleIdToCategoryIndex = new Map();
 
-  // rankings: picture, director or unique picture, actor, actress, writing w/ most noms
+  // rankings: picture, director or unique picture, actor, actress, writing w/ most wins
   for (let i = 0; i < ceremony.categories.length; i++) {
     const ind = categoryToIndex.get(ceremony.categories[i].short_name);
     if (ind !== undefined) {
@@ -91,8 +91,11 @@ export function ceremonyToTopFive(
     }
   }
 
-  // iterate thru titles sorted by noms desc until matching winner title id found
-  for (const t of nominations.stats.title_stats) {
+  // iterate thru titles sorted by wins desc until matching winner title id found
+  const sortedTitleStats = [...nominations.stats.title_stats].sort(
+    (a, b) => b.wins - a.wins || b.noms - a.noms,
+  );
+  for (const t of sortedTitleStats) {
     const ind = titleIdToCategoryIndex.get(t.id);
     if (ind !== undefined) {
       indices[4] = ind;
