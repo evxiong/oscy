@@ -6,7 +6,7 @@ _Open-source Oscars database and API, designed for querying nomination stats_
 
 <!-- 🎭 _pronounced OS-kee, a portmanteau of Oscar and Emmy_ 🎭 -->
 
-**Data last updated Mar. 3, 2025 (includes 97th Oscars results)**
+**Data last updated Apr. 3, 2026 (includes 98th Oscars results)**
 
 [Website](https://oscy.vercel.app)&nbsp;&nbsp;·&nbsp;&nbsp;
 [Running locally](#running-locally)&nbsp;&nbsp;·&nbsp;&nbsp;
@@ -23,8 +23,7 @@ matched to its corresponding IMDb ids, allowing you to extend the capabilities
 of this database as needed (including with
 [TMDB](https://developer.themoviedb.org/reference/find-by-id)).
 
-> \* Primetime Emmy nominations will be added in the near future, hopefully ~
-> Summer 2025.
+> \* Primetime Emmy nominations will be added in the near future
 
 See oscy in action at [oscy.vercel.app](https://oscy.vercel.app).
 
@@ -37,7 +36,7 @@ for more details about the nominations included in the database.
 
 [`data/`](/data/)
 
-- [`db.sql`](/data/db.sql): a `pg_dump` of the latest version of the database,
+- [`db.dump`](/data/db.dump): a `pg_dump` of the latest version of the database,
   allowing you to reconstruct the database locally
 - [`oscars.csv`](/data/oscars.csv): a CSV file containing all joined Oscar
   nomination data
@@ -97,15 +96,15 @@ example docs and web app are not designed to handle large amounts of traffic.
 ### Database only
 
 **If you are only interested in the database** and you already have Postgres 13+
-installed, download [`data/db.sql`](data/db.sql) and run the following commands
-to create a new database called `oscy` containing the data:
+installed, download [`data/db.dump`](data/db.dump) and run the following
+commands to create a new database called `oscy` containing the data:
 
 ```shell
 # Create new database called 'oscy'
 createdb -U <username> oscy
 
 # Load data into database
-psql -X -U <username> -d oscy -f <path to db.sql>
+pg_restore -O -1 -U <username> -d oscy <path to db.dump>
 ```
 
 ### With Docker
@@ -171,7 +170,7 @@ API, web app) should now be running and accessible from outside the containers:
    createdb -U <username> oscy
 
    # Load data into database
-   psql -X -U <username> -d oscy -f data/db.sql
+   pg_restore -O -1 -U <username> -d oscy data/db.dump
    ```
 
 4. Run the following commands to set up the frontend:
@@ -217,9 +216,9 @@ All three components (database, API, web app) can now be run:
 
 ## Future direction
 
-Primetime Emmy nominations will be added in the near future (hopefully around
-Summer 2025), though it may take longer due to the large number of categories
-and lack of centralized, accurate data.
+Primetime Emmy nominations will be added in the near future, though it may take
+longer due to the large number of categories and lack of centralized, accurate
+data.
 
 ## Technologies used
 

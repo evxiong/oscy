@@ -1,16 +1,16 @@
 # data
 
-## db.sql
+## db.dump
 
-Result of calling `pg_dump -O -U <username> <dbname> > db.sql`. To copy this
-dumped data to your own database, run the following commands:
+Result of calling `pg_dump -Fc -U <username> -d <dbname> > db.dump`. To copy
+this dumped data to your own database, run the following commands:
 
 ```shell
 # Create new database called 'oscy'
 createdb -U <username> oscy
 
 # Load data into database
-psql -X -U <username> -d oscy -f <path to db.sql>
+pg_restore -O -1 -U <username> -d oscy <path to db.dump>
 ```
 
 ## oscars.csv
