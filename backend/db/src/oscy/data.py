@@ -41,7 +41,7 @@ class MatchedNominee:
     statement: str
     films: list[
         tuple[str, str, bool, list[str]]
-    ]  # title, imdb id, winner, detail (song titles or dance numbers assoc with title)
+    ]  # title, imdb id, winner, detail (characters, song titles, or dance numbers assoc with title)
     people: list[
         tuple[str, str, int, str]
     ]  # name, imdb id, start index in nomination stmt, role on set (does not apply to oscars)
@@ -50,6 +50,7 @@ class MatchedNominee:
     official: bool
     stat: bool
     pending: bool
+    id: int | None = None
 
 
 @dataclass

@@ -2,22 +2,20 @@
 Functions for parsing IMDb and official data.
 """
 
-from .data import OfficialCategory, OfficialNominee, IMDbCategory, IMDbNominee
+import os
+
 from lxml import html
 
+from .data import IMDbCategory, IMDbNominee, OfficialCategory, OfficialNominee
 
-def parse_official(
-    edition: int, file_path: str = "data/oscars.html"
-) -> list[OfficialCategory]:
+
+def parse_official(edition: int) -> list[OfficialCategory]:
     """Gets edition's categories from official Oscars database HTML file.
 
-    Before running this function, go to https://awardsdatabase.oscars.org/,
-    select all award years, and save HTML page to data/oscars.html.
+    Before running this function, run `scrape.scrape_official_database()`.
 
     Args:
         edition (int): edition of Oscar ceremony
-        file_path (str, optional): location of official Oscars database HTML
-            file. Defaults to "data/oscars.html".
 
     Raises:
         ValueError: invalid edition passed
@@ -53,6 +51,8 @@ def parse_official(
         ]
     )
 
+    file_path = os.path.join("data", "oscars", "official", str(edition) + ".html")
+
     with open(file_path, mode="r", encoding="utf-8") as fd:
         content = fd.read()
 
@@ -66,80 +66,76 @@ def parse_official(
         e = elm.xpath(xp)
         return [mapper(x.text_content()) for x in e]
 
-    for ceremony_div in doc.xpath(
-        f"//div[contains(@class, 'awards-result-chron')][{edition}]"
+    ceremony_div = doc.xpath("//div[contains(@class, 'awards-result-chron')]")[0]
+    for category_div in ceremony_div.xpath(
+        "./div[contains(@class, 'subgroup-awardcategory-chron')]"
     ):
-        for category_div in ceremony_div.xpath(
-            "./div[contains(@class, 'subgroup-awardcategory-chron')]"
-        ):
-            category_a = category_div.xpath(".//div[@class='result-subgroup-title']/a")[
-                0
-            ]
-            link = category_a.get("href")
-            cat_id = int(link[36 : link.index("&")])
-            if cat_id not in excluded_category_ids:
-                category_name = category_a.text
-                nominees: list[OfficialNominee] = []
+        category_a = category_div.xpath(".//div[@class='result-subgroup-title']/a")[0]
+        link = category_a.get("href")
+        cat_id = int(link[36 : link.index("&")])
+        if cat_id not in excluded_category_ids:
+            category_name = category_a.text
+            nominees: list[OfficialNominee] = []
 
-                for nominee_div in category_div.xpath(
-                    ".//div[contains(@class, 'result-details')]"
-                ):
-                    winner = True if nominee_div.xpath("./span") else False
-                    films = xpath_to_list(
-                        nominee_div,
-                        ".//div[@class='awards-result-film-title']",
-                        lambda x: x[:-1] if x[-1] == ";" else x,
-                    )
-                    nomination_statement = xpath_to_text(
-                        nominee_div,
-                        ".//div[@class='awards-result-nominationstatement']",
-                    )
-                    characters = xpath_to_list(
-                        nominee_div,
-                        ".//div[@class='awards-result-character-name']",
-                        lambda x: x[2:-3] if x[-1] == ";" else x[2:-2],
-                    )
-                    citation = xpath_to_text(
-                        nominee_div, ".//div[@class='awards-result-citation']"
-                    )
-                    # description = xpath_to_text(
-                    #     nominee_div, ".//div[@class='awards-result-description']"
-                    # )
-                    note = xpath_to_text(
-                        nominee_div, ".//div[@class='awards-result-publicnote']"
-                    )
-                    songs = xpath_to_list(
-                        nominee_div,
-                        ".//div[@class='awards-result-songtitle']",
-                        lambda x: x[1:-1],
-                    )
-                    dance_numbers = xpath_to_list(
-                        nominee_div,
-                        ".//div[@class='awards-result-dancenumber']",
-                        lambda x: x[1:-1],
-                    )
-
-                    if nomination_statement == "" and citation == "":
-                        print(
-                            "WARNING: no nomination statement (potentially bad HTML):",
-                            edition,
-                            category_name,
-                            nominee_div.text_content(),
-                        )
-
-                    nominees.append(
-                        OfficialNominee(
-                            winner=winner,
-                            films=films,
-                            nomination=nomination_statement or citation,
-                            detail=characters or songs or dance_numbers,
-                            note=note,
-                        )
-                    )
-
-                official_categories.append(
-                    OfficialCategory(category=category_name, nominees=nominees)
+            for nominee_div in category_div.xpath(
+                ".//div[contains(@class, 'result-details')]"
+            ):
+                winner = True if nominee_div.xpath("./span") else False
+                films = xpath_to_list(
+                    nominee_div,
+                    ".//div[@class='awards-result-film-title']",
+                    lambda x: x[:-1] if x[-1] == ";" else x,
                 )
+                nomination_statement = xpath_to_text(
+                    nominee_div,
+                    ".//div[@class='awards-result-nominationstatement']",
+                )
+                characters = xpath_to_list(
+                    nominee_div,
+                    ".//div[@class='awards-result-character-name']",
+                    lambda x: x[2:-3] if x[-1] == ";" else x[2:-2],
+                )
+                citation = xpath_to_text(
+                    nominee_div, ".//div[@class='awards-result-citation']"
+                )
+                # description = xpath_to_text(
+                #     nominee_div, ".//div[@class='awards-result-description']"
+                # )
+                note = xpath_to_text(
+                    nominee_div, ".//div[@class='awards-result-publicnote']"
+                )
+                songs = xpath_to_list(
+                    nominee_div,
+                    ".//div[@class='awards-result-songtitle']",
+                    lambda x: x[1:-1],
+                )
+                dance_numbers = xpath_to_list(
+                    nominee_div,
+                    ".//div[@class='awards-result-dancenumber']",
+                    lambda x: x[1:-1],
+                )
+
+                if nomination_statement == "" and citation == "":
+                    print(
+                        "WARNING: no nomination statement (potentially bad HTML):",
+                        edition,
+                        category_name,
+                        nominee_div.text_content(),
+                    )
+
+                nominees.append(
+                    OfficialNominee(
+                        winner=winner,
+                        films=films,
+                        nomination=nomination_statement or citation,
+                        detail=characters or songs or dance_numbers,
+                        note=note,
+                    )
+                )
+
+            official_categories.append(
+                OfficialCategory(category=category_name, nominees=nominees)
+            )
 
     if not official_categories:
         raise ValueError("Invalid edition passed to parse_oscars")

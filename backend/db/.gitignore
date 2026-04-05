@@ -1,2 +1,4 @@
-data/imdb/**
-data/oscars.html
+data/oscars/**
+downloaded_files
+output
+test.*
