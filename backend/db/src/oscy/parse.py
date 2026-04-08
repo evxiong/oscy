@@ -144,10 +144,10 @@ def parse_official(edition: int) -> list[OfficialCategory]:
 
 
 def parse_imdb(data: dict) -> list[IMDbCategory]:
-    """Gets categories from data returned by scrape.scrape_imdb().
+    """Gets categories from data returned by `scrape.scrape_imdb()`.
 
     Args:
-        data (dict): dict of IMDb data returned by scrape.scrape_imdb()
+        data (dict): dict of IMDb data returned by `scrape.scrape_imdb()`
 
     Raises:
         ValueError: invalid data passed

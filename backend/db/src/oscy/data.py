@@ -15,7 +15,7 @@ class OfficialNominee:
 
 @dataclass
 class OfficialCategory:
-    category: str
+    category: str  # category name (official name)
     nominees: list[OfficialNominee]
 
 

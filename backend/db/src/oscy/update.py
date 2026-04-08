@@ -28,7 +28,8 @@ import re
 import shutil
 import subprocess
 from collections import defaultdict
-from typing import Callable, Literal
+from collections.abc import Callable
+from typing import Literal
 
 from dotenv import load_dotenv
 from rapidfuzz import fuzz, process
@@ -47,16 +48,7 @@ def insert_pending_nominations(edition: int):
     Args:
         edition (int): edition of Oscars ceremony
     """
-    # - scrape nominations from official ceremony page
-    # - within a custom parser that's passed to match.match_categories:
-    #   - match category names against official names in db
-    #   - flag if number of category names this year differs from prev year
-    #   - if category names do not match, ask for user input on official names
-    #     - if user inputs a new category name, ask user input for category
-    #     - if user inputs a new category, ask user input for category group
-    #     - upsert category name/category/category group
-
-    data = interactive_match(
+    data = interactive_match_categories(
         edition, pending=True, official_parser=official_ceremony_page_parser
     )
 
@@ -79,9 +71,6 @@ def insert_pending_nominations(edition: int):
     matched_nominees = [n for ed in data for c in data[ed] for n in c.nominees]
     db.insert_nominees(matched_nominees)
 
-    # NEED TO FORCE REVIEW OF WARNINGS AND JSON PRIOR TO INSERTION, AND WRAP
-    # EVERYTHING IN A SINGLE TX
-
     print("Data insertion complete.")
 
 
@@ -94,10 +83,10 @@ def update_unofficial_results(edition: int):
     Args:
         edition (int): edition of Oscars ceremony
     """
-    matched_categories = interactive_match(
+    matched_categories = interactive_match_categories(
         edition, pending=False, official_parser=official_ceremony_page_parser
     )[edition]
-    update_db(edition, matched_categories)
+    compare_update_nominees(edition, matched_categories)
     print("Data update complete.")
 
 
@@ -111,39 +100,130 @@ def update_official_results(edition: int):
     Args:
         edition (int): edition of Oscars ceremony
     """
-    matched_categories = interactive_match(
+    matched_categories = interactive_match_categories(
         edition, pending=False, official_parser=official_database_parser
     )[edition]
-    update_db(edition, matched_categories)
+    compare_update_nominees(edition, matched_categories)
     print("Data update complete.")
 
 
+def interactive_match_categories(
+    edition: int,
+    pending: bool,
+    official_parser: Callable[[int], list[OfficialCategory]],
+) -> dict[int, list[MatchedCategory]]:
+    """Interactively matches IMDb and official categories.
+
+    Calls `match.match_categories()` with full debug output and warnings
+    redirected to `output` file, which is opened for manual review by user and
+    must be closed to continue.
+
+    Args:
+        edition (int): edition of Oscars ceremony
+        pending (bool): True if ceremony hasn't occurred yet (nominations
+            stage); otherwise, False (unofficial, official stages)
+        official_parser (Callable[[int], list[OfficialCategory]]): parser passed
+            to `match.match_categories()`, which may be interactive
+
+    Returns:
+        dict[int, list[MatchedCategory]]: edition -> matched categories
+    """
+    with open("output", "w+", encoding="utf-8") as fd:
+        with contextlib.redirect_stderr(fd):
+            matched_categories = match.match_categories(
+                edition,
+                pending=pending,
+                official_parser=official_parser,
+                suppress=False,
+                show_warnings=True,
+                imdb_force=True,
+            )
+
+    code_editor = shutil.which("code")
+    if code_editor:
+        editor = [code_editor, "--wait"]
+    else:
+        editor = ["vi"]
+
+    print("Please review the output file and confirm its accuracy.")
+    print("Waiting for your editor to close the file...")
+
+    subprocess.call(editor + ["output"])
+
+    return matched_categories
+
+
 def official_ceremony_page_parser(edition: int) -> list[OfficialCategory]:
-    # used for nomination and unofficial updates
+    """Scrapes and parses official ceremony page.
+
+    Official parsers take an edition as input and output a list of parsed
+    categories using data from an official source; they are passed to
+    `match.match_categories()`. This parser gets data from the Academy's
+    official ceremony page and should be used for the nomination and unofficial
+    update stages.
+
+    This function calls `compare_insert_category_names()`, allowing the user to
+    interactively change category names and potentially insert new category
+    names/categories/category groups to db.
+
+    Args:
+        edition (int): edition of Oscars ceremony
+
+    Returns:
+        list[OfficialCategory]: parsed categories
+    """
     official_categories = scrape.scrape_official_ceremony_page(edition)
-    return interactive_category_match(edition, official_categories)
+    return compare_insert_category_names(edition, official_categories)
 
 
 def official_database_parser(edition: int) -> list[OfficialCategory]:
-    # used for official updates
+    """Scrapes and parses official database.
+
+    Official parsers take an edition as input and output a list of parsed
+    categories using data from an official source; they are passed to
+    `match.match_categories()`. This parser gets data from the Academy's
+    official database and should be used for the official update stage.
+
+    This function calls `compare_insert_category_names()`, allowing the user to
+    interactively change category names and potentially insert new category
+    names/categories/category groups to db.
+
+    Args:
+        edition (int): edition of Oscars ceremony
+
+    Returns:
+        list[OfficialCategory]: parsed categories
+    """
     scrape.scrape_official_database(edition)
     official_categories = parse.parse_official(edition)
-    return interactive_category_match(edition, official_categories)
+    return compare_insert_category_names(edition, official_categories)
 
 
-def interactive_category_match(
+def compare_insert_category_names(
     edition: int,
     official_categories: list[OfficialCategory],
 ) -> list[OfficialCategory]:
-    # match category names for exactness against official names in db and check
-    # against category names used in current or prev year; allow user to insert
-    # new category name/category/category group
+    """Interactively compares and inserts official category names to db.
+
+    Compares official category names against db category names used in current
+    or previous edition, depending on stage. Allows user to edit non-matching
+    OfficialCategory names and insert new category names, categories, and
+    category groups to db.
+
+    Args:
+        edition (int): edition of Oscars ceremony
+        official_categories (list[OfficialCategory]): list of categories, whose
+            names will be compared against db
+
+    Returns:
+        list[OfficialCategory]: list of categories with updated category names
+    """
     official_category_names = [c.category for c in official_categories]
 
     # all official category names in db
     db_category_names = db.get_category_names_official()
 
-    # category names used in current or prev edition, lowercase
+    # category names used in current and prev edition, lowercase
     db_category_names_current = set(
         c.lower() for c in db.get_category_names_official(edition)
     )
@@ -265,7 +345,7 @@ def interactive_category_match(
 
                     # You are about to insert the following entries into the database:
                     # table (columns)                                       values
-                    # category_names (award, official_name, common_name)    ('oscar', <input1> <input2>)
+                    # category_names (award, official_name, common_name)    ('oscar', <input1>, <input2>)
                     # categories (award, name)                              ('oscar', <input3>)
                     # category_groups (award, name)                         ('oscar', <input4>)
                     #
@@ -327,44 +407,25 @@ def interactive_category_match(
     return official_categories
 
 
-def interactive_match(
-    edition: int,
-    pending: bool,
-    official_parser: Callable[[int], list[OfficialCategory]],
-) -> dict[int, list[MatchedCategory]]:
-    with open("output", "w+", encoding="utf-8") as fd:
-        with contextlib.redirect_stderr(fd):
-            matched_categories = match.match_categories(
-                edition,
-                pending=pending,
-                official_parser=official_parser,
-                suppress=False,
-                show_warnings=True,
-                imdb_force=True,
-            )
+def compare_update_nominees(edition: int, matched_categories: list[MatchedCategory]):
+    """Interactively compares and updates scraped nominees to db.
 
-    code_editor = shutil.which("code")
-    if code_editor:
-        editor = [code_editor, "--wait"]
-    else:
-        editor = ["vi"]
+    Matches categories, then fuzzy matches nominees. If number of nominees
+    within a category differs, suggests inserts/deletes. Compares matched
+    nominee properties for exactness and interactively suggests
+    updates/upserts/deletes.
 
-    print("Please review the output file and confirm its accuracy.")
-    print("Waiting for your editor to close the file...")
+    Args:
+        edition (int): edition of Oscars ceremony
+        matched_categories (list[MatchedCategory]): scraped, matched categories
+            returned by `match.match_categories()`
 
-    subprocess.call(editor + ["output"])
-
-    return matched_categories
-
-
-def update_db(edition: int, matched_categories: list[MatchedCategory]):
-    # compare scraped data against db via python objects (ignore pending status,
-    # winner status);
-    # if imdb id has changed, and this id is only used in the current year, suggest deletion and insertion
-    # if official name has changed, but imdb id still same, update name in both entities and nominees_entities
-    # tick off pendings in nominees
-    # mark winners
-
+    Raises:
+        Exception: failure to match items
+    """
+    # matched_categories should have matching category names with same edition
+    # already inserted into db; sorting by lowercase official name should match
+    # category indices with db
     matched_categories.sort(key=lambda c: c.category.lower())
     db_matched_categories = db.get_matched_categories_by_edition(edition)
 
@@ -374,47 +435,12 @@ def update_db(edition: int, matched_categories: list[MatchedCategory]):
         )
         return
 
-    # before checking for nominee exact matches, do fuzzy matching; then compare
-    # for exactness and suggest updates, deletions, and insertions
-    # - warn on any exact field change except pending (no matter how small,
-    #   regardless of fuzzy match results)
-    # - update winner (both nominees.winner and nominees_titles.winner)
-    # - update statement
-    # - update note
-    # - update official
-    # - update stat
-    # - update pending in bulk at end
-    # - fuzzy match films
-    #   - if imdb id has changed: (1) find corresponding row in nominees_titles
-    #     and delete; if this title now has no rows in nominees_titles, then
-    #     delete it; (2) create new entries in nominees_titles and titles
-    #   - if title or detail have changed, update titles or nominees_titles
-    # - fuzzy match people
-    #   - if more scraped people than db people, suggest insertions
-    #   - if less scraped people than db people, suggest deletions
-    #   - if imdb id has changed: (1) find corresponding row in
-    #     nominees_entities and delete; if this title now has no rows in
-    #     nominees_entities, then delete it; (2) create new entries in
-    #     nominees_entities and entities
-    #   - if name, statement index, or role have changed update
-    #     nominees_entities and entities
-    # if there are more scraped nominees than db nominees, suggest insertions
-    # if there are less scraped nominees than db nominees, suggest deletions
-
-    # after sorting matched_categories, matched_categories and
-    # db_matched_categories should be in same order such that ith elm represents
-    # same category
-
-    # within each category, match nominees: calculate similarity for titles and
-    # nomination statements (people) separately (for characters/songs/dance
-    # numbers, add detail to title), then add scores to find best match
-
     for i in range(len(matched_categories)):
         matched_nominees = matched_categories[i].nominees
         db_matched_nominees = db_matched_categories[i].nominees
 
-        # need to handle cases where matched_nominees and db_matched_nominees
-        # have different lengths
+        # handle cases where matched_nominees and db_matched_nominees have
+        # different lengths
         matched_longer_than_db = False
         shorter_nominees = matched_nominees
         longer_nominees = db_matched_nominees
@@ -430,6 +456,8 @@ def update_db(edition: int, matched_categories: list[MatchedCategory]):
                 f"WARNING: {db_matched_categories[i].category}: there are more scraped nominees ({len(matched_nominees)}) than in database ({len(db_matched_nominees)})"
             )
 
+        # fuzzy match nominees: calculate similarity for titles/detail and
+        # statements separately, add scores and take max for best match
         titles = [
             " | ".join(t[0] + " - " + ", ".join(t[3]) for t in n.films)
             for n in matched_nominees
@@ -446,24 +474,18 @@ def update_db(edition: int, matched_categories: list[MatchedCategory]):
 
         matrix = titles_matrix + statements_matrix
         if matched_longer_than_db:
-            # number of rows is always <= number of cols
-            # rows always corresponds to shorter of matched_nominees or db_matched_nominees
+            # transpose matrix s.t. # rows is always <= # cols; rows always
+            # corresponds to shorter of matched_nominees or db_matched_nominees
             matrix = matrix.T
 
         # res[i] is col ind of highest score in row i
         res = matrix.argmax(axis=1)
 
-        # before using process.cdist, swap such that first array is smaller than
-        # second if different lengths; then take argmax along axis=1; there
-        # should be len(b)-len(a) remaining unmatched elements in b, which
-        # should then be inserted or deleted; if there are more unmatched
-        # elements, it means multiple elements in a had best match to same
-        # element in b, which is a problem;
-
-        # if the two arrays match one-to-one except for len(b)-len(a) unmatched
-        # elements, then fuzzy match films and people, then determine what to
-        # insert/delete; otherwise, throw error
-
+        # there should now be len(longer_nominees)-len(shorter_nominees)
+        # remaining unmatched elements in longer_nominees, which should then be
+        # inserted or deleted; if there are more unmatched elements, multiple
+        # elements in shorter_nominees had best match to same element in
+        # longer_nominees, so throw error
         matches: defaultdict[int, list[int]] = defaultdict(
             list
         )  # longer nominee list ind -> matching inds in shorter nominee list
@@ -536,38 +558,43 @@ def update_db(edition: int, matched_categories: list[MatchedCategory]):
                     return
             db.delete_nominees(delete_matched_nominees)
 
-        # fuzzy match films and people, consider what happens if number of films
-        # or number of people differ between matched and db; same process as
-        # above for nominees... actually, do we need to even fuzzy match films
-        # and people? can we just exact match each, then determine what to
-        # insert/delete based on difference??? well, if the tuples do differ, we
-        # won't know which to insert/delete unless they are fuzzy matched,
-        # either manually by human or by program... probably better to just
-        # prompt user to do matches if there's a difference; in both
-        # matched_nominees and db_matched_nominees, within each nominee sort
-        # films by title, and sort people by name, then pray that they match
-        # exactly and if they don't, then prompt the user
-
+        # for each pair of matching scraped/db nominees, compare and update
+        # properties in db (except pending)
         for shorter_ind, longer_ind in enumerate(res):
             if len(matched_nominees) <= len(db_matched_nominees):
-                matched_nominees_equal(
+                compare_update_nominee_properties(
                     matched_nominees[shorter_ind], db_matched_nominees[longer_ind]
                 )
             else:
-                matched_nominees_equal(
+                compare_update_nominee_properties(
                     matched_nominees[longer_ind], db_matched_nominees[shorter_ind]
                 )
 
-    # bulk update pending=FALSE for all nominees
-    db.update_pending(edition)
+    # bulk update pending=FALSE for all nominees in this edition
+    db.update_nominees_pending_false(edition)
 
 
-def matched_nominees_equal(
+def compare_update_nominee_properties(
     n1: MatchedNominee, n2: MatchedNominee, ignored_properties: list[str] = []
 ) -> bool:
-    # check if n1 and n2 are exactly equal; if films or people are unequal,
-    # prompt for user input; for any other properties, suggest appropriate
-    # updates
+    """Interactively compares and updates scraped nominee properties to db.
+
+    Compares for exactness across all unignored properties, except for
+    `pending`.
+
+    Args:
+        n1 (MatchedNominee): scraped nominee
+        n2 (MatchedNominee): db nominee
+        ignored_properties (list[str], optional): nominee properties to ignore
+            during comparison. Defaults to [].
+
+    Raises:
+        ValueError: at least one of n1, n2 must have a database id
+
+    Returns:
+        bool: True if nominees are equal across all compared properties;
+            otherwise, False
+    """
     properties = [
         "edition",
         # "category_name",
@@ -647,12 +674,12 @@ def matched_nominees_equal(
             print()
 
         # if films or people in unequal_properties, prompt user to manually
-        # match, then prompt to insert/delete/update
+        # match elements, then prompt to upsert/delete
         if "films" in unequal_properties:
-            update_films_or_people("films", n1.films, n2.films, n2.id)
+            match_update_films_or_people("films", n1.films, n2.films, n2.id)
 
         if "people" in unequal_properties:
-            update_films_or_people("people", n1.people, n2.people, n2.id)
+            match_update_films_or_people("people", n1.people, n2.people, n2.id)
 
         return False
 
@@ -662,9 +689,17 @@ def matched_nominees_equal(
 NomineeItem = Literal["films", "people"]
 
 
-def update_films_or_people(
+def match_update_films_or_people(
     item: NomineeItem, n1_items: list, n2_items: list, nominee_id: int
 ):
+    """Interactively matches nominee films or people and updates db.
+
+    Args:
+        item (NomineeItem): "films" or "people"
+        n1_items (list): scraped nominee's list of films or people
+        n2_items (list): db nominee's list of films or people
+        nominee_id (int): db nominee's database id
+    """
     longest_n1 = max(len(str(f)) for f in n1_items)
 
     print(f"nominee {item} do not match:")
@@ -743,9 +778,7 @@ def update_films_or_people(
                     else "",
                 )
 
-            # prompt each pair of matched_inds for update with n1 or
-            # stay with n2; if imdb id differs, upsert new entry and
-            # delete old one
+            # prompt each pair of matched_inds for upsert with n1 or ignore
             for n1_ind, n2_ind in matched_inds.items():
                 n1_item = tuple(
                     tuple(e) if isinstance(e, list) else e for e in n1_items[n1_ind]
@@ -771,7 +804,9 @@ def update_films_or_people(
                             data=n1_items[n1_ind],
                         )
 
-                        # if imdb id differs, delete old one
+                        # if imdb id differs, delete entry from associative
+                        # table (nominees_titles or nominees_entities) and
+                        # potentially from titles/entities
                         if n1_items[n1_ind][1] != n2_items[n2_ind][1]:
                             dispatch_delete(
                                 item=item,
@@ -818,6 +853,17 @@ def update_films_or_people(
 
 
 def dispatch_upsert(item: NomineeItem, nominee_id: int, data: list):
+    """Calls appropriate db upsert function based on `item`.
+
+    Upserts title or entity, then uses returned id to upsert entry in
+    associative table.
+
+    Args:
+        item (NomineeItem): "films" or "people"
+        nominee_id (int): db nominee id
+        data (list): list of films or people (see `data.MatchedNominee` for
+            details)
+    """
     if item == "films":
         db.upsert_nominee_title(
             nominee_id=nominee_id,
@@ -837,13 +883,23 @@ def dispatch_upsert(item: NomineeItem, nominee_id: int, data: list):
 
 
 def dispatch_delete(item: NomineeItem, nominee_id: int, imdb_id: str):
+    """Calls appropriate db delete function based on `item`.
+
+    Deletes entry from associative table, then deletes title or entity if it has
+    no more entries in associative table.
+
+    Args:
+        item (NomineeItem): "films" or "people"
+        nominee_id (int): db nominee id
+        imdb_id (str): IMDb id of title or entity
+    """
     if item == "films":
         db.delete_nominee_title(nominee_id=nominee_id, imdb_id=imdb_id)
     else:
         db.delete_nominee_entity(nominee_id=nominee_id, imdb_id=imdb_id)
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "stage", type=str, choices=["nominations", "unofficial", "official"]
@@ -866,3 +922,11 @@ if __name__ == "__main__":
         update_official_results(edition)
     else:
         raise ValueError("stage must be one of: nominations, unofficial, official")
+
+
+if __name__ == "__main__":
+    try:
+        with db.create_or_continue_transaction():
+            main()
+    finally:
+        db.close()

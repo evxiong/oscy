@@ -8,4 +8,4 @@ Usage:
 from . import db
 
 if __name__ == "__main__":
-    db.nominations_to_csv()
+    db.export_nominations_to_csv()

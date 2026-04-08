@@ -1,5 +1,5 @@
 """
-Functions for scraping data from IMDb and official source.
+Functions for scraping data from IMDb and official sources.
 """
 
 import json
@@ -189,7 +189,16 @@ def scrape_official_database(start: int | None = None, end: int | None = None) -
 
 
 def scrape_official_ceremony_page(edition: int) -> list[OfficialCategory]:
-    # should be used for pending nominations and unofficial results ONLY
+    """Scrapes Oscar ceremony data from official ceremony page.
+
+    Should be used for pending nominations and unofficial results only.
+
+    Args:
+        edition (int): edition of Oscars ceremony
+
+    Returns:
+        list[OfficialCategory]: nominations from given edition
+    """
     r = requests.get(
         f"https://www.oscars.org/oscars/ceremonies/{1928 + edition}",
         headers=HEADERS,
@@ -257,6 +266,21 @@ def scrape_official_ceremony_page(edition: int) -> list[OfficialCategory]:
 
 
 def scrape_editions(start: int | None = None, end: int | None = None) -> list[Edition]:
+    """Scrapes multiple Oscar editions' info from official ceremony pages.
+
+    Args:
+        start (int | None, optional): edition of first Oscars ceremony to
+            include. If None, starts from 1st edition. Defaults to None.
+        end (int | None, optional): edition of last Oscars ceremony to include.
+            If None, ends at `start` if specified; otherwise, ends at
+            `CURRENT_EDITION` specified in top-level `.env`. Defaults to None.
+
+    Raises:
+        Exception: failed to scrape data
+
+    Returns:
+        list[Edition]: list of edition info
+    """
     if start is None:
         start = 1
         if end is None:
