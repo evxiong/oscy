@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS
         award award_type NOT NULL, -- 'oscar' or 'emmy'
         iteration integer NOT NULL,
         official_year varchar(10) NOT NULL, -- listed year, ex. '1927/28'
-        ceremony_date date NOT NULL
+        ceremony_date date NOT NULL,
+        UNIQUE (award, iteration)
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -55,7 +56,8 @@ CREATE TABLE IF NOT EXISTS
     editions_category_names (
         id serial PRIMARY KEY,
         edition_id integer NOT NULL REFERENCES editions (id),
-        category_name_id integer NOT NULL REFERENCES category_names (id)
+        category_name_id integer NOT NULL REFERENCES category_names (id),
+        UNIQUE (edition_id, category_name_id)
     );
 
 CREATE TABLE IF NOT EXISTS

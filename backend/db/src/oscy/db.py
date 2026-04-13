@@ -243,7 +243,7 @@ def insert_category_name(
     new_category: bool,
     category_group: str,
     new_category_group: bool,
-):
+) -> int:
     """Inserts new category name and potentially new category, category group.
 
     Tables impacted: `category_names`, `categories`, `category_groups`.
@@ -258,6 +258,9 @@ def insert_category_name(
             to
         new_category_group (bool): if True, insert new category group;
             otherwise, use existing category group with name `category_group`
+
+    Returns:
+        int: database id of newly inserted category name
     """
     with conn().cursor() as cur:
         if new_category_group:
@@ -304,9 +307,13 @@ def insert_category_name(
             """
             INSERT INTO category_names (award, official_name, common_name, category_id)
             VALUES ('oscar', %s, %s, %s)
+            RETURNING id
             """,
             (category_name_official, category_name_common, category_id),
         )
+        category_name_id = cur.fetchone()[0]  # type: ignore
+
+        return category_name_id
 
 
 @transaction
@@ -809,6 +816,136 @@ def delete_nominees(matched_nominees: list[MatchedNominee]):
 
 
 @transaction
+def replace_edition_category_name(
+    edition: int, old_category_name_id: int, new_category_name_official: str
+):
+    """Replaces an edition's category name with a different one.
+
+    The new category name must already exist in the db and its official name
+    must match `new_category_name_official`. Updates entries in both
+    `editions_category_names` and `nominees` with new category name. If this
+    causes the old category name (as well as its parent category and category
+    group) to no longer have entries in `nominees`, they will be deleted.
+
+    Tables impacted: `editions_category_names`, `nominees`, `category_names`,
+    `categories`, `category_groups`.
+
+    Args:
+        edition (int): edition of Oscars ceremony
+        old_category_name_id (int): db id of category name to be replaced
+        new_category_name_official (str): official name of new category name
+            that will replace the old one for this edition
+    """
+    with conn().cursor() as cur:
+        cur.execute(
+            """
+            SELECT id
+            FROM editions
+            WHERE award = 'oscar' AND iteration = %s
+            """,
+            (edition,),
+        )
+        edition_id = cur.fetchone()[0]  # type: ignore
+
+        cur.execute(
+            """
+            SELECT id
+            FROM category_names
+            WHERE award = 'oscar' AND LOWER(official_name) = %s
+            """,
+            (new_category_name_official.lower(),),
+        )
+        new_category_name_id = cur.fetchone()[0]  # type: ignore
+
+        cur.execute(
+            """
+            UPDATE editions_category_names
+            SET category_name_id = %s
+            WHERE edition_id = %s AND category_name_id = %s
+            """,
+            (new_category_name_id, edition_id, old_category_name_id),
+        )
+
+        cur.execute(
+            """
+            UPDATE nominees
+            SET category_name_id = %s
+            WHERE edition_id = %s AND category_name_id = %s
+            """,
+            (new_category_name_id, edition_id, old_category_name_id),
+        )
+
+        cur.execute(
+            """
+            SELECT c.id, cg.id
+            FROM category_names cn
+            JOIN categories c ON cn.category_id = c.id
+            LEFT JOIN category_groups cg ON c.category_group_id = cg.id
+            WHERE cn.id = %s
+            """,
+            (old_category_name_id,),
+        )
+        old_category_id, old_category_group_id = cur.fetchone()  # type: ignore
+
+        cur.execute(
+            """
+            WITH nc AS (
+                SELECT DISTINCT
+                    cn.id AS category_name_id,
+                    c.id AS category_id,
+                    cg.id AS category_group_id
+                FROM nominees n
+                LEFT JOIN category_names cn ON n.category_name_id = cn.id
+                LEFT JOIN categories c ON cn.category_id = c.id
+                LEFT JOIN category_groups cg ON c.category_group_id = cg.id
+            ),
+            deleted_cn AS (
+                DELETE FROM category_names
+                WHERE id = %s AND NOT EXISTS (
+                    SELECT 1
+                    FROM nc
+                    WHERE category_names.id = nc.category_name_id
+                )
+                RETURNING id, official_name AS name
+            ),
+            deleted_c AS (
+                DELETE FROM categories
+                WHERE id = %s AND NOT EXISTS (
+                    SELECT 1
+                    FROM nc
+                    WHERE categories.id = nc.category_id
+                )
+                RETURNING id, name
+            ),
+            deleted_cg AS (
+                DELETE FROM category_groups
+                WHERE id = %s AND NOT EXISTS (
+                    SELECT 1
+                    FROM nc
+                    WHERE category_groups.id = nc.category_group_id
+                )
+                RETURNING id, name
+            )
+            SELECT 'category_names' AS level, id, name FROM deleted_cn
+            UNION
+            SELECT 'categories' AS level, id, name FROM deleted_c
+            UNION
+            SELECT 'category_groups' AS level, id, name FROM deleted_cg
+            """,
+            (
+                old_category_name_id,
+                old_category_id,
+                old_category_group_id,
+            ),
+        )
+        deleted_entries = cur.fetchall()
+        if deleted_entries:
+            print(f"Deleted {len(deleted_entries)} entries from db:")
+            for entry in deleted_entries:
+                print(entry)
+
+
+@transaction
 def get_category_groups() -> list[str]:
     """Gets names of all category groups in db."""
     with conn().cursor() as cur:
@@ -837,8 +974,8 @@ def get_categories() -> list[str]:
 
 
 @transaction
-def get_category_names_official(edition: int | None = None) -> list[str]:
-    """Gets official names of category names in db.
+def get_category_names_official(edition: int | None = None) -> list[tuple[int, str]]:
+    """Gets ids and official names of category names in db.
 
     Args:
         edition (int | None, optional): if None, gets all category names;
@@ -846,13 +983,13 @@ def get_category_names_official(edition: int | None = None) -> list[str]:
             None.
 
     Returns:
-        list[str]: category names (official)
+        list[tuple[int, str]]: list of (id, category name official name)
     """
     with conn().cursor() as cur:
         if edition is None:
             cur.execute(
                 """
-                SELECT official_name
+                SELECT id, official_name
                 FROM category_names
                 WHERE award = 'oscar'
                 """
@@ -860,7 +997,7 @@ def get_category_names_official(edition: int | None = None) -> list[str]:
         else:
             cur.execute(
                 """
-                SELECT cn.official_name
+                SELECT cn.id, cn.official_name
                 FROM category_names cn
                 JOIN editions_category_names ecn ON ecn.category_name_id = cn.id
                 JOIN editions e ON e.id = ecn.edition_id
@@ -868,7 +1005,7 @@ def get_category_names_official(edition: int | None = None) -> list[str]:
                 """,
                 (edition,),
             )
-        return [r[0] for r in cur.fetchall()]
+        return [(r[0], r[1]) for r in cur.fetchall()]
 
 
 @transaction

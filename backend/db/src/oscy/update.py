@@ -208,31 +208,36 @@ def compare_insert_category_names(
     Compares official category names against db category names used in current
     or previous edition, depending on stage. Allows user to edit non-matching
     OfficialCategory names and insert new category names, categories, and
-    category groups to db.
+    category groups to db, as well as replace an existing edition's category
+    names.
+
+    Assumes that the number and identities of categories do not change between
+    update stages within a single edition; only the category names may change.
 
     Args:
         edition (int): edition of Oscars ceremony
         official_categories (list[OfficialCategory]): list of categories, whose
             names will be compared against db
 
+    Raises:
+        Exception: duplicate category names in official categories
+        Exception: lengths of official category names and current edition's db
+            category names do not match
+        Exception: failure to match official category names with current
+            edition's db category names
+
     Returns:
         list[OfficialCategory]: list of categories with updated category names
     """
     official_category_names = [c.category for c in official_categories]
+    if len(set(official_category_names)) != len(official_category_names):
+        raise Exception("Duplicate category names in official categories")
+
+    # db ids and category names from current edition
+    db_category_names_current = db.get_category_names_official(edition)
 
     # all official category names in db
-    db_category_names = db.get_category_names_official()
-
-    # category names used in current and prev edition, lowercase
-    db_category_names_current = set(
-        c.lower() for c in db.get_category_names_official(edition)
-    )
-    db_category_names_prev = set(
-        c.lower() for c in db.get_category_names_official(edition - 1)
-    )
-    compare_current_category_names = True
-    if len(db_category_names_current) != len(official_category_names):
-        compare_current_category_names = False
+    db_category_names = [t[1] for t in db.get_category_names_official()]
 
     # all categories in db
     db_categories = db.get_categories()
@@ -240,171 +245,359 @@ def compare_insert_category_names(
     # all category groups in db
     db_category_groups = db.get_category_groups()
 
+    compare_current_category_names = True if db_category_names_current else False
+
     print()
     print("OSCARS", edition)
 
     if compare_current_category_names:
         if len(official_category_names) != len(db_category_names_current):
-            print()
-            print(
-                f"WARNING: lengths of official_category_names ({len(official_category_names)}) and db_category_names from current edition ({len(db_category_names_current)}) do not match"
-            )
-    else:
-        if len(official_category_names) != len(db_category_names_prev):
-            print()
-            print(
-                f"WARNING: lengths of official_category_names ({len(official_category_names)}) and db_category_names from prev edition ({len(db_category_names_prev)}) do not match"
+            raise Exception(
+                f"Lengths of official_category_names ({len(official_category_names)}) and db_category_names from current edition ({len(db_category_names_current)}) do not match"
             )
 
-    for i, c in enumerate(official_category_names):
-        if (
-            compare_current_category_names
-            and c.lower() not in db_category_names_current
-        ) or (
-            not compare_current_category_names
-            and c.lower() not in db_category_names_prev
-        ):
-            confirm = ""
-            input_category_name_official = ""
-            input_category_name_common = ""
-            input_category = ""
-            input_category_group = ""
-            print()
+        # category names used in current edition, lowercase
+        db_category_names_current_set = {
+            t[1].lower() for t in db_category_names_current
+        }
 
-            while confirm != "yes":
-                confirm = ""
-                input_category_name_official = ""
-                input_category_name_common = ""
-                input_category = ""
-                input_category_group = ""
-
-                print(
-                    f"The category name '{c}' was not used in the {'current' if compare_current_category_names else 'previous'} edition."
-                )
-                print()
-
-                # get closest category name matches
-                matrix = process.cdist(
-                    [c],
+        # prompt user to edit any official category name that doesn't match db
+        # category name in current edition
+        for official_category in official_categories:
+            if official_category.category.lower() not in db_category_names_current_set:
+                input_insert_category_name(
+                    official_category,
+                    True,
                     db_category_names,
-                    scorer=fuzz.token_set_ratio,
-                    processor=lambda x: (
-                        x.lower()
-                        .replace("(", "")
-                        .replace(")", "")
-                        .replace("-", " ")
-                        .replace(",", "")
-                    ),
+                    db_categories,
+                    db_category_groups,
                 )
-                scores = matrix[0]
-                indices = scores.argsort()[
-                    ::-1
-                ]  # indices of scores sorted in desc order
 
-                print("The closest matches are...")
-                for ind in indices[:3]:
-                    print(db_category_names[ind], "--", scores[ind])
+        # to account for differences in category names between
+        # unofficial/official updates:
+        # - after user input above, any official category names that still do
+        #   not match current db category names require manual matching
+        # - replace current db category names with matching official category
+        #   names in editions_category_names and nominees tables
+        # - if this replacement causes a category name/category/category group
+        #   to no longer be used by any nominees, delete those entries in db
+        # - since this stage happens before matching official with imdb, it is
+        #   ill-advised to handle different numbers of categories between
+        #   official and db; the assumption (which should be safe) is that the
+        #   number of categories and the identities of the categories themselves
+        #   should stay constant between updates, given the Academy's
+        #   consistency and the transactional nature of updates
+
+        # lowercase db category name (official) -> (index, db id)
+        db_category_name_current_ind_id = {
+            t[1].lower(): (i, t[0]) for i, t in enumerate(db_category_names_current)
+        }
+
+        unmatched_official_inds = {i for i in range(len(official_categories))}
+        unmatched_db_inds = {i for i in range(len(db_category_names_current))}
+
+        for i, c in enumerate(official_categories):
+            if c.category.lower() in db_category_name_current_ind_id:
+                db_ind = db_category_name_current_ind_id[c.category.lower()][0]
+                unmatched_official_inds.remove(i)
+                unmatched_db_inds.remove(db_ind)
+
+        # these lists should be same length
+        unmatched_official_inds = sorted(list(unmatched_official_inds))
+        unmatched_db_inds = sorted(list(unmatched_db_inds))
+
+        if unmatched_official_inds or unmatched_db_inds:
+            width = max(
+                len(official_categories[i].category) for i in unmatched_official_inds
+            )
+            print("The following category names do not match between official and db:")
+            print("official".ljust(width + 4), "\t", "db")
+
+            # the user is presented with 0-based indices; user input is 0-based,
+            # and should be converted internally to indices in
+            # official_categories and db_category_names_current
+            for i in range(len(unmatched_official_inds)):
+                print(
+                    str(i).ljust(3),
+                    official_categories[unmatched_official_inds[i]].category.ljust(
+                        width
+                    ),
+                    "\t",
+                    str(i).ljust(3),
+                    db_category_names_current[unmatched_db_inds[i]][1],
+                )
+
+            valid_input = False
+            pattern = r"\s*\d+\s*,\s*\d+\s*(?:;\s*\d+\s*,\s*\d+\s*)*"
+
+            while not valid_input:
                 print()
+                input_pairs = input(
+                    "Match the category names by indices. Pairs should be separated by a semicolon. For example: 0,1; 1,0; 2,2\n"
+                )
+                if re.fullmatch(pattern, input_pairs):
+                    # 0-based indices
+                    matched_inds: dict[int, int] = {}  # official ind -> db ind
+                    official_used_inds: set[int] = set()
+                    db_used_inds: set[int] = set()
+                    pairs = input_pairs.split(";")
 
-                # Input the desired official category name (case-sensitive). If your
-                # input does not match any existing category name in the database,
-                # you will be prompted to insert a new one.
-                while input_category_name_official.strip() == "":
-                    input_category_name_official = input(
-                        "Input the desired official category name (case-sensitive):\n"
-                    )
+                    valid_input = True
+                    for pair in pairs:
+                        indices = pair.split(",")
+                        indices = [int(i.strip()) for i in indices]
 
-                if input_category_name_official not in db_category_names:
-                    # <input> is a new category name. Input the common name of this
-                    # category name.
-                    print()
-                    while input_category_name_common.strip() == "":
-                        input_category_name_common = input(
-                            f"'{input_category_name_official}' is a new category name. Input its common name (case-sensitive):\n"
-                        )
-
-                    # Input the category it belongs to (case-sensitive). If your
-                    # input does not match any existing category in the database,
-                    # you will be prompted to insert a new one.
-                    print()
-                    while input_category.strip() == "":
-                        input_category = input(
-                            "Input the category it belongs to (case-sensitive):\n"
-                        )
-
-                    if input_category not in db_categories:
-                        # <input> is a new category. Input the category group it
-                        # belongs to (case-sensitive). If your input does not match
-                        # any existing category group in the database, you will be
-                        # prompted to insert a new one.
-                        print()
-                        while input_category_group.strip() == "":
-                            input_category_group = input(
-                                f"'{input_category}' is a new category. Input the category group it belongs to (case-sensitive):\n"
+                        if (
+                            indices[0] < len(unmatched_official_inds)
+                            and indices[1] < len(unmatched_db_inds)
+                            and indices[0] not in official_used_inds
+                            and indices[1] not in db_used_inds
+                        ):
+                            official_used_inds.add(indices[0])
+                            db_used_inds.add(indices[1])
+                            matched_inds[indices[0]] = indices[1]
+                        else:
+                            valid_input = False
+                            print(
+                                "Invalid input: invalid index or duplicate indices used"
                             )
+                            break
 
-                    # You are about to insert the following entries into the database:
-                    # table (columns)                                       values
-                    # category_names (award, official_name, common_name)    ('oscar', <input1>, <input2>)
-                    # categories (award, name)                              ('oscar', <input3>)
-                    # category_groups (award, name)                         ('oscar', <input4>)
-                    #
-                    # Confirm (yes/no)
-                    width = 54
-                    print()
-                    print(
-                        "You are about to insert the following entries into the database:"
-                    )
-                    print()
-                    print("table (columns)".ljust(width), end="")
-                    print("values")
-                    print(
-                        "category_names (award, official_name, common_name)".ljust(
-                            width
-                        ),
-                        end="",
-                    )
-                    print(
-                        f"('oscar', '{input_category_name_official}', '{input_category_name_common}')"
-                    )
-                    if input_category not in db_categories:
-                        print("categories (award, name)".ljust(width), end="")
-                        print(f"('oscar', '{input_category}')")
+                    if not valid_input:
+                        continue
 
-                        if input_category_group not in db_category_groups:
-                            print("category_groups (award, name)".ljust(width), end="")
-                            print(f"('oscar', '{input_category_group}')")
+                    if len(official_used_inds) != len(unmatched_official_inds) or len(
+                        db_used_inds
+                    ) != len(unmatched_db_inds):
+                        valid_input = False
+                        print("Invalid input: not all indices used")
+                        continue
 
                     print()
+                    print("Matches:")
+                    print("official".ljust(width + 4), "\t", "db")
+                    for official_ind, db_ind in matched_inds.items():
+                        print(
+                            str(official_ind).ljust(3),
+                            official_categories[
+                                unmatched_official_inds[official_ind]
+                            ].category.ljust(width),
+                            "\t",
+                            str(db_ind).ljust(3),
+                            db_category_names_current[unmatched_db_inds[db_ind]][1],
+                        )
+
+                    print()
+                    print("Replace db category names with official?")
+                    confirm = ""
                     while confirm != "yes" and confirm != "no":
                         confirm = input("Confirm (yes/no): ").lower()
 
-                    print()
+                    if confirm == "yes":
+                        # make updates to editions_category_names and nominees tables
+                        for official_ind, db_ind in matched_inds.items():
+                            db.replace_edition_category_name(
+                                edition=edition,
+                                old_category_name_id=db_category_names_current[
+                                    unmatched_db_inds[db_ind]
+                                ][0],
+                                new_category_name_official=official_categories[
+                                    unmatched_official_inds[official_ind]
+                                ].category,
+                            )
 
-                    # insert new category name/category/category group
-                    db.insert_category_name(
-                        category_name_official=input_category_name_official,
-                        category_name_common=input_category_name_common,
-                        category=input_category,
-                        new_category=(input_category not in db_categories),
-                        category_group=input_category_group,
-                        new_category_group=(
-                            input_category_group not in db_category_groups
-                        ),
-                    )
+                        print("Replaced edition's category names.")
+
+                    else:
+                        raise Exception(
+                            "Failed to match official category names with current category names in db"
+                        )
 
                 else:
-                    confirm = "yes"
+                    print("Invalid input: follow the example format")
 
+    else:
+        # category names used in prev edition, lowercase
+        db_category_names_prev_set = set(
+            t[1].lower() for t in db.get_category_names_official(edition - 1)
+        )
+
+        if len(official_category_names) != len(db_category_names_prev_set):
             print()
             print(
-                f"'{input_category_name_official}' will replace '{c}' as the official category name."
+                f"WARNING: lengths of official_category_names ({len(official_category_names)}) and db_category_names from prev edition ({len(db_category_names_prev_set)}) do not match"
             )
-            print()
 
-            official_categories[i].category = input_category_name_official
+        # prompt user to edit any official category name that doesn't match db
+        # category name in previous edition
+        for official_category in official_categories:
+            if official_category.category.lower() not in db_category_names_prev_set:
+                input_insert_category_name(
+                    official_category,
+                    False,
+                    db_category_names,
+                    db_categories,
+                    db_category_groups,
+                )
 
     return official_categories
+
+
+def input_insert_category_name(
+    official_category: OfficialCategory,
+    compare_current_category_names: bool,
+    db_category_names: list[str],
+    db_categories: list[str],
+    db_category_groups: list[str],
+):
+    """Interactively inserts new category name to db.
+
+    Potentially also inserts new category, category group. Updates
+    `official_category.category` with new category name.
+
+    Args:
+        official_category (OfficialCategory): category info scraped from
+            official source, including official category name
+        compare_current_category_names (bool): True if official category names
+            are being compared to current edition's db category names; False if
+            they are being compared to previous edition's
+        db_category_names (list[str]): all category names (official) in db
+        db_categories (list[str]): all categories in db
+        db_category_groups (list[str]): all category groups in db
+    """
+    official_category_name = official_category.category
+
+    confirm = ""
+    input_category_name_official = ""
+    input_category_name_common = ""
+    input_category = ""
+    input_category_group = ""
+    print()
+
+    while confirm != "yes":
+        confirm = ""
+        input_category_name_official = ""
+        input_category_name_common = ""
+        input_category = ""
+        input_category_group = ""
+
+        print(
+            f"The category name '{official_category_name}' was not used in the {'current' if compare_current_category_names else 'previous'} edition."
+        )
+        print()
+
+        # get closest category name matches
+        matrix = process.cdist(
+            [official_category_name],
+            db_category_names,
+            scorer=fuzz.token_set_ratio,
+            processor=lambda x: (
+                x.lower()
+                .replace("(", "")
+                .replace(")", "")
+                .replace("-", " ")
+                .replace(",", "")
+            ),
+        )
+        scores = matrix[0]
+        indices = scores.argsort()[::-1]  # indices of scores sorted in desc order
+
+        print("The closest matches are...")
+        for ind in indices[:3]:
+            print(db_category_names[ind], "--", scores[ind])
+        print()
+
+        # Input the desired official category name (case-sensitive). If your
+        # input does not match any existing category name in the database, you
+        # will be prompted to insert a new one.
+        while input_category_name_official.strip() == "":
+            input_category_name_official = input(
+                "Input the desired official category name (case-sensitive):\n"
+            )
+
+        if input_category_name_official not in db_category_names:
+            # <input> is a new category name. Input the common name of this
+            # category name.
+            print()
+            while input_category_name_common.strip() == "":
+                input_category_name_common = input(
+                    f"'{input_category_name_official}' is a new category name. Input its common name (case-sensitive):\n"
+                )
+
+            # Input the category it belongs to (case-sensitive). If your input
+            # does not match any existing category in the database, you will be
+            # prompted to insert a new one.
+            print()
+            while input_category.strip() == "":
+                input_category = input(
+                    "Input the category it belongs to (case-sensitive):\n"
+                )
+
+            if input_category not in db_categories:
+                # <input> is a new category. Input the category group it belongs
+                # to (case-sensitive). If your input does not match any existing
+                # category group in the database, you will be prompted to insert
+                # a new one.
+                print()
+                while input_category_group.strip() == "":
+                    input_category_group = input(
+                        f"'{input_category}' is a new category. Input the category group it belongs to (case-sensitive):\n"
+                    )
+
+            # You are about to insert the following entries into the database:
+            # table (columns)                                       values
+            # category_names (award, official_name, common_name)    ('oscar', <input1>, <input2>)
+            # categories (award, name)                              ('oscar', <input3>)
+            # category_groups (award, name)                         ('oscar', <input4>)
+            #
+            # Confirm (yes/no)
+            width = 54
+            print()
+            print("You are about to insert the following entries into the database:")
+            print()
+            print("table (columns)".ljust(width), end="")
+            print("values")
+            print(
+                "category_names (award, official_name, common_name)".ljust(width),
+                end="",
+            )
+            print(
+                f"('oscar', '{input_category_name_official}', '{input_category_name_common}')"
+            )
+            if input_category not in db_categories:
+                print("categories (award, name)".ljust(width), end="")
+                print(f"('oscar', '{input_category}')")
+
+                if input_category_group not in db_category_groups:
+                    print("category_groups (award, name)".ljust(width), end="")
+                    print(f"('oscar', '{input_category_group}')")
+
+            print()
+            while confirm != "yes" and confirm != "no":
+                confirm = input("Confirm (yes/no): ").lower()
+
+            print()
+
+            # insert new category name/category/category group
+            db.insert_category_name(
+                category_name_official=input_category_name_official,
+                category_name_common=input_category_name_common,
+                category=input_category,
+                new_category=(input_category not in db_categories),
+                category_group=input_category_group,
+                new_category_group=(input_category_group not in db_category_groups),
+            )
+
+        else:
+            confirm = "yes"
+
+    print()
+    print(
+        f"'{input_category_name_official}' will replace '{official_category_name}' as the official category name."
+    )
+    print()
+
+    official_category.category = input_category_name_official
 
 
 def compare_update_nominees(edition: int, matched_categories: list[MatchedCategory]):
@@ -412,7 +605,7 @@ def compare_update_nominees(edition: int, matched_categories: list[MatchedCatego
 
     Matches categories, then fuzzy matches nominees. If number of nominees
     within a category differs, suggests inserts/deletes. Compares matched
-    nominee properties for exactness and interactively suggests
+    nominees' properties for exactness and interactively suggests
     updates/upserts/deletes.
 
     Args:
