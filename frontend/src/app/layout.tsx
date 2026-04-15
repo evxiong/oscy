@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
-import { Albert_Sans } from "next/font/google";
-import "./globals.css";
+import localFont from "next/font/local";
 import Navbar from "./_components/navbar";
 import SearchRefContextProvider from "./_components/searchRefContext";
+import "./globals.css";
 
-const albertSans = Albert_Sans({
-  variable: "--font-albert-sans",
-  subsets: ["latin"],
+const figtree = localFont({
+  src: [
+    {
+      path: "../../public/fonts/Figtree.woff2",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/Figtree-Italic.woff2",
+      style: "italic",
+    },
+  ],
+  variable: "--font-figtree",
 });
 
 export const metadata: Metadata = {
@@ -26,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${albertSans.variable} antialiased`}>
+    <html lang="en" className={`${figtree.variable} antialiased`}>
       <body className="min-h-screen scroll-smooth font-sans text-zinc-800">
         <SearchRefContextProvider>
           <Navbar />

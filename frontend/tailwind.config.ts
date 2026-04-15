@@ -12,7 +12,7 @@ export default {
         xs: "480px",
       },
       fontFamily: {
-        sans: ["var(--font-albert-sans)"],
+        sans: ["var(--font-figtree)"],
       },
       fontSize: {
         xxs: ["0.625rem", "0.75rem"],
