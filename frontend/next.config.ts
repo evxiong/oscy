@@ -1,7 +1,7 @@
-import type { NextConfig } from "next";
 import { loadEnvConfig } from "@next/env";
+import type { NextConfig } from "next";
 
-loadEnvConfig("..");
+loadEnvConfig("..", undefined, console, true);
 
 const nextConfig: NextConfig = {
   // Uncomment next line if using Docker
@@ -16,6 +16,24 @@ const nextConfig: NextConfig = {
         search: "",
       },
     ],
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination:
+          process.env.VERCEL_ENV === "production"
+            ? "https://oscy-api.vercel.app/:path*"
+            : `http://${process.env.API_HOST}:8000/:path*`,
+      },
+      {
+        source: "/openapi.json",
+        destination:
+          process.env.VERCEL_ENV === "production"
+            ? "https://oscy-api.vercel.app/openapi.json"
+            : `http://${process.env.API_HOST}:8000/openapi.json`,
+      },
+    ];
   },
 };
 
