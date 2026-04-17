@@ -1,21 +1,21 @@
-import Breadcrumbs from "@/app/_components/breadcrumbs";
-import type { Category, CategoryGroupInfo } from "./types";
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import AwardNavigator from "@/app/_components/awardNavigator";
-import { AwardEnum } from "@/app/ceremony/[iteration]/types";
+import Breadcrumbs from "@/app/_components/breadcrumbs";
+import Card from "@/app/_components/card";
+import Nominations from "@/app/_components/nominations";
 import { SmallSelectorOption } from "@/app/_components/selectors";
+import fetchError from "@/app/_utils/fetchError";
 import {
   categoriesToTopFive,
   categoryNamesToTimeline,
   iterationToOrdinal,
   topFiveToImageUrls,
 } from "@/app/_utils/utils";
-import Nominations from "@/app/_components/nominations";
-import Card from "@/app/_components/card";
-import CategoryStats from "./stats";
-import { notFound } from "next/navigation";
-import fetchError from "@/app/_utils/fetchError";
+import { AwardEnum } from "@/app/ceremony/[iteration]/types";
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import CategoryStats from "./stats";
+import type { Category, CategoryGroupInfo } from "./types";
 
 export async function generateStaticParams() {
   // const categoryGroups: CategoryGroupInfo[] =
@@ -85,7 +85,6 @@ export default async function Category({
   const nominationCategories = editions.map((e) => e.categories).flat();
 
   const topFive = categoriesToTopFive(nominationCategories);
-  const topFiveCategoryInds: number[] = topFive.indices;
   const topFiveImageUrls: (string | null)[] = await topFiveToImageUrls(topFive);
 
   const categoryName = category.category.startsWith("Unique")
@@ -165,18 +164,25 @@ export default async function Category({
       <section className="flex w-full flex-col overflow-x-auto bg-gradient-to-r from-white to-zinc-100 py-5 md:items-center">
         <div className="w-fit px-6 md:w-[768px]">
           <div className="flex flex-row gap-[11.25px]">
-            {topFiveCategoryInds.map((catInd, i) => (
+            {topFive.map((topFiveCard, i) => (
               <Card
                 key={i}
                 showCeremony={true}
                 ceremony={
-                  editions[catInd].official_year +
+                  editions[topFiveCard.category_ind].official_year +
                   " (" +
-                  iterationToOrdinal(editions[catInd].iteration) +
+                  iterationToOrdinal(
+                    editions[topFiveCard.category_ind].iteration,
+                  ) +
                   ")"
                 }
-                ceremonyId={editions[catInd].id}
-                category={nominationCategories[catInd]}
+                ceremonyId={editions[topFiveCard.category_ind].id}
+                category={nominationCategories[topFiveCard.category_ind]}
+                nominee={
+                  nominationCategories[topFiveCard.category_ind].nominees[
+                    topFiveCard.nominee_ind
+                  ]
+                }
                 imageUrl={topFiveImageUrls[i]}
               />
             ))}

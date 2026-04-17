@@ -1,16 +1,16 @@
 "use client";
 
 import { IconStarFilled } from "@tabler/icons-react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import { iterationToOrdinal } from "../_utils/utils";
 import {
   CategoryType,
   CeremonyType,
   NomineeType,
 } from "../ceremony/[iteration]/types";
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { MediumSelector } from "@/app/_components/selectors";
-import { Input } from "@headlessui/react";
-import { iterationToOrdinal } from "../_utils/utils";
+import SearchField from "./SearchField";
+import Switch from "./Switch";
 
 export interface NominationCategoryType extends CategoryType {
   ceremony_id: number;
@@ -44,8 +44,9 @@ export default function Nominations({
         .flat(),
     [editions],
   );
-  const winnerOptions = [{ name: "All" }, { name: "Winners" }];
-  const [winnersOnly, setWinnersOnly] = useState(winnerOptions[0]);
+  // const winnerOptions = [{ name: "All" }, { name: "Winners" }];
+  // const [winnersOnly, setWinnersOnly] = useState(winnerOptions[0]);
+  const [winnersOnly, setWinnersOnly] = useState(false);
   const [search, setSearch] = useState("");
   const [filteredCategories, setFilteredCategories] =
     useState<NominationCategoryType[]>(categories);
@@ -71,17 +72,23 @@ export default function Nominations({
     <>
       <div
         id="hide-scrollbar"
-        className="sticky top-0 z-30 flex h-14 w-full flex-row items-center justify-between gap-4 overflow-x-auto bg-white text-sm font-medium text-zinc-500"
+        className="sticky top-0 z-30 -mx-0.5 flex h-[--nominations-header-height-mobile] flex-col justify-center gap-3 overflow-x-auto bg-background px-0.5 text-sm font-medium text-secondary sm:h-[--nominations-header-height] sm:flex-row sm:items-center sm:gap-6"
       >
-        <div className="flex w-full flex-row items-center gap-4">
-          <MediumSelector
+        {/* <MediumSelectorAria
             state={winnersOnly}
             setState={setWinnersOnly}
             options={winnerOptions}
             idKey="name"
             displayKey="name"
+          /> */}
+        <div className="sm:flex-1">
+          <SearchField
+            placeholder="Search categories"
+            onChange={(v) => setSearch(v)}
           />
-          <div className="flex h-8 min-w-32 flex-row-reverse items-center gap-0.5 rounded-md">
+        </div>
+
+        {/* <div className="flex h-8 min-w-32 flex-row-reverse items-center gap-0.5 rounded-md">
             <Input
               name="Category search"
               type="text"
@@ -92,9 +99,14 @@ export default function Nominations({
             <span className="select-none peer-focus:text-zinc-800">
               {searchHeader}:
             </span>
-          </div>
+          </div> */}
+        <div className="flex sm:flex-1 sm:justify-end">
+          <Switch isSelected={winnersOnly} onChange={setWinnersOnly}>
+            Winners only
+          </Switch>
         </div>
-        <div className="flex-shrink-0 font-semibold">{stickyHeader}</div>
+
+        {/* <div className="flex-shrink-0 font-semibold">{stickyHeader}</div> */}
       </div>
       <hr />
       {filteredCategories.map((c, i) => (
@@ -102,7 +114,7 @@ export default function Nominations({
           key={i}
           showCeremony={showCeremony}
           categoryInfo={c}
-          winnersOnly={winnersOnly.name === winnerOptions[1].name}
+          winnersOnly={winnersOnly}
         />
       ))}
     </>
@@ -121,8 +133,8 @@ function Category({
   return (
     <>
       <div className="flex flex-col gap-1 py-6 text-zinc-800 sm:flex-row sm:gap-6">
-        <div className="sticky top-14 z-10 w-full flex-1 bg-white pb-4 sm:pb-0">
-          <div className="sticky top-14 z-10">
+        <div className="sticky top-[--nominations-header-height-mobile] z-10 w-full flex-1 bg-white pb-4 sm:top-[--nominations-header-height] sm:pb-0">
+          <div className="sticky top-[--nominations-header-height-mobile] z-10 sm:top-[--nominations-header-height]">
             <Link
               prefetch={false}
               href={

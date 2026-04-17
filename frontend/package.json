@@ -12,10 +12,13 @@
     "@headlessui/react": "^2.2.0",
     "@next/env": "^15.2.0",
     "@tabler/icons-react": "^3.28.1",
+    "clsx": "^2.1.1",
     "fetch-retry": "^6.0.0",
     "next": "^15.2.8",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-aria-components": "^1.17.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -1,10 +1,16 @@
+import fetchRetryWrapper from "fetch-retry";
 import { CategoryName } from "../category/[id]/types";
 import { CategoryType, NominationsType } from "../ceremony/[iteration]/types";
-import fetchRetryWrapper from "fetch-retry";
 
 interface TopFive {
   indices: number[];
   imdb_ids: string[];
+}
+
+interface TopFiveCard {
+  category_ind: number;
+  nominee_ind: number;
+  imdb_id: string;
 }
 
 interface TimelineItem {
@@ -41,7 +47,7 @@ export function iterationToOrdinal(iteration: number): string {
 
 export function ceremonyToTopFive(
   nominations: NominationsType,
-): TopFive | null {
+): TopFiveCard[] | null {
   // returns list of five category indices in ceremony, and the winner imdb ids to be used in cards
   const ceremony = nominations.editions[0];
 
@@ -104,58 +110,72 @@ export function ceremonyToTopFive(
     }
   }
 
-  const topFive: TopFive = {
-    indices: indices,
-    imdb_ids: imdb_ids,
-  };
+  const topFive: TopFiveCard[] = indices.map((categoryInd, i) => ({
+    category_ind: categoryInd,
+    nominee_ind: 0,
+    imdb_id: imdb_ids[i],
+  }));
 
   return topFive;
 }
 
-export function categoriesToTopFive(categories: CategoryType[]): TopFive {
+export function categoriesToTopFive(categories: CategoryType[]): TopFiveCard[] {
   // categories should already be reversed
-  const indices = [];
-  const imdb_ids = [];
+  const topFiveCards: TopFiveCard[] = [];
 
-  let i = 0;
-  for (const c of categories) {
-    if (c.nominees[0].pending) {
-      i += 1;
+  for (let categoryInd = 0; categoryInd < categories.length; categoryInd++) {
+    const category = categories[categoryInd];
+
+    if (category.nominees[0].pending) {
+      categoryInd += 1;
       continue;
     }
-    if (c.nominees[0].is_person || c.short_name === "Director") {
-      imdb_ids.push(
-        c.nominees[0].people[0]?.imdb_id ?? c.nominees[0].titles[0].imdb_id,
-      );
-    } else {
-      imdb_ids.push(
-        c.nominees[0].titles[0]?.imdb_id ?? c.nominees[0].people[0].imdb_id,
-      );
+
+    for (
+      let nomineeInd = 0;
+      nomineeInd < category.nominees.length;
+      nomineeInd++
+    ) {
+      const nominee = category.nominees[nomineeInd];
+
+      if (!nominee.winner) {
+        break;
+      }
+      if (nominee.is_person || category.short_name === "Director") {
+        topFiveCards.push({
+          category_ind: categoryInd,
+          nominee_ind: nomineeInd,
+          imdb_id: nominee.people[0]?.imdb_id ?? nominee.titles[0].imdb_id,
+        });
+      } else {
+        topFiveCards.push({
+          category_ind: categoryInd,
+          nominee_ind: nomineeInd,
+          imdb_id: nominee.titles[0]?.imdb_id ?? nominee.people[0].imdb_id,
+        });
+      }
+      if (topFiveCards.length === 5) {
+        break;
+      }
     }
-    indices.push(i);
-    if (imdb_ids.length === 5) {
+
+    if (topFiveCards.length === 5) {
       break;
     }
-    i += 1;
   }
 
-  const topFive: TopFive = {
-    indices: indices,
-    imdb_ids: imdb_ids,
-  };
-
-  return topFive;
+  return topFiveCards;
 }
 
 export async function topFiveToImageUrls(
-  topFive: TopFive,
+  topFive: TopFiveCard[],
 ): Promise<(string | null)[]> {
   const fetchRetry = fetchRetryWrapper(fetch);
   return Promise.all(
     process.env.TMDB_API_KEY
-      ? topFive.imdb_ids.map(async (imdb_id) => {
+      ? topFive.map(async (topFiveCard) => {
           const findByIdResults = await fetchRetry(
-            `https://api.themoviedb.org/3/find/${imdb_id}?external_source=imdb_id&api_key=${process.env.TMDB_API_KEY}`,
+            `https://api.themoviedb.org/3/find/${topFiveCard.imdb_id}?external_source=imdb_id&api_key=${process.env.TMDB_API_KEY}`,
             {
               retryOn: (attempt, error, response) => {
                 if (attempt < 3 && (!response || !response.ok)) {
@@ -175,7 +195,7 @@ export async function topFiveToImageUrls(
             );
           }
           const results: TMDBResults = await findByIdResults.json();
-          if (imdb_id.startsWith("tt")) {
+          if (topFiveCard.imdb_id.startsWith("tt")) {
             return results["movie_results"].length > 0 &&
               results["movie_results"][0]["poster_path"]
               ? "https://image.tmdb.org/t/p/w185" +

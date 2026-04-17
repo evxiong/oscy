@@ -1,11 +1,19 @@
 import {
   Listbox,
   ListboxButton,
-  ListboxOptions,
   ListboxOption,
+  ListboxOptions,
 } from "@headlessui/react";
 import { IconChevronDown } from "@tabler/icons-react";
 import { Dispatch, SetStateAction } from "react";
+import {
+  Button as AriaButton,
+  ListBox as AriaListBox,
+  ListBoxItem as AriaListBoxItem,
+  Popover as AriaPopover,
+  Select as AriaSelect,
+  SelectValue as AriaSelectValue,
+} from "react-aria-components";
 
 export interface SmallSelectorOption {
   id: number;
@@ -105,6 +113,53 @@ export function MediumSelector<T>({
           ))}
         </ListboxOptions>
       </Listbox>
+    </div>
+  );
+}
+
+export function MediumSelectorAria<T>({
+  state,
+  setState,
+  options,
+  idKey,
+  displayKey,
+}: {
+  state: T;
+  setState: Dispatch<SetStateAction<T>>;
+  options: T[];
+  idKey: keyof T;
+  displayKey: keyof T;
+}) {
+  // build a map of each option's id to the option itself
+  const idToOption = new Map(
+    options.map((option) => [option[idKey] as string, option]),
+  );
+  return (
+    <div className="w-fit shrink-0">
+      <AriaSelect
+        value={state[idKey] as string}
+        onChange={(v) => setState(idToOption.get(v as string)!)}
+      >
+        <AriaButton className="data-[hovered]:bg-hover data-[pressed]:bg-hover data-[pressed]:border-border-active border-border flex flex-row items-center gap-1 rounded-md border px-2 py-1 transition-all duration-100">
+          <AriaSelectValue />
+          <IconChevronDown className="size-3.5" />
+        </AriaButton>
+        <AriaPopover className="text-secondary border-border overflow-hidden rounded-md border bg-white p-1 font-medium drop-shadow-sm">
+          <AriaListBox>
+            {options.map((option) => (
+              <AriaListBoxItem
+                key={option[idKey] as string}
+                id={option[idKey] as string}
+                textValue={option[displayKey] as string}
+                className="data-[hovered]:bg-hover data-[selected]:text-primary data-[hovered]:text-primary data-[focused]:text-primary data-[focused]:bg-hover group relative cursor-default rounded-sm text-sm data-[selection-mode]:py-1 data-[selection-mode]:pl-6 data-[selection-mode]:pr-4"
+              >
+                <div className="absolute left-2 top-1/2 hidden size-1.5 -translate-y-1/2 rounded-full bg-gold group-data-[selected]:block"></div>
+                <span>{option[displayKey] as string}</span>
+              </AriaListBoxItem>
+            ))}
+          </AriaListBox>
+        </AriaPopover>
+      </AriaSelect>
     </div>
   );
 }

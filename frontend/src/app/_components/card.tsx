@@ -1,31 +1,31 @@
-import Link from "next/link";
-import { CategoryType } from "../ceremony/[iteration]/types";
-import Image from "next/image";
 import { IconLibraryPhoto } from "@tabler/icons-react";
+import Image from "next/image";
+import Link from "next/link";
+import { CategoryType, type NomineeType } from "../ceremony/[iteration]/types";
 
 export default function Card({
   showCeremony,
   ceremony,
   ceremonyId,
   category,
+  nominee,
   imageUrl,
 }: {
   showCeremony: boolean;
   ceremony: string;
   ceremonyId: number;
   category: CategoryType;
+  nominee: NomineeType;
   imageUrl: string | null;
 }) {
   const personFirst =
-    category.nominees[0].is_person ||
+    nominee.is_person ||
     category.short_name === "Director" ||
-    category.nominees[0].titles.length === 0;
+    nominee.titles.length === 0;
   const detailsFirst =
     category.short_name === "Original Song" ||
     category.short_name === "Dance Direction";
-  const titleWinners = category.nominees[0].titles.filter(
-    (t) => t.title_winner,
-  );
+  const titleWinners = nominee.titles.filter((t) => t.title_winner);
   return (
     <div className="flex w-[135px] flex-shrink-0 flex-col gap-2">
       <Link
@@ -59,8 +59,8 @@ export default function Card({
             fill={true}
             alt={
               personFirst
-                ? `Photo of ${category.nominees[0].people[0]?.name ?? category.nominees[0].titles[0].title}`
-                : `Poster for ${category.nominees[0].titles[0]?.title ?? category.nominees[0].people[0].name}`
+                ? `Photo of ${nominee.people[0]?.name ?? nominee.titles[0].title}`
+                : `Poster for ${nominee.titles[0]?.title ?? nominee.people[0].name}`
             }
             priority={true}
             className="object-cover"
@@ -82,7 +82,7 @@ export default function Card({
         <div
           className={`${personFirst ? "text-sm font-medium leading-4 text-zinc-800" : "text-xs font-normal leading-[0.875rem] text-zinc-500"} `}
         >
-          {category.nominees[0].people.map((n, i) => (
+          {nominee.people.map((n, i) => (
             <span key={i}>
               <Link
                 prefetch={false}
@@ -91,7 +91,7 @@ export default function Card({
               >
                 {n.name}
               </Link>
-              {i !== category.nominees[0].people.length - 1 && ", "}
+              {i !== nominee.people.length - 1 && ", "}
             </span>
           ))}
         </div>
@@ -99,10 +99,10 @@ export default function Card({
           className={`${!personFirst ? "text-sm font-medium leading-4 text-zinc-800" : "text-xs leading-[0.875rem] text-zinc-500"} `}
         >
           {detailsFirst
-            ? category.nominees[0].titles[0].detail.map((d, i) => (
+            ? nominee.titles[0].detail.map((d, i) => (
                 <span key={i}>
                   <span className="w-fit">{"“" + d + "”"}</span>
-                  {i < category.nominees[0].titles[0].detail.length - 1 && ", "}
+                  {i < nominee.titles[0].detail.length - 1 && ", "}
                 </span>
               ))
             : titleWinners.map((t, i) => (

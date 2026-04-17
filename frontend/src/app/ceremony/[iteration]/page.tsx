@@ -1,26 +1,33 @@
-import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/react";
 import {
-  IconArrowLeft,
-  IconArrowRight,
-  IconLaurelWreath,
-} from "@tabler/icons-react";
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+} from "@/app/_components/Tabs";
+import AwardNavigator from "@/app/_components/awardNavigator";
+import Breadcrumbs from "@/app/_components/breadcrumbs";
+import Card from "@/app/_components/card";
+import Nominations from "@/app/_components/nominations";
+import { SmallSelectorOption } from "@/app/_components/selectors";
+import fetchError from "@/app/_utils/fetchError";
 import {
   ceremonyToTopFive,
   dateToString,
   iterationToOrdinal,
   topFiveToImageUrls,
 } from "@/app/_utils/utils";
-import { AwardEnum, EditionType, NominationsType } from "./types";
-import Link from "next/link";
-import CeremonyStats from "./stats";
-import Nominations from "@/app/_components/nominations";
-import Breadcrumbs from "@/app/_components/breadcrumbs";
-import AwardNavigator from "@/app/_components/awardNavigator";
-import { SmallSelectorOption } from "@/app/_components/selectors";
-import Card from "@/app/_components/card";
-import { notFound } from "next/navigation";
-import fetchError from "@/app/_utils/fetchError";
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconLaurelWreath,
+} from "@tabler/icons-react";
 import { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import CeremonyEntityStats from "./CeremonyEntityStats";
+import CeremonyTitleStats from "./CeremonyTitleStats";
+import { AwardEnum, EditionType, NominationsType } from "./types";
 
 export async function generateStaticParams() {
   // const editions: EditionType[] = await fetchError(
@@ -82,9 +89,7 @@ export default async function Ceremony({
     notFound();
   }
 
-  const editions: EditionType[] = await fetchError(
-    "/api/ceremonies",
-  );
+  const editions: EditionType[] = await fetchError("/api/ceremonies");
   const ceremony = nominations.editions[0];
   const ordinal = iterationToOrdinal(ceremony.iteration);
   const topFive = ceremonyToTopFive(nominations);
@@ -150,13 +155,18 @@ export default async function Ceremony({
         {topFive ? (
           <div className="w-fit px-6 md:w-[768px]">
             <div className="flex flex-row gap-[11.25px]">
-              {topFive.indices.map((catInd, i) => (
+              {topFive.map((topFiveCard, i) => (
                 <Card
                   key={i}
                   showCeremony={false}
                   ceremony={ceremony.official_year + " (" + ordinal + ")"}
                   ceremonyId={ceremony.iteration}
-                  category={ceremony.categories[catInd]}
+                  category={ceremony.categories[topFiveCard.category_ind]}
+                  nominee={
+                    ceremony.categories[topFiveCard.category_ind].nominees[
+                      topFiveCard.nominee_ind
+                    ]
+                  }
                   imageUrl={topFiveImageUrls[i]}
                 />
               ))}
@@ -164,7 +174,7 @@ export default async function Ceremony({
           </div>
         ) : (
           <div className="flex min-h-56 items-center justify-center px-6 md:w-[768px]">
-            <div className="flex select-none flex-row items-center gap-2 rounded-md border border-gray-200 px-4 py-2 text-sm font-medium text-gray-400">
+            <div className="flex select-none flex-row items-center gap-2 rounded-md border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-400">
               <IconLaurelWreath className="size-5" />
               <div>Winners TBD</div>
             </div>
@@ -173,6 +183,37 @@ export default async function Ceremony({
       </section>
       <section className="mb-20 flex w-full flex-col items-center">
         <div className="flex w-full px-6 md:w-[768px]">
+          <Tabs className="w-full">
+            <TabList>
+              <Tab id="nominations">Nominations</Tab>
+              <Tab id="films">Films</Tab>
+              <Tab id="people">People</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel id="nominations" shouldForceMount>
+                <Nominations
+                  showCeremony={false}
+                  editions={nominations.editions}
+                  searchHeader="Category"
+                  searchKeys={[
+                    "category_group",
+                    "official_name",
+                    "common_name",
+                    "short_name",
+                  ]}
+                  stickyHeader={ceremony.official_year + " (" + ordinal + ")"}
+                />
+              </TabPanel>
+              <TabPanel id="films" shouldForceMount>
+                <CeremonyTitleStats stats={nominations.stats} />
+              </TabPanel>
+              <TabPanel id="people" shouldForceMount>
+                <CeremonyEntityStats stats={nominations.stats} />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </div>
+        {/* <div className="flex w-full px-6 md:w-[768px]">
           <TabGroup className="w-full">
             <TabList className="flex flex-row gap-7 text-lg font-medium text-zinc-500 sm:text-base sm:leading-7">
               <Tab className="decoration-zinc-500 underline-offset-[6px] focus:outline-none data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
@@ -202,7 +243,7 @@ export default async function Ceremony({
               </TabPanel>
             </TabPanels>
           </TabGroup>
-        </div>
+        </div> */}
       </section>
     </div>
   );

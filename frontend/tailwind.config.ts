@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import colors from "tailwindcss/colors";
 
 export default {
   content: [
@@ -19,6 +20,17 @@ export default {
       },
       colors: {
         gold: "#B59349",
+        primary: colors.zinc[800],
+        secondary: colors.zinc[500],
+        tertiary: colors.zinc[400],
+        underline: colors.zinc[300],
+        "border-active": colors.zinc[300],
+        border: colors.zinc[200],
+        active: colors.zinc[200],
+        hover: colors.zinc[100],
+        overlay: colors.zinc[100],
+        background: colors.white,
+        ring: colors.blue[600],
       },
     },
   },

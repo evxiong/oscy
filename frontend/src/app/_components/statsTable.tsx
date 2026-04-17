@@ -1,13 +1,13 @@
 "use client";
 
+import { IconCaretDownFilled, IconCaretUpFilled } from "@tabler/icons-react";
+import Link from "next/link";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   EntityStatsType,
   StatsType,
   TitleStatsType,
 } from "../ceremony/[iteration]/types";
-import { useState, useEffect, useMemo, useCallback } from "react";
-import Link from "next/link";
-import { IconCaretDownFilled, IconCaretUpFilled } from "@tabler/icons-react";
 
 interface StatsTableColumn {
   name: string;
@@ -111,7 +111,7 @@ export default function StatsTable<
   return (
     <div className="h-[90vh] overflow-x-auto xs:h-auto xs:overflow-x-visible">
       <table className="w-full border-collapse">
-        <thead className="sticky top-0 h-10 select-none bg-white align-middle text-xxs font-semibold text-zinc-800">
+        <thead className="sticky top-0 h-10 select-none bg-white align-middle text-xxs text-zinc-800">
           <tr className="h-10 border-b-2 border-zinc-300">
             <th scope="col" className="w-8 pt-1 text-zinc-500" title="Rank">
               #
@@ -186,7 +186,9 @@ function TableHeader({
         <div
           className={`${selected ? "underline" : ""} flex flex-row items-center gap-0.5 decoration-gold underline-offset-2`}
         >
-          <div className="flex items-center justify-center">{name}</div>
+          <div className="flex items-center justify-center font-semibold">
+            {name}
+          </div>
           {selected &&
             (desc ? (
               <IconCaretDownFilled className="h-3 w-3 fill-gold" />

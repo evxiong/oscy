@@ -238,12 +238,16 @@ function Results({
 }
 
 function QuickLinks({ closeResults }: { closeResults: () => void }) {
+  const currentEdition = parseInt(process.env.NEXT_PUBLIC_CURRENT_EDITION!);
+  const currentYear = 1927 + currentEdition;
+  const currentOrdinal = iterationToOrdinal(currentEdition);
   const pages = [
     {
-      url: "/ceremony/97",
-      name: "2024 (97th) Academy Awards",
+      url: `/ceremony/${currentEdition}`,
+      name: `${currentYear} (${currentOrdinal}) Academy Awards`,
       type: "ceremony",
     },
+    { url: "/category/46", name: "Best Picture", type: "category" },
     { url: "/category/1", name: "Best Actor", type: "category" },
     { url: "/category/3", name: "Best Actress", type: "category" },
   ];
