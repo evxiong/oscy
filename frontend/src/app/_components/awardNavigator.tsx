@@ -1,13 +1,13 @@
 "use client";
 
 import {
-  SmallSelector,
+  SmallSelectorAria,
   SmallSelectorOption,
 } from "@/app/_components/selectors";
-import { useState } from "react";
-import { AwardEnum } from "../ceremony/[iteration]/types";
 import { IconArrowRight } from "@tabler/icons-react";
 import Link from "next/link";
+import { useState } from "react";
+import { AwardEnum } from "../ceremony/[iteration]/types";
 
 export default function AwardNavigator({
   subdir,
@@ -33,12 +33,16 @@ export default function AwardNavigator({
       <div
         className={`${go ? "-translate-x-6" : ""} flex flex-row gap-2.5 transition-all duration-300 ease-in-out`}
       >
-        <SmallSelector
+        <SmallSelectorAria
           state={award}
           setState={setAward}
           options={awardOptions}
         />
-        <SmallSelector state={option} setState={setOption} options={options} />
+        <SmallSelectorAria
+          state={option}
+          setState={setOption}
+          options={options}
+        />
       </div>
       <Link
         prefetch={false}

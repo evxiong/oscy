@@ -27,7 +27,7 @@ export function TabList<T extends object>({
   return (
     <AriaTabList
       className={merge(
-        "inline-flex w-full items-center gap-6 border-border text-secondary",
+        "hide-scrollbar inline-flex w-full items-center gap-6 overflow-x-auto border-border text-secondary",
         className,
       )}
       {...props}

@@ -1,3 +1,10 @@
+import {
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+} from "@/app/_components/Tabs";
 import AwardNavigator from "@/app/_components/awardNavigator";
 import Breadcrumbs from "@/app/_components/breadcrumbs";
 import Card from "@/app/_components/card";
@@ -11,7 +18,6 @@ import {
   topFiveToImageUrls,
 } from "@/app/_utils/utils";
 import { AwardEnum } from "@/app/ceremony/[iteration]/types";
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CategoryStats from "./stats";
@@ -191,23 +197,14 @@ export default async function Category({
       </section>
       <section className="mb-20 flex w-full flex-col items-center">
         <div className="flex w-full px-6 md:w-[768px]">
-          <TabGroup className="w-full">
-            <TabList
-              id="hide-scrollbar"
-              className="flex flex-row gap-7 overflow-x-auto text-lg font-medium text-zinc-500 sm:text-base sm:leading-7"
-            >
-              <Tab className="decoration-zinc-500 underline-offset-[6px] focus:outline-none data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
-                Nominations
-              </Tab>
-              <Tab className="decoration-zinc-500 underline-offset-[6px] focus:outline-none data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
-                Statistics
-              </Tab>
-              <Tab className="decoration-zinc-500 underline-offset-[6px] focus:outline-none data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
-                History
-              </Tab>
+          <Tabs className="w-full">
+            <TabList>
+              <Tab id="nominations">Nominations</Tab>
+              <Tab id="statistics">Statistics</Tab>
+              <Tab id="history">History</Tab>
             </TabList>
             <TabPanels>
-              <TabPanel>
+              <TabPanel id="nominations" shouldForceMount>
                 <Nominations
                   showCeremony={true}
                   editions={editions}
@@ -216,13 +213,13 @@ export default async function Category({
                   stickyHeader={category.category}
                 />
               </TabPanel>
-              <TabPanel>
+              <TabPanel id="statistics" shouldForceMount>
                 <CategoryStats
                   entityStats={category.nominations.stats.entity_stats}
                 />
               </TabPanel>
-              <TabPanel>
-                <div className="flex h-14 flex-row items-center justify-between gap-4 bg-white text-base font-medium text-zinc-500">
+              <TabPanel id="history" shouldForceMount>
+                <div className="flex h-14 flex-row items-center justify-between gap-4 bg-background text-sm font-medium text-secondary">
                   <div>Known as</div>
                 </div>
                 <div className="flex flex-col font-medium">
@@ -261,7 +258,7 @@ export default async function Category({
                 </div>
               </TabPanel>
             </TabPanels>
-          </TabGroup>
+          </Tabs>
         </div>
       </section>
     </div>

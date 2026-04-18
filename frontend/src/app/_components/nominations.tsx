@@ -70,10 +70,7 @@ export default function Nominations({
 
   return (
     <>
-      <div
-        id="hide-scrollbar"
-        className="sticky top-0 z-30 -mx-0.5 flex h-[--nominations-header-height-mobile] flex-col justify-center gap-3 overflow-x-auto bg-background px-0.5 text-sm font-medium text-secondary sm:h-[--nominations-header-height] sm:flex-row sm:items-center sm:gap-6"
-      >
+      <div className="hide-scrollbar sticky top-0 z-30 -mx-0.5 flex h-[--nominations-header-height-mobile] flex-col justify-center gap-3 overflow-x-auto bg-background px-0.5 text-sm font-medium text-secondary sm:h-[--nominations-header-height] sm:flex-row sm:items-center sm:gap-6">
         {/* <MediumSelectorAria
             state={winnersOnly}
             setState={setWinnersOnly}
@@ -83,7 +80,11 @@ export default function Nominations({
           /> */}
         <div className="sm:flex-1">
           <SearchField
-            placeholder="Search categories"
+            placeholder={
+              showCeremony
+                ? "Search editions or category names"
+                : "Search categories"
+            }
             onChange={(v) => setSearch(v)}
           />
         </div>
@@ -258,10 +259,10 @@ function Note({ text }: { text: string }) {
     <span className="select-none">
       &nbsp;
       <span
-        className="group relative z-0 cursor-pointer align-top text-xs font-medium text-gold"
+        className="group/note relative z-0 cursor-pointer align-top text-xs font-medium text-gold"
         title={text}
       >
-        <span className="z-0 group-hover:underline">N</span>
+        <span className="z-0 group-hover/note:underline">N</span>
       </span>
     </span>
   );

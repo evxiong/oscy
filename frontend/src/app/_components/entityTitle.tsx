@@ -1,10 +1,10 @@
 import { IconArrowUpRight } from "@tabler/icons-react";
-import Breadcrumbs from "./breadcrumbs";
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
+import { imdbIdToUrl } from "../_utils/utils";
 import AggregateNominations from "../entity/[id]/aggNominations";
 import Rankings from "../entity/[id]/rankings";
 import { EntityOrTitle } from "../entity/[id]/types";
-import { imdbIdToUrl } from "../_utils/utils";
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "./Tabs";
+import Breadcrumbs from "./breadcrumbs";
 
 export default function EntityTitle({
   isTitle,
@@ -109,24 +109,20 @@ export default function EntityTitle({
       )}
       <section className="mb-20 flex w-full flex-col items-center">
         <div className="flex w-full px-6 md:w-[768px]">
-          <TabGroup className="w-full">
-            <TabList className="flex flex-row gap-7 text-lg font-medium text-zinc-500 sm:text-base sm:leading-7">
-              <Tab className="decoration-zinc-500 underline-offset-[6px] focus:outline-none data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
-                Nominations
-              </Tab>
-              <Tab className="decoration-zinc-500 underline-offset-[6px] focus:outline-none data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
-                Statistics
-              </Tab>
+          <Tabs className="w-full">
+            <TabList>
+              <Tab id="nominations">Nominations</Tab>
+              <Tab id="statistics">Statistics</Tab>
             </TabList>
             <TabPanels>
-              <TabPanel>
+              <TabPanel id="nominations" shouldForceMount>
                 <AggregateNominations
                   editions={entityOrTitle.nominations.reverse()}
                   searchHeader="Category"
                   stickyHeader=""
                 />
               </TabPanel>
-              <TabPanel>
+              <TabPanel id="statistics" shouldForceMount>
                 <Rankings
                   overallRankings={entityOrTitle.rankings.overall_rankings}
                   categoryRankings={entityOrTitle.rankings.category_rankings}
@@ -136,7 +132,7 @@ export default function EntityTitle({
                 />
               </TabPanel>
             </TabPanels>
-          </TabGroup>
+          </Tabs>
         </div>
       </section>
     </div>

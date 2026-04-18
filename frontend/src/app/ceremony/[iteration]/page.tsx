@@ -213,37 +213,6 @@ export default async function Ceremony({
             </TabPanels>
           </Tabs>
         </div>
-        {/* <div className="flex w-full px-6 md:w-[768px]">
-          <TabGroup className="w-full">
-            <TabList className="flex flex-row gap-7 text-lg font-medium text-zinc-500 sm:text-base sm:leading-7">
-              <Tab className="decoration-zinc-500 underline-offset-[6px] focus:outline-none data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
-                Nominations
-              </Tab>
-              <Tab className="decoration-zinc-500 underline-offset-[6px] focus:outline-none data-[selected]:font-semibold data-[hover]:text-zinc-800 data-[selected]:text-zinc-800 data-[selected]:underline">
-                Statistics
-              </Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                <Nominations
-                  showCeremony={false}
-                  editions={nominations.editions}
-                  searchHeader="Category"
-                  searchKeys={[
-                    "category_group",
-                    "official_name",
-                    "common_name",
-                    "short_name",
-                  ]}
-                  stickyHeader={ceremony.official_year + " (" + ordinal + ")"}
-                />
-              </TabPanel>
-              <TabPanel>
-                <CeremonyStats stats={nominations.stats} />
-              </TabPanel>
-            </TabPanels>
-          </TabGroup>
-        </div> */}
       </section>
     </div>
   );

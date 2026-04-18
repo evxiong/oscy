@@ -1,10 +1,10 @@
 "use client";
 
+import SearchField from "@/app/_components/SearchField";
+import Switch from "@/app/_components/Switch";
 import { Nominee } from "@/app/_components/nominations";
-import { MediumSelector } from "@/app/_components/selectors";
 import { dateToString, iterationToOrdinal } from "@/app/_utils/utils";
 import { CategoryType, CeremonyType } from "@/app/ceremony/[iteration]/types";
-import { Input } from "@headlessui/react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
@@ -21,8 +21,9 @@ export default function AggregateNominations({
     () => ["category_group", "official_name", "common_name", "short_name"],
     [],
   );
-  const winnerOptions = useMemo(() => [{ name: "All" }, { name: "Wins" }], []);
-  const [winnerOption, setWinnerOption] = useState(winnerOptions[0]);
+  // const winnerOptions = useMemo(() => [{ name: "All" }, { name: "Wins" }], []);
+  // const [winnerOption, setWinnerOption] = useState(winnerOptions[0]);
+  const [winnersOnly, setWinnersOnly] = useState(false);
   const [search, setSearch] = useState("");
   const [filteredEditions, setFilteredEditions] =
     useState<CeremonyType[]>(editions);
@@ -55,19 +56,24 @@ export default function AggregateNominations({
       );
     }
 
-    setFilteredEditions(
-      filterEditions(
-        editions,
-        search,
-        winnerOption.name === winnerOptions[1].name,
-      ),
-    );
-  }, [editions, search, winnerOption, winnerOptions, searchKeys]);
+    setFilteredEditions(filterEditions(editions, search, winnersOnly));
+  }, [editions, search, winnersOnly, searchKeys]);
 
   return (
     <>
-      <div className="sticky top-0 z-30 flex h-14 flex-row items-center justify-between gap-4 bg-white text-sm font-medium text-zinc-500">
-        <div className="flex w-full flex-row items-center gap-4">
+      <div className="hide-scrollbar sticky top-0 z-30 -mx-0.5 flex h-[--nominations-header-height-mobile] flex-col justify-center gap-3 overflow-x-auto bg-background px-0.5 text-sm font-medium text-secondary sm:h-[--nominations-header-height] sm:flex-row sm:items-center sm:gap-6">
+        <div className="sm:flex-1">
+          <SearchField
+            placeholder="Search editions or category names"
+            onChange={(v) => setSearch(v)}
+          />
+        </div>
+        <div className="flex sm:flex-1 sm:justify-end">
+          <Switch isSelected={winnersOnly} onChange={setWinnersOnly}>
+            Wins only
+          </Switch>
+        </div>
+        {/* <div className="flex w-full flex-row items-center gap-4">
           <MediumSelector
             state={winnerOption}
             setState={setWinnerOption}
@@ -88,19 +94,19 @@ export default function AggregateNominations({
             </span>
           </div>
         </div>
-        <div className="flex-shrink-0 font-semibold">{stickyHeader}</div>
+        <div className="flex-shrink-0 font-semibold">{stickyHeader}</div> */}
       </div>
       <hr />
       {filteredEditions.map(
         (e, i) =>
-          (winnerOption.name === winnerOptions[0].name ||
+          (!winnersOnly ||
             e.categories.some((c) => c.nominees.some((n) => n.winner))) && (
             <Edition
               key={i}
               editionInfo={e}
               search={search}
               searchKeys={searchKeys}
-              winnersOnly={winnerOption.name === winnerOptions[1].name}
+              winnersOnly={winnersOnly}
             />
           ),
       )}
@@ -123,8 +129,8 @@ function Edition({
   return (
     <>
       <div className="flex flex-col gap-1 py-6 text-zinc-800 sm:flex-row sm:gap-6">
-        <div className="sticky top-14 z-10 w-full flex-1 bg-white pb-4">
-          <div className="sticky top-14 z-10">
+        <div className="sticky top-[--nominations-header-height-mobile] z-10 w-full flex-1 bg-white pb-4 sm:top-[--nominations-header-height] sm:pb-0">
+          <div className="sticky top-[--nominations-header-height-mobile] z-10 sm:top-[--nominations-header-height]">
             <Link
               prefetch={false}
               href={`/ceremony/${editionInfo.iteration}`}
