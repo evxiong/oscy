@@ -1,9 +1,9 @@
 import { IconArrowUpRight } from "@tabler/icons-react";
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "../_ui/Tabs";
 import { imdbIdToUrl } from "../_utils/utils";
 import AggregateNominations from "../entity/[id]/aggNominations";
 import Rankings from "../entity/[id]/rankings";
 import { EntityOrTitle } from "../entity/[id]/types";
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from "./Tabs";
 import Breadcrumbs from "./breadcrumbs";
 
 export default function EntityTitle({

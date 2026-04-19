@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Navbar from "./_components/navbar";
-import SearchRefContextProvider from "./_components/searchRefContext";
+import SearchRefContextProvider from "./_contexts/SearchRefContext";
 import "./globals.css";
 
 const figtree = localFont({

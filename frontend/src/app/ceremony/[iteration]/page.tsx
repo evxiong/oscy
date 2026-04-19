@@ -1,15 +1,9 @@
-import {
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-} from "@/app/_components/Tabs";
 import AwardNavigator from "@/app/_components/awardNavigator";
 import Breadcrumbs from "@/app/_components/breadcrumbs";
 import Card from "@/app/_components/card";
 import Nominations from "@/app/_components/nominations";
 import { SmallSelectorOption } from "@/app/_components/selectors";
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@/app/_ui/Tabs";
 import fetchError from "@/app/_utils/fetchError";
 import {
   ceremonyToTopFive,

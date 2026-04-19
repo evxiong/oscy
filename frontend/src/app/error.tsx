@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@headlessui/react";
-import { startTransition, useEffect } from "react";
-import ExploreButton from "./_components/exploreButton";
 import { useRouter } from "next/navigation";
+import { startTransition, useEffect } from "react";
+import { Button } from "react-aria-components";
+import ExploreButton from "./_components/ExploreButton";
 
 export default function Error({
   error,
@@ -38,10 +38,7 @@ export default function Error({
             </h3>
           </div>
           <div className="flex flex-row gap-4">
-            <Button
-              onClick={refresh}
-              className="flex cursor-pointer flex-row items-center gap-2 rounded-md border border-zinc-400 px-4 py-2 text-sm font-medium text-zinc-500 hover:border-zinc-800 hover:text-zinc-800 focus:border-zinc-800 focus:text-zinc-800 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-            >
+            <Button onClick={refresh} className="border-tertiary">
               <span>Try again</span>
             </Button>
             <ExploreButton id="explore-3" text="New search" />

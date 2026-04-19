@@ -1,6 +1,6 @@
-import Link from "next/link";
-import ExploreButton from "./_components/exploreButton";
 import { Metadata } from "next";
+import Link from "next/link";
+import ExploreButton from "./_components/ExploreButton";
 
 export const metadata: Metadata = {
   title: "Page not found",

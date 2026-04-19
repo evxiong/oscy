@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@headlessui/react": "^2.2.0",
     "@next/env": "^15.2.0",
     "@tabler/icons-react": "^3.28.1",
     "clsx": "^2.1.1",

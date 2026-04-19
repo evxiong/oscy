@@ -1,6 +1,6 @@
 "use client";
 
-import { MediumSelectorAria } from "@/app/_components/selectors";
+import { MediumSelector } from "@/app/_components/selectors";
 import { useState } from "react";
 import {
   CategoryGroupRankings,
@@ -37,7 +37,7 @@ export default function Rankings({
   return (
     <>
       <div className="hide-scrollbar -mx-0.5 -mb-2 flex h-16 flex-row items-center gap-3 overflow-x-auto px-0.5">
-        <MediumSelectorAria
+        <MediumSelector
           state={option}
           setState={setOption}
           options={options}
@@ -45,7 +45,7 @@ export default function Rankings({
           displayKey="name"
         />
         {option.name === options[1].name ? (
-          <MediumSelectorAria
+          <MediumSelector
             state={categoryOption}
             setState={setCategoryOption}
             options={categoryOptions}
@@ -53,7 +53,7 @@ export default function Rankings({
             displayKey="category"
           />
         ) : options.length > 2 && option.name === options[2].name ? (
-          <MediumSelectorAria
+          <MediumSelector
             state={categoryGroupOption}
             setState={setCategoryGroupOption}
             options={categoryGroupOptions}

@@ -1,5 +1,3 @@
-import { Metadata } from "next";
-import ExploreButton from "./_components/exploreButton";
 import {
   IconAdjustments,
   IconBlendMode,
@@ -7,6 +5,8 @@ import {
   IconSparkles,
   IconTableHeart,
 } from "@tabler/icons-react";
+import { Metadata } from "next";
+import ExploreButton from "./_components/ExploreButton";
 
 const title = "oscy - Open-source Oscars database and API";
 const description = "Use oscy in your next movie-related project.";

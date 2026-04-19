@@ -3,6 +3,7 @@
 import { IconStarFilled } from "@tabler/icons-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import Switch from "../_ui/Switch";
 import { iterationToOrdinal } from "../_utils/utils";
 import {
   CategoryType,
@@ -10,7 +11,6 @@ import {
   NomineeType,
 } from "../ceremony/[iteration]/types";
 import SearchField from "./SearchField";
-import Switch from "./Switch";
 
 export interface NominationCategoryType extends CategoryType {
   ceremony_id: number;
@@ -71,13 +71,6 @@ export default function Nominations({
   return (
     <>
       <div className="hide-scrollbar sticky top-0 z-30 -mx-0.5 flex h-[--nominations-header-height-mobile] flex-col justify-center gap-3 overflow-x-auto bg-background px-0.5 text-sm font-medium text-secondary sm:h-[--nominations-header-height] sm:flex-row sm:items-center sm:gap-6">
-        {/* <MediumSelectorAria
-            state={winnersOnly}
-            setState={setWinnersOnly}
-            options={winnerOptions}
-            idKey="name"
-            displayKey="name"
-          /> */}
         <div className="sm:flex-1">
           <SearchField
             placeholder={
@@ -88,25 +81,11 @@ export default function Nominations({
             onChange={(v) => setSearch(v)}
           />
         </div>
-
-        {/* <div className="flex h-8 min-w-32 flex-row-reverse items-center gap-0.5 rounded-md">
-            <Input
-              name="Category search"
-              type="text"
-              placeholder="All"
-              className="peer h-8 w-full rounded-md bg-transparent px-1 text-sm text-zinc-800 outline-none placeholder:text-zinc-500"
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <span className="select-none peer-focus:text-zinc-800">
-              {searchHeader}:
-            </span>
-          </div> */}
         <div className="flex sm:flex-1 sm:justify-end">
           <Switch isSelected={winnersOnly} onChange={setWinnersOnly}>
             Winners only
           </Switch>
         </div>
-
         {/* <div className="flex-shrink-0 font-semibold">{stickyHeader}</div> */}
       </div>
       <hr />

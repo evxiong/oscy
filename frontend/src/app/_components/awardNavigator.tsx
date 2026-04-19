@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  SmallSelectorAria,
+  SmallSelector,
   SmallSelectorOption,
 } from "@/app/_components/selectors";
 import { IconArrowRight } from "@tabler/icons-react";
@@ -33,16 +33,12 @@ export default function AwardNavigator({
       <div
         className={`${go ? "-translate-x-6" : ""} flex flex-row gap-2.5 transition-all duration-300 ease-in-out`}
       >
-        <SmallSelectorAria
+        <SmallSelector
           state={award}
           setState={setAward}
           options={awardOptions}
         />
-        <SmallSelectorAria
-          state={option}
-          setState={setOption}
-          options={options}
-        />
+        <SmallSelector state={option} setState={setOption} options={options} />
       </div>
       <Link
         prefetch={false}

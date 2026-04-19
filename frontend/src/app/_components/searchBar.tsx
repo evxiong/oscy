@@ -1,7 +1,6 @@
 "use client";
 
-import { Input } from "@headlessui/react";
-import { IconArrowRight, IconSearch } from "@tabler/icons-react";
+import { IconArrowRight, IconSearch, IconX } from "@tabler/icons-react";
 import Link from "next/link";
 import {
   DependencyList,
@@ -13,6 +12,13 @@ import {
   useState,
 } from "react";
 import {
+  Button as AriaButton,
+  Group as AriaGroup,
+  Input as AriaInput,
+  SearchField as AriaSearchField,
+} from "react-aria-components";
+import { SearchRefContext } from "../_contexts/SearchRefContext";
+import {
   CategoryResult,
   CeremonyResult,
   EntityResult,
@@ -20,8 +26,8 @@ import {
   SearchResults,
   TitleResult,
 } from "../_types/types";
+import merge from "../_utils/merge";
 import { iterationToOrdinal } from "../_utils/utils";
-import { SearchRefContext } from "./searchRefContext";
 
 export default function SearchBar() {
   const searchRef = useRef(null);
@@ -137,19 +143,34 @@ export default function SearchBar() {
   );
 
   return (
-    <div className="w-full max-w-[720px] sm:relative" ref={searchRef}>
-      <div className="peer flex h-9 flex-row items-center rounded-md bg-zinc-100 has-[input:focus-within]:outline has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-gold">
-        <IconSearch className="mx-2 size-4 flex-shrink-0 stroke-zinc-400" />
-        <Input
-          name="Search"
-          type="text"
-          placeholder="Search for people, titles, categories, or ceremonies"
-          className="h-full w-full bg-transparent pr-2 text-sm text-zinc-800 outline-none"
-          onFocus={() => setOpenResults(true)}
-          onChange={(e) => setSearch(e.target.value)}
-          ref={inputRef}
-        />
-      </div>
+    <div className="w-full min-w-0 max-w-[720px] sm:relative" ref={searchRef}>
+      <AriaSearchField
+        className="group/field w-full text-sm font-normal"
+        onChange={(v) => setSearch(v)}
+      >
+        <AriaGroup
+          className={merge(
+            "flex h-9 items-center overflow-hidden rounded-md bg-overlay px-2",
+            "data-[focus-within]:outline data-[focus-within]:outline-2 data-[focus-within]:-outline-offset-2 data-[focus-within]:outline-gold",
+          )}
+        >
+          <IconSearch className="size-4 shrink-0 stroke-tertiary" />
+          <AriaInput
+            placeholder="Search for people, titles, categories, or ceremonies"
+            className="min-w-0 flex-1 bg-overlay p-1.5 text-primary outline-none placeholder:text-tertiary [&::-webkit-search-cancel-button]:hidden"
+            onFocus={() => setOpenResults(true)}
+            ref={(v) => {
+              if (inputRef) {
+                inputRef.current = v;
+              }
+            }}
+          />
+          <AriaButton className="group/button -m-1.5 p-1.5 group-data-[empty]/field:hidden">
+            <IconX className="size-4 stroke-tertiary group-hover/button:stroke-secondary" />
+          </AriaButton>
+        </AriaGroup>
+      </AriaSearchField>
+
       <ResultsBox
         open={openResults}
         blankSearch={search.trim() === ""}
