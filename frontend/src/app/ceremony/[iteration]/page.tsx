@@ -1,10 +1,9 @@
-import AwardNavigator from "@/app/_components/awardNavigator";
-import Breadcrumbs from "@/app/_components/breadcrumbs";
 import Card from "@/app/_components/card";
 import Nominations from "@/app/_components/nominations";
 import { SmallSelectorOption } from "@/app/_components/selectors";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@/app/_ui/Tabs";
 import fetchError from "@/app/_utils/fetchError";
+import merge from "@/app/_utils/merge";
 import {
   ceremonyToTopFive,
   dateToString,
@@ -21,7 +20,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import CeremonyEntityStats from "./CeremonyEntityStats";
 import CeremonyTitleStats from "./CeremonyTitleStats";
-import { AwardEnum, EditionType, NominationsType } from "./types";
+import { EditionType, NominationsType } from "./types";
 
 export async function generateStaticParams() {
   // const editions: EditionType[] = await fetchError(
@@ -99,53 +98,52 @@ export default async function Ceremony({
   const originalAwardNavigatorOption: SmallSelectorOption =
     awardNavigatorOptions[editions.findIndex((e) => e.id === ceremony.id)];
 
+  const disableNextLink = ceremony.iteration === editions.length;
+  const disablePrevLink = ceremony.iteration === 1;
+
   return (
     <div className="flex flex-col gap-5">
-      <section className="flex w-full flex-col items-center">
-        <div className="flex w-full flex-col gap-5 px-6 pt-5 md:w-[768px]">
-          <nav className="flex flex-row justify-between text-xs">
-            <Breadcrumbs
-              crumbs={[
-                { name: "Home", link: "/" },
-                { name: "Ceremony", link: "" },
-              ]}
-            />
-            <AwardNavigator
-              subdir="ceremony"
-              originalAwardType={AwardEnum.oscar}
-              options={awardNavigatorOptions}
-              originalOption={originalAwardNavigatorOption}
-            />
-          </nav>
-          <div className="flex w-full flex-row items-center justify-between">
-            <div className="flex flex-col gap-1">
-              <h1 className="text-2xl font-medium leading-7 text-zinc-800">
-                {ordinal} Academy Awards
-              </h1>
-              <h2 className="text-sm font-medium leading-4 text-zinc-500">
-                <span>{dateToString(ceremony.ceremony_date)}</span>
-                <span className="select-none">&#32;·&#32;</span>
-                <span>Honoring films from {ceremony.official_year}</span>
-              </h2>
-            </div>
-            <div className="hidden flex-row gap-2 sm:flex">
-              <Link
-                href={`/ceremony/${ceremony.iteration - 1}`}
-                className={`${ceremony.iteration === 1 ? "hidden" : "flex"} h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-zinc-100 hover:bg-zinc-200`}
-              >
-                <IconArrowLeft className="h-5 w-5 stroke-zinc-500" />
-              </Link>
-              <Link
-                href={`/ceremony/${ceremony.iteration + 1}`}
-                className={`${ceremony.iteration === editions.length ? "hidden" : "flex"} h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-zinc-100 hover:bg-zinc-200`}
-              >
-                <IconArrowRight className="h-5 w-5 stroke-zinc-500" />
-              </Link>
-            </div>
-          </div>
+      <div className="mx-auto flex w-full flex-row items-center justify-between px-6 md:w-[768px]">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-medium leading-7 text-zinc-800">
+            {ordinal} Academy Awards
+          </h1>
+          <h2 className="text-sm font-medium leading-4 text-zinc-500">
+            <span>{dateToString(ceremony.ceremony_date)}</span>
+            <span className="select-none">&#32;·&#32;</span>
+            <span>Honoring films from {ceremony.official_year}</span>
+          </h2>
         </div>
-      </section>
-      <section className="flex w-full flex-col overflow-x-auto bg-gradient-to-r from-white to-zinc-100 py-5 md:items-center">
+        <div className="hidden flex-row gap-2 sm:flex">
+          <Link
+            href={`/ceremony/${ceremony.iteration - 1}`}
+            tabIndex={disablePrevLink ? -1 : 0}
+            aria-disabled={disablePrevLink}
+            className={merge(
+              disablePrevLink
+                ? "bg-overlay-disabled pointer-events-none opacity-50"
+                : "cursor-pointer hover:bg-zinc-200",
+              "flex size-8 items-center justify-center rounded-full bg-overlay",
+            )}
+          >
+            <IconArrowLeft className="size-5 stroke-secondary" />
+          </Link>
+          <Link
+            href={`/ceremony/${ceremony.iteration + 1}`}
+            tabIndex={disableNextLink ? -1 : 0}
+            aria-disabled={disableNextLink}
+            className={merge(
+              disableNextLink
+                ? "bg-overlay-disabled pointer-events-none opacity-50"
+                : "cursor-pointer hover:bg-zinc-200",
+              "flex size-8 items-center justify-center rounded-full bg-overlay",
+            )}
+          >
+            <IconArrowRight className="size-5 stroke-secondary" />
+          </Link>
+        </div>
+      </div>
+      <div className="flex w-full flex-col overflow-x-auto bg-gradient-to-r from-white to-zinc-100 py-5 md:items-center">
         {topFive ? (
           <div className="w-fit px-6 md:w-[768px]">
             <div className="flex flex-row gap-[11.25px]">
@@ -174,8 +172,8 @@ export default async function Ceremony({
             </div>
           </div>
         )}
-      </section>
-      <section className="mb-20 flex w-full flex-col items-center">
+      </div>
+      <div className="mb-20 flex w-full flex-col items-center">
         <div className="flex w-full px-6 md:w-[768px]">
           <Tabs className="w-full">
             <TabList>
@@ -207,7 +205,7 @@ export default async function Ceremony({
             </TabPanels>
           </Tabs>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
