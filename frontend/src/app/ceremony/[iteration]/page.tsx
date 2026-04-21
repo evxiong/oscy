@@ -1,26 +1,18 @@
 import Card from "@/app/_components/card";
 import Nominations from "@/app/_components/nominations";
-import { SmallSelectorOption } from "@/app/_components/selectors";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@/app/_ui/Tabs";
 import fetchError from "@/app/_utils/fetchError";
-import merge from "@/app/_utils/merge";
 import {
   ceremonyToTopFive,
-  dateToString,
   iterationToOrdinal,
   topFiveToImageUrls,
 } from "@/app/_utils/utils";
-import {
-  IconArrowLeft,
-  IconArrowRight,
-  IconLaurelWreath,
-} from "@tabler/icons-react";
+import { IconLaurelWreath } from "@tabler/icons-react";
 import { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import CeremonyEntityStats from "./CeremonyEntityStats";
 import CeremonyTitleStats from "./CeremonyTitleStats";
-import { EditionType, NominationsType } from "./types";
+import { NominationsType } from "./types";
 
 export async function generateStaticParams() {
   // const editions: EditionType[] = await fetchError(
@@ -82,7 +74,6 @@ export default async function Ceremony({
     notFound();
   }
 
-  const editions: EditionType[] = await fetchError("/api/ceremonies");
   const ceremony = nominations.editions[0];
   const ordinal = iterationToOrdinal(ceremony.iteration);
   const topFive = ceremonyToTopFive(nominations);
@@ -90,59 +81,8 @@ export default async function Ceremony({
     ? await topFiveToImageUrls(topFive)
     : [null, null, null, null, null];
 
-  const awardNavigatorOptions: SmallSelectorOption[] = editions.map((e) => ({
-    id: e.iteration,
-    name: e.official_year + " (" + iterationToOrdinal(e.iteration) + ")",
-    disabled: false,
-  }));
-  const originalAwardNavigatorOption: SmallSelectorOption =
-    awardNavigatorOptions[editions.findIndex((e) => e.id === ceremony.id)];
-
-  const disableNextLink = ceremony.iteration === editions.length;
-  const disablePrevLink = ceremony.iteration === 1;
-
   return (
-    <div className="flex flex-col gap-5">
-      <div className="mx-auto flex w-full flex-row items-center justify-between px-6 md:w-[768px]">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-medium leading-7 text-zinc-800">
-            {ordinal} Academy Awards
-          </h1>
-          <h2 className="text-sm font-medium leading-4 text-zinc-500">
-            <span>{dateToString(ceremony.ceremony_date)}</span>
-            <span className="select-none">&#32;·&#32;</span>
-            <span>Honoring films from {ceremony.official_year}</span>
-          </h2>
-        </div>
-        <div className="hidden flex-row gap-2 sm:flex">
-          <Link
-            href={`/ceremony/${ceremony.iteration - 1}`}
-            tabIndex={disablePrevLink ? -1 : 0}
-            aria-disabled={disablePrevLink}
-            className={merge(
-              disablePrevLink
-                ? "bg-overlay-disabled pointer-events-none opacity-50"
-                : "cursor-pointer hover:bg-zinc-200",
-              "flex size-8 items-center justify-center rounded-full bg-overlay",
-            )}
-          >
-            <IconArrowLeft className="size-5 stroke-secondary" />
-          </Link>
-          <Link
-            href={`/ceremony/${ceremony.iteration + 1}`}
-            tabIndex={disableNextLink ? -1 : 0}
-            aria-disabled={disableNextLink}
-            className={merge(
-              disableNextLink
-                ? "bg-overlay-disabled pointer-events-none opacity-50"
-                : "cursor-pointer hover:bg-zinc-200",
-              "flex size-8 items-center justify-center rounded-full bg-overlay",
-            )}
-          >
-            <IconArrowRight className="size-5 stroke-secondary" />
-          </Link>
-        </div>
-      </div>
+    <>
       <div className="flex w-full flex-col overflow-x-auto bg-gradient-to-r from-white to-zinc-100 py-5 md:items-center">
         {topFive ? (
           <div className="w-fit px-6 md:w-[768px]">
@@ -206,6 +146,6 @@ export default async function Ceremony({
           </Tabs>
         </div>
       </div>
-    </div>
+    </>
   );
 }
