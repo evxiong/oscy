@@ -1,8 +1,5 @@
-import AwardNavigator from "@/app/_components/awardNavigator";
-import Breadcrumbs from "@/app/_components/breadcrumbs";
 import Card from "@/app/_components/card";
 import Nominations from "@/app/_components/nominations";
-import { SmallSelectorOption } from "@/app/_components/selectors";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@/app/_ui/Tabs";
 import fetchError from "@/app/_utils/fetchError";
 import {
@@ -11,11 +8,10 @@ import {
   iterationToOrdinal,
   topFiveToImageUrls,
 } from "@/app/_utils/utils";
-import { AwardEnum } from "@/app/ceremony/[iteration]/types";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CategoryStats from "./stats";
-import type { Category, CategoryGroupInfo } from "./types";
+import type { Category } from "./types";
 
 export async function generateStaticParams() {
   // const categoryGroups: CategoryGroupInfo[] =
@@ -80,88 +76,18 @@ export default async function Category({
     notFound();
   }
 
-  const categories: CategoryGroupInfo[] = await fetchError("/api/categories");
   const editions = category.nominations.editions.reverse();
   const nominationCategories = editions.map((e) => e.categories).flat();
 
   const topFive = categoriesToTopFive(nominationCategories);
   const topFiveImageUrls: (string | null)[] = await topFiveToImageUrls(topFive);
 
-  const categoryName = category.category.startsWith("Unique")
-    ? category.category
-    : "Best " + category.category;
-
-  const awardNavigatorOptions: SmallSelectorOption[] = categories
-    .map((categoryGroup) =>
-      categoryGroup.categories.map((c) => ({
-        id: c.category_id,
-        name: c.category,
-        disabled: false,
-      })),
-    )
-    .flat();
-
-  const originalAwardNavigatorOption: SmallSelectorOption =
-    awardNavigatorOptions.find((e) => e.id === category.category_id)!;
-
   const timeline = categoryNamesToTimeline(category.category_names);
   const LATEST_EDITION = parseInt(process.env.NEXT_PUBLIC_CURRENT_EDITION!);
-  const numCeremonies = category.category_names.reduce(
-    (acc1, cn) =>
-      acc1 + cn.ranges.reduce((acc2, r) => acc2 + r[1] - r[0] + 1, 0),
-    0,
-  );
-  const firstYear = timeline.at(-1)!.start_year;
-  const lastYear = timeline[0].end_year;
 
   return (
-    <div className="flex flex-col gap-5">
-      <section className="flex w-full flex-col items-center">
-        <div className="flex w-full flex-col gap-5 px-6 pt-5 md:w-[768px]">
-          <nav className="flex flex-row justify-between text-xs">
-            <Breadcrumbs
-              crumbs={[
-                { name: "Home", link: "/" },
-                { name: "Category", link: "" },
-              ]}
-            />
-            <AwardNavigator
-              subdir="category"
-              originalAwardType={AwardEnum.oscar}
-              options={awardNavigatorOptions}
-              originalOption={originalAwardNavigatorOption}
-            />
-          </nav>
-          <div className="flex w-full flex-row items-center justify-between">
-            <div className="flex flex-col gap-1">
-              <h1 className="text-2xl font-medium leading-7 text-zinc-800">
-                {categoryName}
-              </h1>
-              <h2 className="text-sm font-medium leading-4 text-zinc-500">
-                {category.category_group !== "Other" && (
-                  <span>
-                    <span>{category.category_group}</span>
-                    <span className="select-none">&#32;·&#32;</span>
-                  </span>
-                )}
-                <span>
-                  {numCeremonies}{" "}
-                  {numCeremonies !== 1 ? "ceremonies" : "ceremony"}
-                </span>
-                <span className="select-none">&#32;·&#32;</span>
-                <span>
-                  {lastYear === 1927 + LATEST_EDITION
-                    ? firstYear + "-present"
-                    : firstYear === lastYear
-                      ? firstYear
-                      : firstYear + "-" + lastYear}
-                </span>
-              </h2>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section className="flex w-full flex-col overflow-x-auto bg-gradient-to-r from-white to-zinc-100 py-5 md:items-center">
+    <>
+      <div className="flex w-full flex-col overflow-x-auto bg-gradient-to-r from-white to-zinc-100 py-5 md:items-center">
         <div className="w-fit px-6 md:w-[768px]">
           <div className="flex flex-row gap-[11.25px]">
             {topFive.map((topFiveCard, i) => (
@@ -188,8 +114,8 @@ export default async function Category({
             ))}
           </div>
         </div>
-      </section>
-      <section className="mb-20 flex w-full flex-col items-center">
+      </div>
+      <div className="mb-20 flex w-full flex-col items-center">
         <div className="flex w-full px-6 md:w-[768px]">
           <Tabs className="w-full">
             <TabList>
@@ -254,7 +180,7 @@ export default async function Category({
             </TabPanels>
           </Tabs>
         </div>
-      </section>
-    </div>
+      </div>
+    </>
   );
 }

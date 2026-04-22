@@ -1,5 +1,6 @@
-from .nominations import Nominations
 from pydantic import BaseModel
+
+from .nominations import Nominations
 
 
 # for /categories
@@ -11,12 +12,14 @@ class CategoryRow(BaseModel):
     category_name_id: int
     official_name: str
     common_name: str
+    iterations: list[int]
 
 
 class CategoryName(BaseModel):
     category_name_id: int
     official_name: str
     common_name: str
+    ranges: list[tuple[int, int]]
 
 
 class CategoryCategory(BaseModel):

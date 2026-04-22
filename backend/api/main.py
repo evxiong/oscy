@@ -1,14 +1,14 @@
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import categories, ceremonies, nominations, entities_titles, search
-from .dependencies import pool
 
-ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://oscy.vercel.app",
-]
+from .dependencies import pool
+from .routers import categories, ceremonies, entities_titles, nominations, search
+
+ALLOWED_ORIGIN_REGEX = (
+    r"http:\/\/localhost:\d+|https://oscy.vercel.app|https://oscy.evanxiong.com"
+)
 
 
 @asynccontextmanager
@@ -19,7 +19,7 @@ async def lifespan(instance: FastAPI):
 
 
 summary = """
-API for querying Oscar nomination stats. Last updated: Feb. 27, 2025.
+API for querying Oscar nomination stats. Last updated: Apr. 21, 2026.
 """
 
 description = """
@@ -63,7 +63,7 @@ app = FastAPI(
     title="oscy",
     summary=summary,
     description=description,
-    version="1.0.0",
+    version="0.1.1",
     license_info={
         "name": "MIT License",
         "url": "https://github.com/evxiong/oscy/blob/main/LICENSE",
@@ -73,7 +73,7 @@ app = FastAPI(
 )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
+    allow_origin_regex=ALLOWED_ORIGIN_REGEX,
 )
 app.include_router(nominations.router)
 app.include_router(categories.router)

@@ -9,13 +9,7 @@ export interface CategoryGroupInfo {
 export interface CategoryInfo {
   category_id: number;
   category: string;
-  category_names: CategoryNameInfo[];
-}
-
-export interface CategoryNameInfo {
-  category_name_id: number;
-  official_name: string;
-  common_name: string;
+  category_names: CategoryName[];
 }
 
 export interface Category {

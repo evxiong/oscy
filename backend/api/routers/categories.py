@@ -1,16 +1,17 @@
-from ..dependencies import connect
-from ..models.category import (
-    CategoryGroup,
-    CategoryCategory,
-    CategoryName,
-    CategoryRow,
-    CategoryInfo,
-    CategoryNameInfo,
-    CategoryInfoRow,
-)
-from .nominations import get_nominations
 from fastapi import APIRouter
 from psycopg.rows import class_row
+
+from ..dependencies import connect
+from ..models.category import (
+    CategoryCategory,
+    CategoryGroup,
+    CategoryInfo,
+    CategoryInfoRow,
+    CategoryName,
+    CategoryNameInfo,
+    CategoryRow,
+)
+from .nominations import get_nominations
 
 router = APIRouter(prefix="/categories", tags=["categories"])
 
@@ -38,17 +39,31 @@ async def get_category_hierarchy() -> list[CategoryGroup]:
         async with con.cursor(row_factory=class_row(CategoryRow)) as cur:  # type: ignore
             await cur.execute(
                 """
+                WITH cni AS (
+                    SELECT
+                        cn.id,
+                        cn.official_name,
+                        cn.common_name,
+                        json_agg(e.iteration ORDER BY e.iteration) AS iterations, 
+                        cn.category_id -- for the join
+                    FROM category_names cn
+                    JOIN editions_category_names ecn ON ecn.category_name_id = cn.id
+                    JOIN editions e ON e.id = ecn.edition_id
+                    GROUP BY cn.id, cn.official_name, cn.common_name, cn.category_id
+                )
                 SELECT
                     cg.id AS category_group_id,
                     cg.name AS category_group,
                     c.id AS category_id,
                     c.name AS category,
-                    cn.id AS category_name_id,
-                    cn.official_name AS official_name,
-                    cn.common_name AS common_name
+                    cni.id AS category_name_id,
+                    cni.official_name AS official_name,
+                    cni.common_name AS common_name,
+                    cni.iterations AS iterations -- array of all iterations using this category name
                 FROM category_groups cg
                 JOIN categories c ON cg.id = c.category_group_id
-                JOIN category_names cn ON c.id = cn.category_id;
+                JOIN cni ON c.id = cni.category_id
+                ORDER BY category_group_id, category_id, category_name_id
                 """
             )
 
@@ -81,13 +96,21 @@ async def get_category_hierarchy() -> list[CategoryGroup]:
                     seen_c_ids.add(row.category_id)
 
                 if row.category_name_id not in seen_cn_ids:
-                    res[-1].categories[-1].category_names.append(
-                        CategoryName(
-                            category_name_id=row.category_name_id,
-                            official_name=row.official_name,
-                            common_name=row.common_name,
-                        )
+                    c = CategoryName(
+                        category_name_id=row.category_name_id,
+                        official_name=row.official_name,
+                        common_name=row.common_name,
+                        ranges=[],
                     )
+                    iterations = row.iterations
+                    start = iterations[0]
+                    for ind in range(1, len(iterations)):
+                        if iterations[ind] != iterations[ind - 1] + 1:
+                            c.ranges.append((start, iterations[ind - 1]))
+                            start = iterations[ind]
+                    c.ranges.append((start, iterations[-1]))
+
+                    res[-1].categories[-1].category_names.append(c)
                     seen_cn_ids.add(row.category_name_id)
 
     return res
@@ -107,13 +130,13 @@ async def get_category_by_id(id: int) -> CategoryInfo | None:
                     json_agg(cni.category_name_id ORDER BY cni.category_name_id) AS category_name_ids,
                     json_agg(cni.official_name ORDER BY cni.category_name_id) AS official_names,
                     json_agg(cni.common_name ORDER BY cni.category_name_id) AS common_names,
-                    json_agg(cni.r ORDER BY cni.category_name_id) AS ranges
+                    json_agg(cni.iterations ORDER BY cni.category_name_id) AS ranges
                 FROM (
                     SELECT
                         cn.id AS category_name_id,
                         cn.official_name AS official_name,
                         cn.common_name AS common_name,
-                        json_agg(iteration) AS r,
+                        json_agg(e.iteration ORDER BY e.iteration) AS iterations,
                         cn.category_id AS category_id -- for the join
                     FROM category_names cn
                     JOIN editions_category_names ecn ON ecn.category_name_id = cn.id
@@ -123,7 +146,7 @@ async def get_category_by_id(id: int) -> CategoryInfo | None:
                 JOIN categories c ON c.id = cni.category_id
                 JOIN category_groups cg ON cg.id = c.category_group_id
                 WHERE category_id = %s
-                GROUP BY c.id, c.name, cg.id, cg.name;
+                GROUP BY c.id, c.name, cg.id, cg.name
                 """,
                 (id,),
             )
