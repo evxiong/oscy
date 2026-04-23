@@ -1,4 +1,6 @@
 import { IconArrowUpRight } from "@tabler/icons-react";
+import { Fragment } from "react";
+import Skeleton from "../_ui/Skeleton";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "../_ui/Tabs";
 import { imdbIdToUrl } from "../_utils/utils";
 import AggregateNominations from "../entity/[id]/aggNominations";
@@ -20,7 +22,7 @@ export default function EntityTitle({
 
   return (
     <div className="flex flex-col gap-5">
-      <section className="flex w-full flex-col items-center">
+      <div className="flex w-full flex-col items-center">
         <div className="flex w-full flex-col gap-4 px-6 pt-5 md:w-[768px]">
           <nav className="flex flex-row justify-between text-xs">
             <Breadcrumbs
@@ -49,8 +51,8 @@ export default function EntityTitle({
             )}
           </nav>
         </div>
-      </section>
-      <section className="flex w-full flex-col items-center bg-gradient-to-r from-white to-zinc-100 py-7">
+      </div>
+      <div className="flex w-full flex-col items-center bg-gradient-to-r from-white to-zinc-100 py-7">
         <div className="flex w-full flex-col gap-6 px-6 sm:flex-row sm:items-center md:w-[768px]">
           <div className="flex flex-1 flex-col gap-0.5">
             <h1
@@ -87,9 +89,9 @@ export default function EntityTitle({
             <div className="flex-1"></div>
           </div>
         </div>
-      </section>
+      </div>
       {!isTitle && aliases.length > 0 && (
-        <section className="flex w-full flex-col items-center">
+        <div className="flex w-full flex-col items-center">
           <div className="flex w-full flex-col gap-4 px-6 pb-4 md:w-[768px]">
             <div className="flex w-full flex-col gap-2 border-zinc-200 font-medium sm:flex-row sm:gap-6">
               <div className="flex-1 text-sm font-medium leading-4 text-zinc-500">
@@ -105,9 +107,9 @@ export default function EntityTitle({
               </div>
             </div>
           </div>
-        </section>
+        </div>
       )}
-      <section className="mb-20 flex w-full flex-col items-center">
+      <div className="mb-20 flex w-full flex-col items-center">
         <div className="flex w-full px-6 md:w-[768px]">
           <Tabs className="w-full">
             <TabList>
@@ -118,8 +120,6 @@ export default function EntityTitle({
               <TabPanel id="nominations" shouldForceMount>
                 <AggregateNominations
                   editions={entityOrTitle.nominations.reverse()}
-                  searchHeader="Category"
-                  stickyHeader=""
                 />
               </TabPanel>
               <TabPanel id="statistics" shouldForceMount>
@@ -134,7 +134,112 @@ export default function EntityTitle({
             </TabPanels>
           </Tabs>
         </div>
-      </section>
+      </div>
+    </div>
+  );
+}
+
+export function EntityTitleLoading() {
+  return (
+    <div className="flex flex-col gap-5">
+      <div className="flex w-full flex-col items-center">
+        <div className="flex w-full flex-col gap-4 px-6 pt-5 md:w-[768px]">
+          <nav className="flex flex-row justify-between text-xs">
+            <div className="flex h-5 items-center">
+              <Skeleton className="h-3 w-16" />
+            </div>
+            <div className="flex h-5 items-center">
+              <Skeleton className="h-3 w-10" />
+            </div>
+          </nav>
+        </div>
+      </div>
+      <div className="flex w-full flex-col items-center bg-gradient-to-r from-white to-overlay py-7">
+        <div className="flex w-full flex-col gap-6 px-6 sm:flex-row sm:items-center md:w-[768px]">
+          <div className="flex flex-1 flex-col gap-0.5">
+            <div className="flex h-7 items-center sm:pr-4">
+              <Skeleton className="h-6 w-28" />
+            </div>
+            <h2 className="flex h-5 items-center">
+              <Skeleton className="h-3.5 w-48" />
+            </h2>
+          </div>
+          <div className="flex flex-1 flex-row gap-4">
+            <div className="flex flex-1 flex-col gap-1">
+              <div className="flex h-3 items-center">
+                <Skeleton className="h-2.5 w-20" />
+              </div>
+              <div className="flex flex-col gap-0">
+                <div className="flex h-6 items-center">
+                  <Skeleton className="h-5 w-14" />
+                </div>
+                <div className="flex h-6 items-center">
+                  <Skeleton className="h-5 w-14" />
+                </div>
+              </div>
+            </div>
+            <div className="flex-1"></div>
+          </div>
+        </div>
+      </div>
+      <div className="flex w-full flex-col items-center">
+        <div className="flex w-full flex-col gap-4 px-6 pb-4 md:w-[768px]">
+          <div className="flex w-full flex-col gap-2 border-zinc-200 font-medium sm:flex-row sm:gap-6">
+            <div className="flex-1">
+              <div className="mb-1 flex h-4 items-center">
+                <Skeleton className="h-3.5 w-24" />
+              </div>
+              <div className="flex h-4 items-center">
+                <Skeleton className="h-3.5 w-48" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="mb-20 flex w-full flex-col items-center">
+        <div className="w-full px-6 md:w-[768px]">
+          <Skeleton className="-mb-2 h-4 w-60" />
+          <div className="hide-scrollbar sticky top-0 z-30 flex h-[--nominations-header-height-mobile] flex-col justify-center gap-3 overflow-x-auto sm:h-[--nominations-header-height] sm:flex-row sm:items-center sm:gap-6">
+            <div className="sm:flex-1">
+              <Skeleton className="h-6 w-full" />
+            </div>
+            <div className="flex sm:flex-1 sm:justify-end">
+              <Skeleton className="h-4 w-32" />
+            </div>
+          </div>
+          <hr />
+          {[...Array(4)].map((_, i) => (
+            <Fragment key={i}>
+              <div className="flex flex-col gap-1 py-6 sm:flex-row sm:gap-6">
+                <div className="sticky top-[--nominations-header-height-mobile] z-10 w-full flex-1 bg-white pb-4 sm:top-[--nominations-header-height] sm:pb-0">
+                  <div className="sticky top-[--nominations-header-height-mobile] z-10 sm:top-[--nominations-header-height]">
+                    <Skeleton className="h-6 w-24" />
+                    <div className="mt-1 flex h-4 items-center">
+                      <Skeleton className="h-3.5 w-48" />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-1 flex-col gap-[0.875rem]">
+                  {[...Array(5)].map((_, j) => (
+                    <div key={j} className="flex flex-row gap-2.5">
+                      <div className="size-4 shrink-0" />
+                      <div className="flex flex-col gap-1">
+                        <div className="flex h-5 items-center">
+                          <Skeleton className="h-4 w-24" />
+                        </div>
+                        <div className="flex h-4 items-center">
+                          <Skeleton className="h-3.5 w-64" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <hr />
+            </Fragment>
+          ))}
+        </div>
+      </div>{" "}
     </div>
   );
 }

@@ -2,11 +2,6 @@ import fetchRetryWrapper from "fetch-retry";
 import { CategoryName } from "../category/[id]/types";
 import { CategoryType, NominationsType } from "../ceremony/[iteration]/types";
 
-interface TopFive {
-  indices: number[];
-  imdb_ids: string[];
-}
-
 interface TopFiveCard {
   category_ind: number;
   nominee_ind: number;

@@ -33,15 +33,14 @@ export default async function CategoryLayout({
     notFound();
   }
 
-  const awardNavigatorOptions: SmallSelectorOption[] = categoryGroups
-    .map((categoryGroup) =>
-      categoryGroup.categories.map((c) => ({
+  const awardNavigatorOptions: SmallSelectorOption[] = categoryGroups.flatMap(
+    (cg) =>
+      cg.categories.map((c) => ({
         id: c.category_id,
         name: c.category,
         disabled: false,
       })),
-    )
-    .flat();
+  );
   const originalAwardNavigatorOption: SmallSelectorOption =
     awardNavigatorOptions.find((e) => e.id === categoryId)!;
 

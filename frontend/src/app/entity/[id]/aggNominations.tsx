@@ -10,19 +10,13 @@ import { useEffect, useMemo, useState } from "react";
 
 export default function AggregateNominations({
   editions,
-  searchHeader,
-  stickyHeader,
 }: {
   editions: CeremonyType[];
-  searchHeader: string;
-  stickyHeader: string;
 }) {
   const searchKeys: (keyof CategoryType)[] = useMemo(
     () => ["category_group", "official_name", "common_name", "short_name"],
     [],
   );
-  // const winnerOptions = useMemo(() => [{ name: "All" }, { name: "Wins" }], []);
-  // const [winnerOption, setWinnerOption] = useState(winnerOptions[0]);
   const [winnersOnly, setWinnersOnly] = useState(false);
   const [search, setSearch] = useState("");
   const [filteredEditions, setFilteredEditions] =
@@ -73,28 +67,6 @@ export default function AggregateNominations({
             Wins only
           </Switch>
         </div>
-        {/* <div className="flex w-full flex-row items-center gap-4">
-          <MediumSelector
-            state={winnerOption}
-            setState={setWinnerOption}
-            options={winnerOptions}
-            idKey="name"
-            displayKey="name"
-          />
-          <div className="flex h-8 w-full flex-row-reverse items-center gap-0.5 rounded-md">
-            <Input
-              name="Category search"
-              type="text"
-              placeholder="All"
-              className="peer h-8 w-full rounded-md bg-transparent px-1 text-sm text-zinc-800 outline-none placeholder:text-zinc-500"
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <span className="select-none peer-focus:text-zinc-800">
-              {searchHeader}:
-            </span>
-          </div>
-        </div>
-        <div className="flex-shrink-0 font-semibold">{stickyHeader}</div> */}
       </div>
       <hr />
       {filteredEditions.map(

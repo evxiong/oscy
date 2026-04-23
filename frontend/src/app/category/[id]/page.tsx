@@ -128,9 +128,7 @@ export default async function Category({
                 <Nominations
                   showCeremony={true}
                   editions={editions}
-                  searchHeader="Ceremony"
                   searchKeys={["year_and_ordinal", "common_name"]}
-                  stickyHeader={category.category}
                 />
               </TabPanel>
               <TabPanel id="statistics" shouldForceMount>

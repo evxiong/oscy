@@ -126,14 +126,12 @@ export default async function Ceremony({
                 <Nominations
                   showCeremony={false}
                   editions={nominations.editions}
-                  searchHeader="Category"
                   searchKeys={[
                     "category_group",
                     "official_name",
                     "common_name",
                     "short_name",
                   ]}
-                  stickyHeader={ceremony.official_year + " (" + ordinal + ")"}
                 />
               </TabPanel>
               <TabPanel id="films" shouldForceMount>

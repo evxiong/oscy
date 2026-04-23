@@ -6,6 +6,7 @@ import merge from "@/app/_utils/merge";
 import { dateToString, iterationToOrdinal } from "@/app/_utils/utils";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { AwardEnum, type EditionType } from "./types";
 
 export default async function CeremonyLayout({
@@ -16,6 +17,10 @@ export default async function CeremonyLayout({
   children: React.ReactNode;
 }) {
   const iteration = parseInt((await params).iteration);
+  if (Number.isNaN(iteration)) {
+    notFound();
+  }
+
   const ordinal = iterationToOrdinal(iteration);
   const editions: EditionType[] = await fetchError("/api/ceremonies");
   const currentEditionInd = editions.findIndex(

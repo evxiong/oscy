@@ -20,15 +20,11 @@ export interface NominationCategoryType extends CategoryType {
 export default function Nominations({
   showCeremony,
   editions,
-  searchHeader,
   searchKeys,
-  stickyHeader,
 }: {
   showCeremony: boolean;
   editions: CeremonyType[];
-  searchHeader: string;
   searchKeys: (keyof NominationCategoryType)[];
-  stickyHeader: string;
 }) {
   const categories: NominationCategoryType[] = useMemo(
     () =>
@@ -44,8 +40,6 @@ export default function Nominations({
         .flat(),
     [editions],
   );
-  // const winnerOptions = [{ name: "All" }, { name: "Winners" }];
-  // const [winnersOnly, setWinnersOnly] = useState(winnerOptions[0]);
   const [winnersOnly, setWinnersOnly] = useState(false);
   const [search, setSearch] = useState("");
   const [filteredCategories, setFilteredCategories] =
@@ -86,7 +80,6 @@ export default function Nominations({
             Winners only
           </Switch>
         </div>
-        {/* <div className="flex-shrink-0 font-semibold">{stickyHeader}</div> */}
       </div>
       <hr />
       {filteredCategories.map((c, i) => (

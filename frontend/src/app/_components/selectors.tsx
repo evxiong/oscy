@@ -9,8 +9,15 @@ import {
   Popover as AriaPopover,
   Select as AriaSelect,
   SelectValue as AriaSelectValue,
+  composeRenderProps,
+  type ListBoxItemProps as AriaListBoxItemProps,
 } from "react-aria-components";
 import merge from "../_utils/merge";
+
+export interface SmallSelectorSection {
+  id: number;
+  name: string;
+}
 
 export interface SmallSelectorOption {
   id: number;
@@ -70,30 +77,46 @@ export function SmallSelector({
             ref={(v) => {
               listBoxRef.current = v;
             }}
+            items={options}
             className="max-h-60 w-fit scroll-pb-1 overflow-y-auto p-1"
           >
-            {options.map((option) => (
-              <AriaListBoxItem
+            {(option) => (
+              <SelectItem
                 key={option.id}
                 id={option.id}
                 textValue={option.name}
                 isDisabled={option.disabled}
-                className={merge(
-                  "group relative cursor-default rounded-sm text-sm",
-                  "data-[selection-mode]:py-1 data-[selection-mode]:pl-5 data-[selection-mode]:pr-5",
-                  option.disabled
-                    ? "data-[disabled]:cursor-not-allowed data-[disabled]:text-tertiary"
-                    : "hover:bg-hover hover:text-primary data-[focused]:bg-hover data-[focused]:text-primary",
-                )}
               >
-                <div className="absolute left-2 top-1/2 hidden size-[5px] -translate-y-1/2 rounded-full bg-gold group-data-[selected]:block"></div>
-                <span>{option.name}</span>
-              </AriaListBoxItem>
-            ))}
+                {option.name}
+              </SelectItem>
+            )}
           </AriaListBox>
         </AriaPopover>
       </AriaSelect>
     </div>
+  );
+}
+
+function SelectItem({ className, children, ...props }: AriaListBoxItemProps) {
+  return (
+    <AriaListBoxItem
+      className={merge(
+        "group relative cursor-default rounded-sm text-sm",
+        "data-[selection-mode]:px-5 data-[selection-mode]:py-1",
+        props.isDisabled
+          ? "data-[disabled]:cursor-not-allowed data-[disabled]:text-tertiary"
+          : "hover:bg-hover hover:text-primary data-[focused]:bg-hover data-[focused]:text-primary",
+        className,
+      )}
+      {...props}
+    >
+      {composeRenderProps(children, (children) => (
+        <>
+          <div className="absolute left-2 top-1/2 hidden size-[5px] -translate-y-1/2 rounded-full bg-gold group-data-[selected]:block" />
+          <span>{children}</span>
+        </>
+      ))}
+    </AriaListBoxItem>
   );
 }
 
@@ -132,15 +155,13 @@ export function MediumSelector<T>({
         <AriaPopover className="overflow-hidden rounded-md border border-border bg-background p-1 font-medium text-secondary drop-shadow-sm transition-opacity data-[entering]:opacity-0">
           <AriaListBox>
             {options.map((option) => (
-              <AriaListBoxItem
+              <SelectItem
                 key={option[idKey] as string}
                 id={option[idKey] as string}
                 textValue={option[displayKey] as string}
-                className="group relative cursor-default rounded-sm text-sm data-[focused]:bg-hover data-[hovered]:bg-hover data-[selection-mode]:py-1 data-[selection-mode]:pl-5 data-[selection-mode]:pr-4 data-[focused]:text-primary data-[hovered]:text-primary"
               >
-                <div className="absolute left-2 top-1/2 hidden size-[5px] -translate-y-1/2 rounded-full bg-gold group-data-[selected]:block"></div>
-                <span>{option[displayKey] as string}</span>
-              </AriaListBoxItem>
+                {option[displayKey] as string}
+              </SelectItem>
             ))}
           </AriaListBox>
         </AriaPopover>

@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { startTransition, useEffect } from "react";
-import { Button } from "react-aria-components";
 import ExploreButton from "./_components/ExploreButton";
+import Button from "./_ui/Button";
 
 export default function Error({
   error,
