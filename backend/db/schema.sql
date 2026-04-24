@@ -3,6 +3,8 @@ CREATE TYPE award_type AS ENUM('oscar', 'emmy');
 
 CREATE TYPE entity_type AS ENUM('person', 'company', 'country', 'network');
 
+CREATE TYPE update_type AS ENUM('nominations', 'unofficial', 'official');
+
 CREATE
 OR REPLACE FUNCTION integer_to_ordinal (num integer) RETURNS text AS $$
     SELECT 
@@ -110,6 +112,16 @@ CREATE TABLE IF NOT EXISTS
         statement_ind integer NOT NULL, -- start index of name in nomination statement
         role text NOT NULL, -- entity's role on set (if applicable)
         UNIQUE (nominee_id, entity_id)
+    );
+
+CREATE TABLE IF NOT EXISTS
+    current_versions (
+        id serial PRIMARY KEY,
+        award award_type UNIQUE NOT NULL,
+        iteration integer NOT NULL,
+        update_stage update_type NOT NULL,
+        updated_at timestamptz NOT NULL DEFAULT NOW(),
+        tag text NOT NULL -- used for API caching
     );
 
 CREATE INDEX title_trgm_idx ON titles USING GIST (title gist_trgm_ops);
