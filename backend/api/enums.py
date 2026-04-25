@@ -6,6 +6,12 @@ class AwardType(str, Enum):
     emmy = "emmy"
 
 
+class UpdateType(str, Enum):
+    nominations = "nominations"
+    unofficial = "unofficial"
+    official = "official"
+
+
 class SortType(str, Enum):
     ASC = "asc"
     DESC = "desc"
