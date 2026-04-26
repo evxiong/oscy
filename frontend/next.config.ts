@@ -20,6 +20,10 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
+        source: "/api/revalidate",
+        destination: "/api/revalidate",
+      },
+      {
         source: "/api/:path*",
         destination:
           process.env.VERCEL_ENV === "production"

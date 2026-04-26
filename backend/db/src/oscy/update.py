@@ -29,6 +29,7 @@ import shutil
 import subprocess
 from collections import defaultdict
 from collections.abc import Callable
+from enum import Enum
 from typing import Literal
 
 from dotenv import load_dotenv
@@ -1092,29 +1093,36 @@ def dispatch_delete(item: NomineeItem, nominee_id: int, imdb_id: str):
         db.delete_nominee_entity(nominee_id=nominee_id, imdb_id=imdb_id)
 
 
+class UpdateType(str, Enum):
+    nominations = "nominations"
+    unofficial = "unofficial"
+    official = "official"
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "stage", type=str, choices=["nominations", "unofficial", "official"]
-    )
+    parser.add_argument("stage", type=UpdateType, choices=[c.name for c in UpdateType])
     parser.add_argument("edition", type=int)
 
     args = parser.parse_args()
 
-    edition = args.edition
+    edition: int = args.edition
     if edition <= 0 or edition > int(os.getenv("CURRENT_EDITION")):  # type: ignore
         raise ValueError(
             f"edition must be between 1 and {os.getenv('CURRENT_EDITION')}"
         )
 
-    if args.stage == "nominations":
+    stage: UpdateType = args.stage
+    if stage == "nominations":
         insert_pending_nominations(edition)
-    elif args.stage == "unofficial":
+    elif stage == "unofficial":
         update_unofficial_results(edition)
-    elif args.stage == "official":
+    elif stage == "official":
         update_official_results(edition)
     else:
         raise ValueError("stage must be one of: nominations, unofficial, official")
+
+    db.upsert_current_version(edition, stage)
 
 
 if __name__ == "__main__":
