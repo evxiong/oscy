@@ -1,7 +1,7 @@
 import Card from "@/app/_components/card";
 import Nominations from "@/app/_components/nominations";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@/app/_ui/Tabs";
-import fetchError from "@/app/_utils/fetchError";
+import { fetchApi } from "@/app/_utils/fetch";
 import {
   ceremonyToTopFive,
   iterationToOrdinal,
@@ -15,8 +15,8 @@ import CeremonyTitleStats from "./CeremonyTitleStats";
 import { NominationsType } from "./types";
 
 export async function generateStaticParams() {
-  // const editions: EditionType[] = await fetchError(
-  //   "/api/ceremonies",
+  // const editions: EditionType[] = await fetchApi(
+  //   "/ceremonies",
   // );
   // const iterations = editions.map((e) => ({
   //   iteration: e.iteration.toString(),
@@ -31,8 +31,8 @@ export async function generateMetadata({
   params: Promise<{ iteration: string }>;
 }): Promise<Metadata> {
   const iteration = (await params).iteration;
-  const nominations: NominationsType = await fetchError(
-    `/api/?start_edition=${iteration}&end_edition=${iteration}`,
+  const nominations: NominationsType = await fetchApi(
+    `/?start_edition=${iteration}&end_edition=${iteration}`,
   );
   if (nominations === null || nominations.editions.length === 0) {
     notFound();
@@ -66,8 +66,8 @@ export default async function Ceremony({
   params: Promise<{ iteration: string }>;
 }) {
   const iteration = (await params).iteration;
-  const nominations: NominationsType = await fetchError(
-    `/api/?start_edition=${iteration}&end_edition=${iteration}`,
+  const nominations: NominationsType = await fetchApi(
+    `/?start_edition=${iteration}&end_edition=${iteration}`,
   );
 
   if (nominations === null || nominations.editions.length === 0) {

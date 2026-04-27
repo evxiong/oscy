@@ -5,19 +5,17 @@ As a script, matches data for multiple editions with full debug output and
 warnings to stderr.
 
 Usage:
-    python -m src.oscy.match [<start>] [<end>]
+    python -m src.oscy.match <start> [<end>]
 
-    <start> (optional) is the first edition to match; if empty, starts from 1st
-        edition.
-    <end> (optional) is the last edition to match; if empty, ends at <start> if
-        specified; otherwise, ends at `CURRENT_EDITION` specified in top-level
-        `.env`.
+    <start> is the first edition to match
+    <end> (optional) is the last edition to match; if not included, only the
+        <start> edition will be matched
 """
 
+import argparse
 import contextlib
 import dataclasses
 import json
-import os
 import re
 import sys
 from collections.abc import Callable
@@ -557,7 +555,7 @@ def merge_imdb_nominees(i1: IMDbNominee, i2: IMDbNominee) -> IMDbNominee:
 
 
 def match_categories(
-    start: int | None = None,
+    start: int = 1,
     end: int | None = None,
     pending: bool = False,
     suppress: bool = True,
@@ -568,11 +566,9 @@ def match_categories(
     """Matches official and IMDb categories for multiple editions.
 
     Args:
-        start (int | None, optional): edition of first Oscar ceremony to
-            include. If None, starts from 1st edition. Defaults to None.
-        end (int | None, optional): edition of last Oscar ceremony to include.
-            If None, ends at `start` if specified; otherwise, ends at
-            `CURRENT_EDITION` specified in top-level `.env`. Defaults to None.
+        start (int, optional): first ceremony edition to include. Defaults to 1.
+        end (int | None, optional): last ceremony edition to include. If None,
+            ends at `start`. Defaults to None.
         pending (bool, optional): True if ceremony hasn't occurred yet;
             otherwise, False. Defaults to False.
         suppress (bool, optional): if True, suppress printing matched entries.
@@ -588,13 +584,11 @@ def match_categories(
     Returns:
         dict[int, list[MatchedCategory]]: edition -> matched categories
     """
-    if start is None:
-        start = 1
-        if end is None:
-            end = int(os.getenv("CURRENT_EDITION"))  # type: ignore
-    else:
-        if end is None:
-            end = start
+    if end is None:
+        end = start
+
+    if start < 1 or end < start:
+        raise ValueError("invalid start or end edition")
 
     exception_count = 0
     total = 0
@@ -846,8 +840,15 @@ def print_imdb_categories(ed: int):
 
 
 if __name__ == "__main__":
-    start = int(sys.argv[1]) if len(sys.argv) > 1 else None
-    end = int(sys.argv[2]) if len(sys.argv) > 2 else None
+    parser = argparse.ArgumentParser()
+    parser.add_argument("start", type=int)
+    parser.add_argument("end", type=int, nargs="?", default=None)
+
+    args = parser.parse_args()
+
+    start: int = args.start
+    end: int | None = args.end
+
     match_categories(
         start, end, pending=False, suppress=False, show_warnings=True, imdb_force=False
     )

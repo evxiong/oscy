@@ -1,8 +1,10 @@
-import { IconBrandGithub, IconApi } from "@tabler/icons-react";
-import SearchBar from "./searchBar";
+import { IconApi, IconBrandGithub } from "@tabler/icons-react";
 import Link from "next/link";
+import { fetchVersion } from "../_utils/fetch";
+import SearchBar from "./searchBar";
 
-export default function Navbar() {
+export default async function Navbar() {
+  const currentEdition = (await fetchVersion()).iteration;
   return (
     <header className="flex h-20 w-full select-none flex-row justify-center">
       <div className="flex w-full flex-row items-center gap-6">
@@ -14,7 +16,7 @@ export default function Navbar() {
             oscy
           </Link>
         </div>
-        <SearchBar />
+        <SearchBar currentEdition={currentEdition} />
         <div className="flex flex-1 flex-row justify-end gap-2 pr-6">
           <a
             target="_blank"

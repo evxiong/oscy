@@ -5,7 +5,7 @@ Usage:
     python -m src.oscy.update <stage> <edition>
 
     <stage> is one of `nominations`, `unofficial`, `official`
-    <edition> is an integer from 1 to `CURRENT_EDITION` in `.env`
+    <edition> is the Oscars ceremony edition to update
 
 Example:
     python -m src.oscy.update nominations 98
@@ -23,7 +23,6 @@ stage.
 
 import argparse
 import contextlib
-import os
 import re
 import shutil
 import subprocess
@@ -1107,10 +1106,8 @@ def main():
     args = parser.parse_args()
 
     edition: int = args.edition
-    if edition <= 0 or edition > int(os.getenv("CURRENT_EDITION")):  # type: ignore
-        raise ValueError(
-            f"edition must be between 1 and {os.getenv('CURRENT_EDITION')}"
-        )
+    if edition <= 0:
+        raise ValueError("edition must be >= 1")
 
     stage: UpdateType = args.stage
     if stage == "nominations":

@@ -1,22 +1,23 @@
-import os
-from ..dependencies import connect
-from ..enums import FilterAwardType, FilterType, FilterEntityType
-from ..models.search import (
-    SearchResults,
-    SearchGroup,
-    TitleSearchGroup,
-    EntitySearchGroup,
-    CategorySearchGroup,
-    CeremonySearchGroup,
-    TitleResult,
-    EntityResult,
-    CategoryResult,
-    CeremonyResult,
-    EntityResultRow,
-)
+from typing import Annotated, Type
+
 from fastapi import APIRouter, Query
 from psycopg.rows import class_row
-from typing import Annotated, Type
+
+from ..dependencies import connect
+from ..enums import FilterAwardType, FilterEntityType, FilterType
+from ..models.search import (
+    CategoryResult,
+    CategorySearchGroup,
+    CeremonyResult,
+    CeremonySearchGroup,
+    EntityResult,
+    EntityResultRow,
+    EntitySearchGroup,
+    SearchGroup,
+    SearchResults,
+    TitleResult,
+    TitleSearchGroup,
+)
 
 router = APIRouter(prefix="/search", tags=["search"])
 
@@ -43,11 +44,11 @@ async def search_all(
             edition."""
         ),
     ),
-    end_edition: int = Query(
-        default=int(os.getenv("CURRENT_EDITION")),  # type: ignore
+    end_edition: int | None = Query(
+        default=None,
         description=(
             """(inclusive) Restrict search to nominations at or before this
-            edition."""
+            edition. If null, ends at current edition. Defaults to null."""
         ),
     ),
     categories: Annotated[
@@ -215,7 +216,7 @@ async def search_all(
                         (%(award)s::award_type IS NULL OR n.award = %(award)s) AND
                         (%(query)s::text IS NULL OR %(query)s <%% t.title) AND
                         e.iteration >= %(start_edition)s AND
-                        e.iteration <= %(end_edition)s AND
+                        (%(end_edition)s::integer IS NULL OR e.iteration <= %(end_edition)s) AND
                         (%(filter_c)s::text[] IS NULL OR c.name = ANY(%(filter_c)s)) AND
                         (%(filter_cg)s::text[] IS NULL OR cg.name = ANY(%(filter_cg)s))
                     GROUP BY t.id, t.imdb_id, t.title
@@ -299,7 +300,7 @@ async def search_all(
                         (%(entity_type)s::entity_type IS NULL OR en.type = %(entity_type)s) AND
                         (%(query)s::text IS NULL OR %(query)s <%% ANY(a.aliases)) AND
                         e.iteration >= %(start_edition)s AND
-                        e.iteration <= %(end_edition)s AND
+                        (%(end_edition)s::integer IS NULL OR e.iteration <= %(end_edition)s) AND
                         (%(filter_c)s::text[] IS NULL OR c.name = ANY(%(filter_c)s)) AND
                         (%(filter_cg)s::text[] IS NULL OR cg.name = ANY(%(filter_cg)s))
                     GROUP BY

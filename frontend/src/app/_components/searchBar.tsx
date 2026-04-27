@@ -29,7 +29,11 @@ import {
 import merge from "../_utils/merge";
 import { iterationToOrdinal } from "../_utils/utils";
 
-export default function SearchBar() {
+export default function SearchBar({
+  currentEdition,
+}: {
+  currentEdition: number;
+}) {
   const searchRef = useRef(null);
   const inputRef = useContext(SearchRefContext);
   const [openResults, setOpenResults] = useState(false);
@@ -172,6 +176,7 @@ export default function SearchBar() {
       </AriaSearchField>
 
       <ResultsBox
+        currentEdition={currentEdition}
         open={openResults}
         blankSearch={search.trim() === ""}
         results={results}
@@ -196,11 +201,13 @@ function useDebounce(
 }
 
 function ResultsBox({
+  currentEdition,
   open,
   blankSearch,
   results,
   closeResults,
 }: {
+  currentEdition: number;
   open: boolean;
   blankSearch: boolean;
   results: Result[];
@@ -212,7 +219,10 @@ function ResultsBox({
     >
       <div className="flex flex-col gap-4">
         {blankSearch ? (
-          <QuickLinks closeResults={closeResults} />
+          <QuickLinks
+            currentEdition={currentEdition}
+            closeResults={closeResults}
+          />
         ) : (
           <Results results={results} closeResults={closeResults} />
         )}
@@ -258,8 +268,13 @@ function Results({
   );
 }
 
-function QuickLinks({ closeResults }: { closeResults: () => void }) {
-  const currentEdition = parseInt(process.env.NEXT_PUBLIC_CURRENT_EDITION!);
+function QuickLinks({
+  currentEdition,
+  closeResults,
+}: {
+  currentEdition: number;
+  closeResults: () => void;
+}) {
   const currentYear = 1927 + currentEdition;
   const currentOrdinal = iterationToOrdinal(currentEdition);
   const pages = [
@@ -274,7 +289,9 @@ function QuickLinks({ closeResults }: { closeResults: () => void }) {
   ];
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-xxs font-semibold text-zinc-500">QUICK LINKS</div>
+      <div className="text-xxs font-semibold uppercase text-zinc-500">
+        Quick Links
+      </div>
       <div className="flex flex-col text-sm font-medium">
         {pages.map((p, i) => (
           <Link

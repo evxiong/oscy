@@ -83,6 +83,7 @@ app = FastAPI(
     },
     lifespan=lifespan,
     swagger_ui_parameters={"defaultModelsExpandDepth": -1},
+    redoc_url=None,
 )
 
 

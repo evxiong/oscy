@@ -1,7 +1,7 @@
 import AwardNavigator from "@/app/_components/awardNavigator";
 import Breadcrumbs from "@/app/_components/breadcrumbs";
 import type { SmallSelectorOption } from "@/app/_components/selectors";
-import fetchError from "@/app/_utils/fetchError";
+import { fetchApi } from "@/app/_utils/fetch";
 import merge from "@/app/_utils/merge";
 import { dateToString, iterationToOrdinal } from "@/app/_utils/utils";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
@@ -22,7 +22,7 @@ export default async function CeremonyLayout({
   }
 
   const ordinal = iterationToOrdinal(iteration);
-  const editions: EditionType[] = await fetchError("/api/ceremonies");
+  const editions: EditionType[] = await fetchApi("/ceremonies");
   const currentEditionInd = editions.findIndex(
     (e) => e.iteration === iteration,
   );

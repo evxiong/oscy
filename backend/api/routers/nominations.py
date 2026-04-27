@@ -1,24 +1,24 @@
-import os
-from ..dependencies import connect
-from ..enums import FilterAwardType, SortType
-from ..models.nominations import (
-    Nominations,
-    Edition,
-    AggStats,
-    EntityStats,
-    TitleStats,
-    EditionRow,
-    Category,
-    Nominee,
-    NomineePerson,
-    NomineeTitle,
-)
 from collections import defaultdict
+from typing import Annotated
+
 from fastapi import APIRouter, Query
 from psycopg import sql
 from psycopg.rows import class_row
-from typing import Annotated
 
+from ..dependencies import connect
+from ..enums import FilterAwardType, SortType
+from ..models.nominations import (
+    AggStats,
+    Category,
+    Edition,
+    EditionRow,
+    EntityStats,
+    Nominations,
+    Nominee,
+    NomineePerson,
+    NomineeTitle,
+    TitleStats,
+)
 
 router = APIRouter(tags=["nominations"])
 
@@ -27,9 +27,15 @@ router = APIRouter(tags=["nominations"])
 async def get_nominations(
     award: FilterAwardType = FilterAwardType.all,
     start_edition: Annotated[int, Query(ge=1, description="(inclusive)")] = 1,
-    end_edition: Annotated[int, Query(description="(inclusive)")] = int(
-        os.getenv("CURRENT_EDITION")  # type: ignore
-    ),
+    end_edition: Annotated[
+        int | None,
+        Query(
+            description=(
+                """(inclusive) if null, ends at current edition. Defaults to
+                null."""
+            )
+        ),
+    ] = None,
     winners_only: bool = False,
     pending: Annotated[
         bool | None,
@@ -171,7 +177,7 @@ async def get_nominations(
                     WHERE
                         (%(award)s::award_type IS NULL OR n.award = %(award)s) AND
                         e.iteration >= %(start_edition)s AND
-                        e.iteration <= %(end_edition)s AND
+                        (%(end_edition)s::integer IS NULL OR e.iteration <= %(end_edition)s) AND
                         (%(winners_only)s = FALSE OR n.winner = TRUE) AND
                         (%(filter_c_bool)s = FALSE OR c.name = ANY(%(filter_c)s)) AND
                         (%(filter_cg_bool)s = FALSE OR cg.name = ANY(%(filter_cg)s)) AND
@@ -207,15 +213,63 @@ async def get_nominations(
                         cg.name AS category_group,
                         c.id AS category_id,
                         c.name AS category,
-                        SUM(CASE WHEN n.stat = TRUE AND e.iteration >= %(start_edition)s AND e.iteration <= %(end_edition)s THEN 1 ELSE 0 END) AS category_noms,
-                        SUM(CASE WHEN n.winner = TRUE AND e.iteration >= %(start_edition)s AND e.iteration <= %(end_edition)s THEN 1 ELSE 0 END) AS category_wins,
-                        SUM(SUM(CASE WHEN n.stat = TRUE AND e.iteration >= %(start_edition)s AND e.iteration <= %(end_edition)s THEN 1 ELSE 0 END)) OVER (PARTITION BY en.id) AS total_noms,
-                        SUM(SUM(CASE WHEN n.winner = TRUE AND e.iteration >= %(start_edition)s AND e.iteration <= %(end_edition)s THEN 1 ELSE 0 END)) OVER (PARTITION BY en.id) AS total_wins,
+                        SUM(
+                            CASE
+                                WHEN
+                                    n.stat = TRUE AND
+                                    e.iteration >= %(start_edition)s AND
+                                    (%(end_edition)s::integer IS NULL OR e.iteration <= %(end_edition)s)
+                                    THEN 1
+                                ELSE 0
+                            END
+                        ) AS category_noms,
+                        SUM(
+                            CASE
+                                WHEN
+                                    n.winner = TRUE AND
+                                    e.iteration >= %(start_edition)s AND
+                                    (%(end_edition)s::integer IS NULL OR e.iteration <= %(end_edition)s)
+                                    THEN 1
+                                ELSE 0
+                            END
+                        ) AS category_wins,
+                        SUM(
+                            SUM(
+                                CASE
+                                    WHEN
+                                        n.stat = TRUE AND
+                                        e.iteration >= %(start_edition)s AND
+                                        (%(end_edition)s::integer IS NULL OR e.iteration <= %(end_edition)s)
+                                        THEN 1
+                                    ELSE 0
+                                END
+                            )
+                        ) OVER (PARTITION BY en.id) AS total_noms,
+                        SUM(
+                            SUM(
+                                CASE
+                                    WHEN
+                                        n.winner = TRUE AND
+                                        e.iteration >= %(start_edition)s AND
+                                        (%(end_edition)s::integer IS NULL OR e.iteration <= %(end_edition)s)
+                                        THEN 1
+                                    ELSE 0
+                                END
+                            )
+                        ) OVER (PARTITION BY en.id) AS total_wins,
                         SUM(CASE WHEN n.stat = TRUE THEN 1 ELSE 0 END) AS career_category_noms,
                         SUM(CASE WHEN n.winner = TRUE THEN 1 ELSE 0 END) AS career_category_wins,
                         SUM(SUM(CASE WHEN n.stat = TRUE THEN 1 ELSE 0 END)) OVER (PARTITION BY en.id) AS career_total_noms,
                         SUM(SUM(CASE WHEN n.winner = TRUE THEN 1 ELSE 0 END)) OVER (PARTITION BY en.id) AS career_total_wins,
-                        SUM(CASE WHEN e.iteration >= %(start_edition)s AND e.iteration <= %(end_edition)s THEN 1 ELSE 0 END) > 0 AS valid
+                        SUM(
+                            CASE
+                                WHEN
+                                    e.iteration >= %(start_edition)s AND
+                                    (%(end_edition)s::integer IS NULL OR e.iteration <= %(end_edition)s)
+                                    THEN 1
+                                ELSE 0
+                            END
+                        ) > 0 AS valid
                     FROM category_names cn
                     JOIN categories c ON c.id = cn.category_id
                     JOIN category_groups cg ON cg.id = c.category_group_id
@@ -270,7 +324,7 @@ async def get_nominations(
                 WHERE
                     (%(award)s::award_type IS NULL OR n.award = %(award)s) AND
                     e.iteration >= %(start_edition)s AND
-                    e.iteration <= %(end_edition)s AND
+                    (%(end_edition)s::integer IS NULL OR e.iteration <= %(end_edition)s) AND
                     (%(winners_only)s = FALSE OR n.winner = TRUE) AND
                     (%(filter_c_bool)s = FALSE OR c.name = ANY(%(filter_c)s)) AND
                     (%(filter_cg_bool)s = FALSE OR cg.name = ANY(%(filter_cg)s)) AND

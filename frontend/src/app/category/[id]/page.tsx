@@ -1,7 +1,7 @@
 import Card from "@/app/_components/card";
 import Nominations from "@/app/_components/nominations";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@/app/_ui/Tabs";
-import fetchError from "@/app/_utils/fetchError";
+import { fetchApi, fetchVersion } from "@/app/_utils/fetch";
 import {
   categoriesToTopFive,
   categoryNamesToTimeline,
@@ -15,7 +15,7 @@ import type { Category } from "./types";
 
 export async function generateStaticParams() {
   // const categoryGroups: CategoryGroupInfo[] =
-  //   await fetchError("/api/categories");
+  //   await fetchApi("/categories");
   // const categoryIds = categoryGroups
   //   .map((categoryGroup) =>
   //     categoryGroup.categories.map((c) => ({
@@ -33,7 +33,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const categoryId = (await params).id;
-  const category: Category = await fetchError(`/api/categories/${categoryId}`);
+  const category: Category = await fetchApi(`/categories/${categoryId}`);
 
   if (category === null) {
     notFound();
@@ -70,7 +70,7 @@ export default async function Category({
   params: Promise<{ id: string }>;
 }) {
   const categoryId = (await params).id;
-  const category: Category = await fetchError(`/api/categories/${categoryId}`);
+  const category: Category = await fetchApi(`/categories/${categoryId}`);
 
   if (category === null) {
     notFound();
@@ -83,7 +83,8 @@ export default async function Category({
   const topFiveImageUrls: (string | null)[] = await topFiveToImageUrls(topFive);
 
   const timeline = categoryNamesToTimeline(category.category_names);
-  const LATEST_EDITION = parseInt(process.env.NEXT_PUBLIC_CURRENT_EDITION!);
+
+  const currentEdition = (await fetchVersion()).iteration;
 
   return (
     <>
@@ -141,7 +142,7 @@ export default async function Category({
                   <div>Known as</div>
                 </div>
                 <div className="flex flex-col font-medium">
-                  {/* {timeline[0].end_iteration === LATEST_EDITION && (
+                  {/* {timeline[0].end_iteration === currentEdition && (
                     <div className="relative ml-4 h-6">
                       <div className="before:absolute before:bottom-0 before:left-0 before:top-0 before:border-l-2 before:border-gold before:content-['']"></div>
                     </div>
@@ -152,18 +153,18 @@ export default async function Category({
                         className={`${t.start_iteration === 1 ? "before:border-none" : i < timeline.length - 1 && t.start_iteration === timeline[i + 1].end_iteration + 1 ? "before:border-solid" : "before:border-dashed"} w-full pb-6 before:absolute before:bottom-0 before:left-0 before:top-0 before:border-l-2 before:border-zinc-300 before:content-['']`}
                       >
                         <div
-                          className={`${t.end_iteration === LATEST_EDITION ? "border-4 border-gold" : "border-2 border-zinc-300"} absolute -left-[5px] top-0 size-3 rounded-full bg-white`}
+                          className={`${t.end_iteration === currentEdition ? "border-4 border-gold" : "border-2 border-zinc-300"} absolute -left-[5px] top-0 size-3 rounded-full bg-white`}
                         ></div>
                         <div className="-mt-1 flex flex-col gap-0.5 pl-6">
                           <div
-                            className={`${t.end_iteration === LATEST_EDITION ? "text-zinc-800" : "text-zinc-600"} text-base leading-5`}
+                            className={`${t.end_iteration === currentEdition ? "text-zinc-800" : "text-zinc-600"} text-base leading-5`}
                           >
                             {t.name}
                           </div>
                           <div
-                            className={`${t.end_iteration === LATEST_EDITION ? "text-zinc-800" : "text-zinc-500"} text-sm font-normal`}
+                            className={`${t.end_iteration === currentEdition ? "text-zinc-800" : "text-zinc-500"} text-sm font-normal`}
                           >
-                            {t.end_iteration === LATEST_EDITION
+                            {t.end_iteration === currentEdition
                               ? t.start_year + "-present"
                               : t.start_year === t.end_year
                                 ? t.start_year

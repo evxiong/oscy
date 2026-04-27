@@ -1,8 +1,8 @@
+import EntityTitle from "@/app/_components/entityTitle";
+import { fetchApi } from "@/app/_utils/fetch";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { EntityOrTitle } from "./types";
-import EntityTitle from "@/app/_components/entityTitle";
-import fetchError from "@/app/_utils/fetchError";
-import { Metadata } from "next";
 
 export async function generateStaticParams() {
   return [];
@@ -14,7 +14,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const entityId = (await params).id;
-  const entity: EntityOrTitle = await fetchError(`/api/entities/${entityId}`);
+  const entity: EntityOrTitle = await fetchApi(`/entities/${entityId}`);
   if (entity === null) {
     notFound();
   }
@@ -46,7 +46,7 @@ export default async function Entity({
   params: Promise<{ id: string }>;
 }) {
   const entityId = (await params).id;
-  const entity: EntityOrTitle = await fetchError(`/api/entities/${entityId}`);
+  const entity: EntityOrTitle = await fetchApi(`/entities/${entityId}`);
   if (entity === null) {
     notFound();
   }

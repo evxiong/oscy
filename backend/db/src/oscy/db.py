@@ -2,20 +2,27 @@
 Functions for interacting with database.
 
 As a script, creates new database with `PG_DBNAME` and initializes it with data
-spanning from edition 1 to `CURRENT_EDITION` specified in top-level `.env`. The
-`data/oscars/imdb` and `data/oscars/official` directories should already be
-populated with data for all editions prior to running this script. See
-`scrape.py` for details.
+spanning from edition 1 to edition specified in command. The `data/oscars/imdb`
+and `data/oscars/official` directories should already be populated with data for
+all editions prior to running this script. See `scrape.py` for details.
 
 Usage:
-    python -m src.oscy.db
+    python -m src.oscy.db <edition>
+
+    <edition> is the edition of the last Oscars ceremony to include; the
+        db will be initialized with data from the 1st edition to this edition
+
+Example:
+    python -m src.oscy.db 98
 """
 
+import argparse
 import csv
 import dataclasses
 import os
 from contextlib import contextmanager
 from contextvars import ContextVar
+from datetime import UTC, datetime
 from functools import wraps
 
 import psycopg
@@ -27,6 +34,7 @@ from tqdm import tqdm
 
 from . import match, scrape
 from .data import MatchedCategory, MatchedNominee
+from .update import UpdateType
 
 load_dotenv(override=True)
 
@@ -136,17 +144,15 @@ def create_schema():
 
 
 @transaction
-def insert_editions(start: int | None = None, end: int | None = None) -> None:
+def insert_editions(start: int = 1, end: int | None = None) -> None:
     """Inserts to `editions` based on official ceremony pages.
 
     Tables impacted: `editions`.
 
     Args:
-        start (int | None, optional): edition of first Oscars ceremony to
-            include. If None, starts from 1st edition. Defaults to None.
-        end (int | None, optional): edition of last Oscars ceremony to include.
-            If None, ends at `start` if specified; otherwise, ends at
-            `CURRENT_EDITION` specified in top-level `.env`. Defaults to None.
+        start (int, optional): first ceremony edition to include. Defaults to 1.
+        end (int | None, optional): last ceremony edition to include. If None,
+            ends at `start`. Defaults to None.
     """
     editions = scrape.scrape_editions(start, end)
     values = [dataclasses.asdict(e) for e in editions]
@@ -161,12 +167,16 @@ def insert_editions(start: int | None = None, end: int | None = None) -> None:
 
 
 @transaction
-def insert_categories():
+def insert_categories(current_edition: int):
     """Inserts to category tables based on `data/oscar_categories.yaml`.
 
     Should only be used at db initialization. Tables impacted:
     `category_groups`, `categories`, `category_names`,
     `editions_category_names`.
+
+    Args:
+        current_edition (int): edition of most recent Oscars ceremony, used to
+            replace `present` values in YAML file
     """
     with open("data/oscar_categories.yaml", encoding="utf-8") as fd:
         categories = yaml.safe_load(fd)
@@ -201,7 +211,7 @@ def insert_categories():
                             r = g.split("-")
                             if len(r) == 2:
                                 if r[1] == "present":
-                                    r[1] = int(os.getenv("CURRENT_EDITION"))  # type: ignore
+                                    r[1] = current_edition
                                 eds += [i for i in range(int(r[0]), int(r[1]) + 1)]
                             else:
                                 eds.append(int(r[0]))
@@ -946,6 +956,56 @@ def replace_edition_category_name(
 
 
 @transaction
+def upsert_current_version(edition: int, update_stage: UpdateType):
+    """Upserts info about the data's current version to db.
+
+    Tables impacted: `current_versions`.
+
+    Args:
+        edition (int): edition of Oscars ceremony
+        update_stage (UpdateType): current update stage
+    """
+    updated_at = datetime.now(UTC)
+    tag = f"o{edition}{update_stage.name[0]}{int(updated_at.timestamp())}"
+
+    with conn().cursor() as cur:
+        cur.execute(
+            """
+            INSERT INTO current_versions (award, iteration, update_stage, updated_at, tag)
+            VALUES ('oscar', %(iteration)s, %(update_stage)s, %(updated_at)s, %(tag)s)
+            ON CONFLICT (award)
+            DO UPDATE SET
+                iteration = EXCLUDED.iteration,
+                update_stage = EXCLUDED.update_stage,
+                updated_at = EXCLUDED.updated_at,
+                tag = EXCLUDED.tag
+            """,
+            {
+                "iteration": edition,
+                "update_stage": update_stage,
+                "updated_at": updated_at,
+                "tag": tag,
+            },
+        )
+        print("Upserted current version with tag:", tag)
+
+
+@transaction
+def get_current_edition() -> int:
+    """Gets current edition iteration from db."""
+    with conn().cursor() as cur:
+        cur.execute(
+            """
+            SELECT iteration
+            FROM current_versions
+            WHERE award = 'oscar'
+            """
+        )
+        edition: int = cur.fetchone()[0]  # type: ignore
+        return edition
+
+
+@transaction
 def get_category_groups() -> list[str]:
     """Gets names of all category groups in db."""
     with conn().cursor() as cur:
@@ -1128,29 +1188,42 @@ def export_nominations_to_csv():
             dict_writer.writerows(results)
 
 
-def initialize_db():
+def initialize_db(current_edition: int):
     """Initializes database after initial creation.
 
-    Creates db objects and initializes it with data spanning from edition 1 to
-    `CURRENT_EDITION` specified in top-level `.env`. The `data/oscars/imdb` and
+    Creates db objects and initializes it with data spanning from the 1st
+    edition to `current_edition`. The `data/oscars/imdb` and
     `data/oscars/official` directories should already be populated with data for
     all editions prior to calling this function.
 
     This function should not be used to update the db with new data. See
     `update.py` for details.
+
+    Args:
+        current_edition (int): edition of last Oscars ceremony to include
     """
     with create_or_continue_transaction():
         create_schema()
-        insert_editions()
-        insert_categories()
-        data = match.match_categories()
+        insert_editions(end=current_edition)
+        insert_categories(current_edition)
+        data = match.match_categories(end=current_edition)
         matched_nominees = [n for ed in data for c in data[ed] for n in c.nominees]
         insert_nominees(matched_nominees)
+        upsert_current_version(current_edition, UpdateType.official)
 
 
 if __name__ == "__main__":
     try:
+        parser = argparse.ArgumentParser()
+        parser.add_argument("edition", type=int)
+
+        args = parser.parse_args()
+
+        edition: int = args.edition
+        if edition <= 0:
+            raise ValueError("edition must be >= 1")
+
         create_db()
-        initialize_db()
+        initialize_db(edition)
     finally:
         close()

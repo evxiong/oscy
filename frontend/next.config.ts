@@ -20,22 +20,16 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/api/revalidate",
-        destination: "/api/revalidate",
-      },
-      {
         source: "/api/:path*",
-        destination:
-          process.env.VERCEL_ENV === "production"
-            ? "https://oscy-api.vercel.app/:path*"
-            : `http://${process.env.API_HOST}:8000/:path*`,
+        destination: process.env.VERCEL
+          ? `https://${process.env.PROD_API_HOST}/:path*`
+          : `http://${process.env.LOCAL_API_HOST}:8000/:path*`,
       },
       {
         source: "/openapi.json",
-        destination:
-          process.env.VERCEL_ENV === "production"
-            ? "https://oscy-api.vercel.app/openapi.json"
-            : `http://${process.env.API_HOST}:8000/openapi.json`,
+        destination: process.env.VERCEL
+          ? `https://${process.env.PROD_API_HOST}/openapi.json`
+          : `http://${process.env.LOCAL_API_HOST}:8000/openapi.json`,
       },
     ];
   },

@@ -91,48 +91,44 @@ def scrape_imdb(edition: int, save: bool = True, force: bool = False) -> dict:
 
 def save_imdb(
     start: int = 1,
-    end: int = int(os.getenv("CURRENT_EDITION")),  # type: ignore
+    end: int | None = None,
     sleep: int = 1,
 ) -> None:
     """Saves IMDb Oscar data for multiple ceremonies.
 
     Args:
         start (int, optional): first ceremony edition to include. Defaults to 1.
-        end (int, optional): last ceremony edition to include. Defaults to
-            `CURRENT_EDITION` specified in top-level `.env`.
+        end (int | None, optional): last ceremony edition to include. If None,
+            ends at `start`. Defaults to None.
         sleep (int, optional): time (s) between IMDb requests. Defaults to 1.
     """
+    if end is None:
+        end = start
+
     if start < 1 or end < start:
-        raise ValueError
+        raise ValueError("invalid start or end edition")
 
     for edition in tqdm(range(start, end + 1)):
         scrape_imdb(edition)
         time.sleep(sleep)
 
 
-def scrape_official_database(start: int | None = None, end: int | None = None) -> None:
+def scrape_official_database(start: int = 1, end: int | None = None) -> None:
     """Scrapes multiple Oscar ceremonies' data from official database.
 
     Each ceremony's data is saved to `data/oscars/official/<edition>.html`. If
     data already exists, compares data and warns on difference.
 
     Args:
-        start (int | None, optional): edition of first Oscar ceremony to
-            include. If None, starts from 1st edition. Defaults to None.
-        end (int | None, optional): edition of last Oscar ceremony to include.
-            If None, ends at `start` if specified; otherwise, ends at
-            `CURRENT_EDITION` specified in top-level `.env`. Defaults to None.
+        start (int, optional): first ceremony edition to include. Defaults to 1.
+        end (int | None, optional): last ceremony edition to include. If None,
+            ends at `start`. Defaults to None.
     """
-    if start is None:
-        start = 1
-        if end is None:
-            end = int(os.getenv("CURRENT_EDITION"))  # type: ignore
-    else:
-        if end is None:
-            end = start
+    if end is None:
+        end = start
 
     if start < 1 or end < start:
-        raise ValueError
+        raise ValueError("invalid start or end edition")
 
     with sync_playwright() as p:
         browser = p.chromium.launch()
@@ -265,15 +261,13 @@ def scrape_official_ceremony_page(edition: int) -> list[OfficialCategory]:
     return categories
 
 
-def scrape_editions(start: int | None = None, end: int | None = None) -> list[Edition]:
+def scrape_editions(start: int = 1, end: int | None = None) -> list[Edition]:
     """Scrapes multiple Oscar editions' info from official ceremony pages.
 
     Args:
-        start (int | None, optional): edition of first Oscars ceremony to
-            include. If None, starts from 1st edition. Defaults to None.
-        end (int | None, optional): edition of last Oscars ceremony to include.
-            If None, ends at `start` if specified; otherwise, ends at
-            `CURRENT_EDITION` specified in top-level `.env`. Defaults to None.
+        start (int, optional): first ceremony edition to include. Defaults to 1.
+        end (int | None, optional): last ceremony edition to include. If None,
+            ends at `start`. Defaults to None.
 
     Raises:
         Exception: failed to scrape data
@@ -281,13 +275,11 @@ def scrape_editions(start: int | None = None, end: int | None = None) -> list[Ed
     Returns:
         list[Edition]: list of edition info
     """
-    if start is None:
-        start = 1
-        if end is None:
-            end = int(os.getenv("CURRENT_EDITION"))  # type: ignore
-    else:
-        if end is None:
-            end = start
+    if end is None:
+        end = start
+
+    if start < 1 or end < start:
+        raise ValueError("invalid start or end edition")
 
     editions: list[Edition] = []
 

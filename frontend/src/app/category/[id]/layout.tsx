@@ -1,7 +1,7 @@
 import AwardNavigator from "@/app/_components/awardNavigator";
 import Breadcrumbs from "@/app/_components/breadcrumbs";
 import type { SmallSelectorOption } from "@/app/_components/selectors";
-import fetchError from "@/app/_utils/fetchError";
+import { fetchApi, fetchVersion } from "@/app/_utils/fetch";
 import { categoryNamesToTimeline } from "@/app/_utils/utils";
 import { AwardEnum } from "@/app/ceremony/[iteration]/types";
 import { notFound } from "next/navigation";
@@ -15,8 +15,7 @@ export default async function CategoryLayout({
   children: React.ReactNode;
 }) {
   const categoryId = parseInt((await params).id);
-  const categoryGroups: CategoryGroupInfo[] =
-    await fetchError("/api/categories");
+  const categoryGroups: CategoryGroupInfo[] = await fetchApi("/categories");
 
   let category: CategoryInfo | undefined = undefined;
   let categoryGroup = "";
@@ -56,7 +55,7 @@ export default async function CategoryLayout({
   const firstYear = timeline.at(-1)!.start_year;
   const lastYear = timeline[0].end_year;
 
-  const CURRENT_EDITION = parseInt(process.env.NEXT_PUBLIC_CURRENT_EDITION!);
+  const currentEdition = (await fetchVersion()).iteration;
 
   return (
     <div className="flex flex-col gap-5">
@@ -91,7 +90,7 @@ export default async function CategoryLayout({
             </span>
             <span className="select-none">&#32;·&#32;</span>
             <span>
-              {lastYear === 1927 + CURRENT_EDITION
+              {lastYear === 1927 + currentEdition
                 ? firstYear + "-present"
                 : firstYear === lastYear
                   ? firstYear
