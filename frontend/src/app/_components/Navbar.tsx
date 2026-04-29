@@ -1,6 +1,7 @@
 import { IconApi, IconBrandGithub } from "@tabler/icons-react";
 import Link from "next/link";
 import { fetchVersion } from "../_utils/fetch";
+import ExternalLink from "./ExternalLink";
 import SearchBar from "./SearchBar";
 
 export default async function Navbar() {
@@ -18,22 +19,18 @@ export default async function Navbar() {
         </div>
         <SearchBar currentEdition={currentEdition} />
         <div className="flex flex-1 flex-row justify-end gap-2 pr-6">
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
+          <ExternalLink
             href="/api/docs"
             className="group flex h-8 w-8 cursor-pointer items-center justify-center focus:outline-none"
           >
             <IconApi className="h-5 w-5 stroke-zinc-500 group-hover:stroke-gold group-focus-visible:stroke-gold" />
-          </a>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
+          </ExternalLink>
+          <ExternalLink
             href="https://github.com/evxiong/oscy"
             className="group flex h-8 w-8 cursor-pointer items-center justify-center focus:outline-none"
           >
             <IconBrandGithub className="h-5 w-5 stroke-zinc-500 group-hover:stroke-gold group-focus-visible:stroke-gold" />
-          </a>
+          </ExternalLink>
         </div>
       </div>
     </header>

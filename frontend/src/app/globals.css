@@ -19,3 +19,18 @@ html {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  .rotate-carousel {
+    animation: rotate-carousel 80s linear infinite;
+  }
+}
+
+@keyframes rotate-carousel {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}

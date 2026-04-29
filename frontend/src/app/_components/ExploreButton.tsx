@@ -7,21 +7,22 @@ import Button from "../_ui/Button";
 
 export default function ExploreButton({
   id,
-  text,
+  children,
 }: {
   id: string;
-  text: string;
+  children: React.ReactNode;
 }) {
   const ref = useContext(SearchRefContext);
   return (
     <Button
       id={id}
+      variant="secondary"
       onClick={() => {
         ref?.current?.focus();
       }}
     >
-      <IconSearch className="size-4" />
-      <span>{text}</span>
+      <IconSearch />
+      {children}
     </Button>
   );
 }

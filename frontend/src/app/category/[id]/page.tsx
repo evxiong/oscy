@@ -2,11 +2,10 @@ import Card from "@/app/_components/card";
 import Nominations from "@/app/_components/nominations";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@/app/_ui/Tabs";
 import { fetchApi, fetchVersion } from "@/app/_utils/fetch";
+import { categoriesToTopFive, topFiveToImageUrls } from "@/app/_utils/topFive";
 import {
-  categoriesToTopFive,
   categoryNamesToTimeline,
   iterationToOrdinal,
-  topFiveToImageUrls,
 } from "@/app/_utils/utils";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -80,7 +79,7 @@ export default async function Category({
   const nominationCategories = editions.map((e) => e.categories).flat();
 
   const topFive = categoriesToTopFive(nominationCategories);
-  const topFiveImageUrls: (string | null)[] = await topFiveToImageUrls(topFive);
+  const topFiveImageUrls = await topFiveToImageUrls(topFive);
 
   const timeline = categoryNamesToTimeline(category.category_names);
 

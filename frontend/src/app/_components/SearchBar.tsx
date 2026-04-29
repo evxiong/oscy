@@ -1,6 +1,11 @@
 "use client";
 
-import { IconArrowRight, IconSearch, IconX } from "@tabler/icons-react";
+import {
+  IconArrowRight,
+  IconLoader,
+  IconSearch,
+  IconX,
+} from "@tabler/icons-react";
 import Link from "next/link";
 import {
   DependencyList,
@@ -38,7 +43,8 @@ export default function SearchBar({
   const inputRef = useContext(SearchRefContext);
   const [openResults, setOpenResults] = useState(false);
   const [search, setSearch] = useState("");
-  const [results, setResults] = useState<Result[]>([]);
+  const [results, setResults] = useState<Result[]>();
+  const [loading, setLoading] = useState(false);
 
   // for closing search results box
   useEffect(() => {
@@ -76,9 +82,10 @@ export default function SearchBar({
 
   async function fetchResults() {
     if (search.trim() === "") {
-      setResults([]);
       return;
     }
+
+    setLoading(true);
     const data = await fetch(`/api/search?query=${search}`);
     const searchResults: SearchResults = await data.json();
     const r: Result[] = [];
@@ -135,6 +142,7 @@ export default function SearchBar({
       }
     }
     r.sort((a, b) => a.word_dist - b.word_dist);
+    setLoading(false);
     setResults(r.slice(0, 10));
   }
 
@@ -150,7 +158,12 @@ export default function SearchBar({
     <div className="w-full min-w-0 max-w-[720px] sm:relative" ref={searchRef}>
       <AriaSearchField
         className="group/field w-full text-sm font-normal"
-        onChange={(v) => setSearch(v)}
+        onChange={(v) => {
+          if (v.trim() === "") {
+            setResults(undefined);
+          }
+          setSearch(v.trim());
+        }}
       >
         <AriaGroup
           className={merge(
@@ -178,7 +191,7 @@ export default function SearchBar({
       <ResultsBox
         currentEdition={currentEdition}
         open={openResults}
-        blankSearch={search.trim() === ""}
+        loading={loading}
         results={results}
         closeResults={closeResults}
       />
@@ -203,28 +216,33 @@ function useDebounce(
 function ResultsBox({
   currentEdition,
   open,
-  blankSearch,
+  loading,
   results,
   closeResults,
 }: {
   currentEdition: number;
   open: boolean;
-  blankSearch: boolean;
-  results: Result[];
+  loading: boolean;
+  results: Result[] | undefined;
   closeResults: () => void;
 }) {
   return (
     <div
-      className={`${open ? "visible opacity-100" : "invisible opacity-0"} absolute left-6 right-6 z-50 mt-2 rounded-md border border-zinc-200 bg-white p-4 transition-all sm:left-0 sm:w-full`}
+      className={`${open ? "visible opacity-100" : "invisible opacity-0"} absolute left-6 right-6 z-50 mt-2 rounded-md border border-border bg-background p-4 shadow-sm transition-all sm:left-0 sm:w-full`}
     >
       <div className="flex flex-col gap-4">
-        {blankSearch ? (
+        {results === undefined ? (
           <QuickLinks
             currentEdition={currentEdition}
+            loading={loading}
             closeResults={closeResults}
           />
         ) : (
-          <Results results={results} closeResults={closeResults} />
+          <Results
+            results={results}
+            loading={loading}
+            closeResults={closeResults}
+          />
         )}
       </div>
     </div>
@@ -233,36 +251,47 @@ function ResultsBox({
 
 function Results({
   results,
+  loading,
   closeResults,
 }: {
   results: Result[];
+  loading: boolean;
   closeResults: () => void;
 }) {
   return (
-    <div className="flex flex-col gap-2">
-      <div className="text-xxs font-semibold text-zinc-500">RESULTS</div>
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center justify-between text-xxs/4 font-semibold text-zinc-500">
+        <div className="uppercase">Results</div>
+        {loading && <IconLoader className="size-4 animate-spin" />}
+      </div>
       <div className="flex flex-col text-base font-medium leading-5">
-        {results.map((r, i) => (
-          <Link
-            prefetch={false}
-            key={i}
-            href={`/${r.subdir}/${r.id}`}
-            className="group -mx-1 flex cursor-pointer flex-col justify-start gap-0.5 rounded-md px-1 py-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 focus:bg-zinc-100 focus:text-zinc-800 focus:outline-none"
-            onClick={() => closeResults()}
-          >
-            <div className="flex flex-row items-center gap-2">
-              <IconArrowRight className="size-3.5 flex-shrink-0" />
-              <div
-                className={`${r.type === "title" ? "italic" : ""} truncate pr-1 text-zinc-600 group-hover:text-zinc-800 group-focus:text-zinc-800`}
-              >
-                {r.name}
+        {results.length === 0 ? (
+          <div className="flex w-full items-center justify-center py-2.5 font-medium text-secondary">
+            No results found.
+          </div>
+        ) : (
+          results.map((r, i) => (
+            <Link
+              prefetch={false}
+              key={i}
+              href={`/${r.subdir}/${r.id}`}
+              className="group -mx-1 flex cursor-pointer flex-col justify-start gap-0.5 rounded-md px-1 py-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 focus:bg-zinc-100 focus:text-zinc-800 focus:outline-none"
+              onClick={() => closeResults()}
+            >
+              <div className="flex flex-row items-center gap-2">
+                <IconArrowRight className="size-3.5 flex-shrink-0" />
+                <div
+                  className={`${r.type === "title" ? "italic" : ""} truncate pr-1 text-zinc-600 group-hover:text-zinc-800 group-focus:text-zinc-800`}
+                >
+                  {r.name}
+                </div>
               </div>
-            </div>
-            <div className="ml-[22px] text-xxs font-semibold text-zinc-400">
-              {r.type.toUpperCase()}
-            </div>
-          </Link>
-        ))}
+              <div className="ml-[22px] text-xxs font-semibold text-zinc-400">
+                {r.type.toUpperCase()}
+              </div>
+            </Link>
+          ))
+        )}
       </div>
     </div>
   );
@@ -270,9 +299,11 @@ function Results({
 
 function QuickLinks({
   currentEdition,
+  loading,
   closeResults,
 }: {
   currentEdition: number;
+  loading: boolean;
   closeResults: () => void;
 }) {
   const currentYear = 1927 + currentEdition;
@@ -288,9 +319,10 @@ function QuickLinks({
     { url: "/category/3", name: "Best Actress", type: "category" },
   ];
   return (
-    <div className="flex flex-col gap-2">
-      <div className="text-xxs font-semibold uppercase text-zinc-500">
-        Quick Links
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center justify-between text-xxs/4 font-semibold text-zinc-500">
+        <div className="uppercase">Quick Links</div>
+        {loading && <IconLoader className="size-4 animate-spin" />}
       </div>
       <div className="flex flex-col text-sm font-medium">
         {pages.map((p, i) => (

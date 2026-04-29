@@ -6,6 +6,7 @@ import { imdbIdToUrl } from "../_utils/utils";
 import AggregateNominations from "../entity/[id]/aggNominations";
 import Rankings from "../entity/[id]/rankings";
 import { EntityOrTitle } from "../entity/[id]/types";
+import ExternalLink from "./ExternalLink";
 import Breadcrumbs from "./breadcrumbs";
 
 export default function EntityTitle({
@@ -39,15 +40,13 @@ export default function EntityTitle({
               }
             />
             {validImdbId && (
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
+              <ExternalLink
                 href={imdbUrl}
                 className="group flex cursor-pointer flex-row items-center text-xs font-medium text-zinc-500 underline decoration-zinc-300 underline-offset-4 hover:text-zinc-600 hover:decoration-zinc-400"
               >
                 <div>IMDb</div>
                 <IconArrowUpRight className="size-3.5" />
-              </a>
+              </ExternalLink>
             )}
           </nav>
         </div>

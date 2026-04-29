@@ -1,4 +1,4 @@
-import EntityTitle from "@/app/_components/entityTitle";
+import EntityTitle from "@/app/_components/EntityTitle";
 import { fetchApi } from "@/app/_utils/fetch";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";

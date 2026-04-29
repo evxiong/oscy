@@ -70,7 +70,7 @@ export function SmallSelector({
           <IconChevronDown className="pointer-events-none absolute right-0 top-1/2 size-3.5 -translate-y-1/2" />
         </AriaButton>
         <AriaPopover
-          className="rounded-md border border-border bg-background font-medium text-secondary drop-shadow-sm transition-opacity data-[entering]:opacity-0"
+          className="overflow-hidden rounded-md border border-border bg-background font-medium text-secondary shadow-sm transition-opacity data-[entering]:opacity-0"
           placement="bottom end"
         >
           <AriaListBox
@@ -152,7 +152,7 @@ export function MediumSelector<T>({
           <AriaSelectValue />
           <IconChevronDown className="size-3.5" />
         </AriaButton>
-        <AriaPopover className="overflow-hidden rounded-md border border-border bg-background p-1 font-medium text-secondary drop-shadow-sm transition-opacity data-[entering]:opacity-0">
+        <AriaPopover className="overflow-hidden rounded-md border border-border bg-background p-1 font-medium text-secondary shadow-sm transition-opacity data-[entering]:opacity-0">
           <AriaListBox>
             {options.map((option) => (
               <SelectItem

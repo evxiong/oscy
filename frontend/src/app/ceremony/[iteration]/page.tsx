@@ -2,11 +2,8 @@ import Card from "@/app/_components/card";
 import Nominations from "@/app/_components/nominations";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@/app/_ui/Tabs";
 import { fetchApi } from "@/app/_utils/fetch";
-import {
-  ceremonyToTopFive,
-  iterationToOrdinal,
-  topFiveToImageUrls,
-} from "@/app/_utils/utils";
+import { ceremonyToTopFive, topFiveToImageUrls } from "@/app/_utils/topFive";
+import { iterationToOrdinal } from "@/app/_utils/utils";
 import { IconLaurelWreath } from "@tabler/icons-react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";

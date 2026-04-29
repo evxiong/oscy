@@ -1,6 +1,8 @@
+import { IconArrowBackUp } from "@tabler/icons-react";
 import { Metadata } from "next";
 import Link from "next/link";
 import ExploreButton from "./_components/ExploreButton";
+import { buttonVariants } from "./_ui/variants";
 
 export const metadata: Metadata = {
   title: "Page not found",
@@ -12,21 +14,22 @@ export default function NotFound() {
       <section className="mb-10 flex w-full flex-col items-center gap-8 py-16">
         <div className="flex w-full flex-col items-center gap-8 px-6 md:w-[768px]">
           <div>
-            <h1 className="text-center text-4xl font-medium tracking-tight text-zinc-600">
+            <h1 className="text-title text-center text-4xl font-medium tracking-tight">
               We couldn&rsquo;t find that page&hellip;
             </h1>
-            <h3 className="mt-3 text-center text-xl font-normal leading-6 tracking-tight text-zinc-500">
+            <h3 className="mt-3 text-center text-xl/6 font-normal tracking-tight text-secondary">
               Double-check the URL.
             </h3>
           </div>
           <div className="flex flex-row gap-4">
-            <Link
-              href="/"
-              className="flex cursor-pointer flex-row items-center gap-2 rounded-md border border-zinc-400 px-4 py-2 text-sm font-medium text-zinc-500 hover:border-zinc-800 hover:text-zinc-800 focus:border-zinc-800 focus:text-zinc-800 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-            >
-              <span>Back to home</span>
+            <Link href="/" className={buttonVariants({ variant: "primary" })}>
+              <IconArrowBackUp />
+              <span className="xxs:block hidden">Back to home</span>
+              <span className="xxs:hidden">Home</span>
             </Link>
-            <ExploreButton id="explore-3" text="New search" />
+            <ExploreButton id="explore-not-found">
+              <span>New search</span>
+            </ExploreButton>
           </div>
         </div>
       </section>
