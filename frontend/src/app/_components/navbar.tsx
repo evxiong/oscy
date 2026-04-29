@@ -1,7 +1,7 @@
 import { IconApi, IconBrandGithub } from "@tabler/icons-react";
 import Link from "next/link";
 import { fetchVersion } from "../_utils/fetch";
-import SearchBar from "./searchBar";
+import SearchBar from "./SearchBar";
 
 export default async function Navbar() {
   const currentEdition = (await fetchVersion()).iteration;
