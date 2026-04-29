@@ -3,7 +3,7 @@
 import SearchField from "@/app/_components/SearchField";
 import StatsTable, {
   EntityStatsTableColumn,
-} from "@/app/_components/statsTable";
+} from "@/app/_components/StatsTable";
 import { EntityStatsType } from "@/app/ceremony/[iteration]/types";
 import { useState } from "react";
 

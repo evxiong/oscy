@@ -1,6 +1,6 @@
-import AwardNavigator from "@/app/_components/awardNavigator";
-import Breadcrumbs from "@/app/_components/breadcrumbs";
-import type { SmallSelectorOption } from "@/app/_components/selectors";
+import AwardNavigator from "@/app/_components/AwardNavigator";
+import Breadcrumbs from "@/app/_components/Breadcrumbs";
+import type { SmallSelectorOption } from "@/app/_components/Selectors";
 import { fetchApi } from "@/app/_utils/fetch";
 import merge from "@/app/_utils/merge";
 import { dateToString, iterationToOrdinal } from "@/app/_utils/utils";

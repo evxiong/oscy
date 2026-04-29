@@ -3,11 +3,11 @@ import { Fragment } from "react";
 import Skeleton from "../_ui/Skeleton";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "../_ui/Tabs";
 import { imdbIdToUrl } from "../_utils/utils";
-import AggregateNominations from "../entity/[id]/aggNominations";
-import Rankings from "../entity/[id]/rankings";
 import { EntityOrTitle } from "../entity/[id]/types";
+import AggregateNominations from "./AggregateNominations";
+import Breadcrumbs from "./Breadcrumbs";
 import ExternalLink from "./ExternalLink";
-import Breadcrumbs from "./breadcrumbs";
+import Rankings from "./Rankings";
 
 export default function EntityTitle({
   isTitle,

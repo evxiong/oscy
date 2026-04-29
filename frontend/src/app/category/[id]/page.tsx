@@ -1,5 +1,5 @@
-import Card from "@/app/_components/card";
-import Nominations from "@/app/_components/nominations";
+import Nominations from "@/app/_components/Nominations";
+import TopFiveCard from "@/app/_components/TopFiveCard";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@/app/_ui/Tabs";
 import { fetchApi, fetchVersion } from "@/app/_utils/fetch";
 import { categoriesToTopFive, topFiveToImageUrls } from "@/app/_utils/topFive";
@@ -9,7 +9,7 @@ import {
 } from "@/app/_utils/utils";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import CategoryStats from "./stats";
+import CategoryStats from "./CategoryStats";
 import type { Category } from "./types";
 
 export async function generateStaticParams() {
@@ -91,7 +91,7 @@ export default async function Category({
         <div className="w-fit px-6 md:w-[768px]">
           <div className="flex flex-row gap-[11.25px]">
             {topFive.map((topFiveCard, i) => (
-              <Card
+              <TopFiveCard
                 key={i}
                 showCeremony={true}
                 ceremony={

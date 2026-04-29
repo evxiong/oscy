@@ -1,6 +1,6 @@
-import AwardNavigator from "@/app/_components/awardNavigator";
-import Breadcrumbs from "@/app/_components/breadcrumbs";
-import type { SmallSelectorOption } from "@/app/_components/selectors";
+import AwardNavigator from "@/app/_components/AwardNavigator";
+import Breadcrumbs from "@/app/_components/Breadcrumbs";
+import type { SmallSelectorOption } from "@/app/_components/Selectors";
 import { fetchApi, fetchVersion } from "@/app/_utils/fetch";
 import { categoryNamesToTimeline } from "@/app/_utils/utils";
 import { AwardEnum } from "@/app/ceremony/[iteration]/types";

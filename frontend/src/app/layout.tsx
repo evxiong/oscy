@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import Navbar from "./_components/navbar";
+import Navbar from "./_components/Navbar";
 import SearchRefContextProvider from "./_contexts/SearchRefContext";
 import "./globals.css";
 

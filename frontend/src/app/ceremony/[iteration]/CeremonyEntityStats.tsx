@@ -1,8 +1,8 @@
 "use client";
 
 import SearchField from "@/app/_components/SearchField";
-import type { EntityStatsTableColumn } from "@/app/_components/statsTable";
-import StatsTable from "@/app/_components/statsTable";
+import type { EntityStatsTableColumn } from "@/app/_components/StatsTable";
+import StatsTable from "@/app/_components/StatsTable";
 import { useState } from "react";
 import type { AllStatsType } from "./types";
 

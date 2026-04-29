@@ -1,5 +1,5 @@
-import Card from "@/app/_components/card";
-import Nominations from "@/app/_components/nominations";
+import Nominations from "@/app/_components/Nominations";
+import TopFiveCard from "@/app/_components/TopFiveCard";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@/app/_ui/Tabs";
 import { fetchApi } from "@/app/_utils/fetch";
 import { ceremonyToTopFive, topFiveToImageUrls } from "@/app/_utils/topFive";
@@ -85,7 +85,7 @@ export default async function Ceremony({
           <div className="w-fit px-6 md:w-[768px]">
             <div className="flex flex-row gap-[11.25px]">
               {topFive.map((topFiveCard, i) => (
-                <Card
+                <TopFiveCard
                   key={i}
                   showCeremony={false}
                   ceremony={ceremony.official_year + " (" + ordinal + ")"}

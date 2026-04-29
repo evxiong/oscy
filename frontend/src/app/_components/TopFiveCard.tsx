@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CategoryType, type NomineeType } from "../ceremony/[iteration]/types";
 
-export default function Card({
+export default function TopFiveCard({
   showCeremony,
   ceremony,
   ceremonyId,

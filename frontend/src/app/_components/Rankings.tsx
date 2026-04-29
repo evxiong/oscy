@@ -1,12 +1,12 @@
 "use client";
 
-import { MediumSelector } from "@/app/_components/selectors";
+import { MediumSelector } from "@/app/_components/Selectors";
 import { useState } from "react";
 import {
   CategoryGroupRankings,
   CategoryRankings,
   OverallRankings,
-} from "./types";
+} from "../entity/[id]/types";
 
 export default function Rankings({
   overallRankings,

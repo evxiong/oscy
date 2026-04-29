@@ -1,7 +1,7 @@
 "use client";
 
+import { Nominee } from "@/app/_components/Nominations";
 import SearchField from "@/app/_components/SearchField";
-import { Nominee } from "@/app/_components/nominations";
 import Switch from "@/app/_ui/Switch";
 import { dateToString, iterationToOrdinal } from "@/app/_utils/utils";
 import { CategoryType, CeremonyType } from "@/app/ceremony/[iteration]/types";

@@ -3,7 +3,7 @@
 import {
   SmallSelector,
   SmallSelectorOption,
-} from "@/app/_components/selectors";
+} from "@/app/_components/Selectors";
 import { IconArrowRight } from "@tabler/icons-react";
 import Link from "next/link";
 import { useState } from "react";
