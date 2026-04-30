@@ -137,7 +137,7 @@ export async function topFiveToImageUrls(
 ): Promise<(string | null)[]> {
   try {
     if (!process.env.TMDB_API_KEY) {
-      return topFive.map((_) => null);
+      return topFive.map(() => null);
     }
 
     return Promise.all(
@@ -149,6 +149,6 @@ export async function topFiveToImageUrls(
     } else {
       console.error(error);
     }
-    return topFive.map((_) => null);
+    return topFive.map(() => null);
   }
 }

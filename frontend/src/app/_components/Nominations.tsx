@@ -1,7 +1,6 @@
 "use client";
 
 import { IconStarFilled } from "@tabler/icons-react";
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import Switch from "../_ui/Switch";
 import { iterationToOrdinal } from "../_utils/utils";
@@ -10,6 +9,7 @@ import {
   CeremonyType,
   NomineeType,
 } from "../ceremony/[iteration]/types";
+import PrefetchLink from "./PrefetchLink";
 import SearchField from "./SearchField";
 
 export interface NominationCategoryType extends CategoryType {
@@ -108,8 +108,7 @@ function Category({
       <div className="flex flex-col gap-1 py-6 text-zinc-800 sm:flex-row sm:gap-6">
         <div className="sticky top-[--nominations-header-height-mobile] z-10 w-full flex-1 bg-white pb-4 sm:top-[--nominations-header-height] sm:pb-0">
           <div className="sticky top-[--nominations-header-height-mobile] z-10 sm:top-[--nominations-header-height]">
-            <Link
-              prefetch={false}
+            <PrefetchLink
               href={
                 showCeremony
                   ? `/ceremony/${categoryInfo.ceremony_id}`
@@ -120,7 +119,7 @@ function Category({
               {showCeremony
                 ? categoryInfo.year_and_ordinal
                 : categoryInfo.common_name}
-            </Link>
+            </PrefetchLink>
             {showCeremony && (
               <div className="mt-1 text-sm font-medium leading-4 text-zinc-500">
                 {categoryInfo.common_name}
@@ -168,13 +167,12 @@ export function Nominee({
           >
             {nomineeInfo.people.map((p, i) => (
               <span key={i}>
-                <Link
-                  prefetch={false}
+                <PrefetchLink
                   href={`/entity/${p.id}`}
                   className="w-fit cursor-pointer underline decoration-zinc-300 underline-offset-2 hover:text-gold"
                 >
                   {p.name}
-                </Link>
+                </PrefetchLink>
                 {i !== nomineeInfo.people.length - 1 && ", "}
               </span>
             ))}
@@ -202,13 +200,12 @@ export function Nominee({
                     </span>
                   ))}
                   <span>
-                    <Link
-                      prefetch={false}
+                    <PrefetchLink
                       href={`/title/${t.id}`}
                       className="w-fit cursor-pointer italic underline decoration-zinc-300 underline-offset-2 hover:text-gold"
                     >
                       {t.title}
-                    </Link>
+                    </PrefetchLink>
                     {i !== nomineeInfo.titles.length - 1 && (
                       <span className="select-none">&nbsp;&thinsp;·&nbsp;</span>
                     )}

@@ -5,8 +5,8 @@ import SearchField from "@/app/_components/SearchField";
 import Switch from "@/app/_ui/Switch";
 import { dateToString, iterationToOrdinal } from "@/app/_utils/utils";
 import { CategoryType, CeremonyType } from "@/app/ceremony/[iteration]/types";
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import PrefetchLink from "./PrefetchLink";
 
 export default function AggregateNominations({
   editions,
@@ -103,13 +103,12 @@ function Edition({
       <div className="flex flex-col gap-1 py-6 text-zinc-800 sm:flex-row sm:gap-6">
         <div className="sticky top-[--nominations-header-height-mobile] z-10 w-full flex-1 bg-white pb-4 sm:top-[--nominations-header-height] sm:pb-0">
           <div className="sticky top-[--nominations-header-height-mobile] z-10 sm:top-[--nominations-header-height]">
-            <Link
-              prefetch={false}
+            <PrefetchLink
               href={`/ceremony/${editionInfo.iteration}`}
               className="w-fit cursor-pointer text-xl font-medium leading-6 hover:text-gold sm:text-lg sm:leading-6"
             >
               {iterationToOrdinal(editionInfo.iteration) + " Academy Awards"}
-            </Link>
+            </PrefetchLink>
             <div className="mt-1 text-sm font-medium leading-4 text-zinc-500">
               {dateToString(editionInfo.ceremony_date)}
               <span className="select-none">
@@ -136,14 +135,13 @@ function Edition({
                 )) &&
               (!winnersOnly || c.nominees.some((n) => n.winner)) && (
                 <div key={i} className="flex flex-col gap-2">
-                  <Link
-                    prefetch={false}
+                  <PrefetchLink
                     title={c.common_name}
                     href={`/category/${c.category_id}`}
                     className="cursor-pointer text-xs font-semibold text-zinc-800 hover:text-gold sm:text-xxs"
                   >
                     {c.common_name.toUpperCase()}
-                  </Link>
+                  </PrefetchLink>
                   <div className="flex flex-1 flex-col gap-[0.875rem]">
                     {c.nominees.map(
                       (n, j) =>

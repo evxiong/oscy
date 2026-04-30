@@ -1,7 +1,7 @@
 import { IconLibraryPhoto } from "@tabler/icons-react";
 import Image from "next/image";
-import Link from "next/link";
 import { CategoryType, type NomineeType } from "../ceremony/[iteration]/types";
+import PrefetchLink from "./PrefetchLink";
 
 export default function TopFiveCard({
   showCeremony,
@@ -28,8 +28,7 @@ export default function TopFiveCard({
   const titleWinners = nominee.titles.filter((t) => t.title_winner);
   return (
     <div className="flex w-[135px] flex-shrink-0 flex-col gap-2">
-      <Link
-        prefetch={false}
+      <PrefetchLink
         href={
           showCeremony
             ? `/ceremony/${ceremonyId}`
@@ -50,7 +49,7 @@ export default function TopFiveCard({
             ? category.short_name
             : "Best " + category.short_name
         ).toUpperCase()}
-      </Link>
+      </PrefetchLink>
       <div className="relative h-[200px] overflow-hidden rounded-[0.25rem] border border-zinc-300 bg-transparent">
         {imageUrl ? (
           <Image
@@ -84,13 +83,12 @@ export default function TopFiveCard({
         >
           {nominee.people.map((n, i) => (
             <span key={i}>
-              <Link
-                prefetch={false}
+              <PrefetchLink
                 href={`/entity/${n.id}`}
                 className="w-fit cursor-pointer underline decoration-zinc-200 underline-offset-2 hover:text-gold"
               >
                 {n.name}
-              </Link>
+              </PrefetchLink>
               {i !== nominee.people.length - 1 && ", "}
             </span>
           ))}
@@ -107,13 +105,12 @@ export default function TopFiveCard({
               ))
             : titleWinners.map((t, i) => (
                 <span key={i}>
-                  <Link
-                    prefetch={false}
+                  <PrefetchLink
                     href={`/title/${t.id}`}
                     className="w-fit cursor-pointer italic underline decoration-zinc-200 underline-offset-2 hover:text-gold"
                   >
                     {t.title}
-                  </Link>
+                  </PrefetchLink>
                   {i !== titleWinners.length - 1 && (
                     <span className="select-none">&nbsp;&thinsp;·&nbsp;</span>
                   )}

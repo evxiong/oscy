@@ -68,7 +68,7 @@ export default async function CeremonyLayout({
         </div>
         <div className="hidden flex-row gap-2 sm:flex">
           <Link
-            href={`/ceremony/${currentEdition.iteration - 1}`}
+            href={`/ceremony/${disablePrevLink ? currentEdition.iteration : currentEdition.iteration - 1}`}
             tabIndex={disablePrevLink ? -1 : 0}
             aria-disabled={disablePrevLink}
             className={merge(
@@ -81,7 +81,7 @@ export default async function CeremonyLayout({
             <IconArrowLeft className="size-5 stroke-secondary" />
           </Link>
           <Link
-            href={`/ceremony/${currentEdition.iteration + 1}`}
+            href={`/ceremony/${disableNextLink ? currentEdition.iteration : currentEdition.iteration + 1}`}
             tabIndex={disableNextLink ? -1 : 0}
             aria-disabled={disableNextLink}
             className={merge(

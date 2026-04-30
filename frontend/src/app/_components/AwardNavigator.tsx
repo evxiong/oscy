@@ -5,9 +5,9 @@ import {
   SmallSelectorOption,
 } from "@/app/_components/Selectors";
 import { IconArrowRight } from "@tabler/icons-react";
-import Link from "next/link";
 import { useState } from "react";
 import { AwardEnum } from "../ceremony/[iteration]/types";
+import PrefetchLink from "./PrefetchLink";
 
 export default function AwardNavigator({
   subdir,
@@ -40,13 +40,12 @@ export default function AwardNavigator({
         />
         <SmallSelector state={option} setState={setOption} options={options} />
       </div>
-      <Link
-        prefetch={false}
+      <PrefetchLink
         href={`/${subdir}/${option.id}`}
         className={`${go ? "visible opacity-100" : "invisible opacity-0"} group absolute -right-1 -top-0.5 cursor-pointer p-1 transition-all duration-300 ease-in-out`}
       >
         <IconArrowRight className="size-4 stroke-zinc-500 group-hover:stroke-gold" />
-      </Link>
+      </PrefetchLink>
     </div>
   );
 }

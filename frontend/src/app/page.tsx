@@ -7,10 +7,10 @@ import {
   IconTableHeart,
 } from "@tabler/icons-react";
 import { Metadata } from "next";
-import Link from "next/link";
 import { Carousel } from "./_components/Carousel";
 import ExploreButton from "./_components/ExploreButton";
 import ExternalLink from "./_components/ExternalLink";
+import PrefetchLink from "./_components/PrefetchLink";
 import { buttonVariants } from "./_ui/variants";
 import { fetchVersion } from "./_utils/fetch";
 import { getBestPictureImages, iterationToOrdinal } from "./_utils/utils";
@@ -46,12 +46,12 @@ export default async function Home() {
   const bestPictureImages = await getBestPictureImages();
   return (
     <div className="flex flex-col">
-      <section className="to-light flex w-full flex-col items-center bg-gradient-to-b from-background pb-12 pt-10">
+      <section className="flex w-full flex-col items-center bg-gradient-to-b from-background to-light pb-12 pt-10">
         <div className="w-full md:w-[768px]">
           <div className="flex flex-col items-center gap-6 px-6">
             <div className="w-fit rounded-full text-sm font-medium text-secondary">
               <span>{updateMonth} update:</span>&ensp;
-              <Link
+              <PrefetchLink
                 href={`/ceremony/${currentEdition}`}
                 className="group/link cursor-pointer"
               >
@@ -60,10 +60,10 @@ export default async function Home() {
                 <span className="underline decoration-border underline-offset-4 group-hover/link:decoration-secondary">
                   {`${currentOrdinal} Academy Awards`}
                 </span>
-              </Link>
+              </PrefetchLink>
             </div>
             <div>
-              <h1 className="text-title text-balance text-center text-4xl font-medium tracking-tight">
+              <h1 className="text-balance text-center text-4xl font-medium tracking-tight text-title">
                 An{" "}
                 <span className="underline decoration-border decoration-2 underline-offset-[6px]">
                   open-source
@@ -155,7 +155,7 @@ export default async function Home() {
 
 function Card({ children }: { children: React.ReactNode }) {
   return (
-    <div className="border-border-light to-light flex flex-col rounded-md border bg-gradient-to-b from-background p-4 shadow-sm">
+    <div className="flex flex-col rounded-md border border-border-light bg-gradient-to-b from-background to-light p-4 shadow-sm">
       {children}
     </div>
   );
@@ -163,7 +163,7 @@ function Card({ children }: { children: React.ReactNode }) {
 
 function CardTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-subtitle mt-2 text-xl font-medium tracking-tight">
+    <h2 className="mt-2 text-xl font-medium tracking-tight text-subtitle">
       {children}
     </h2>
   );

@@ -25,6 +25,7 @@ import {
 import { SearchRefContext } from "../_contexts/SearchRefContext";
 import merge from "../_utils/merge";
 import { iterationToOrdinal } from "../_utils/utils";
+import PrefetchLink from "./PrefetchLink";
 
 export interface SearchResults {
   titles: SearchGroup;
@@ -331,8 +332,7 @@ function Results({
           </div>
         ) : (
           results.map((r, i) => (
-            <Link
-              prefetch={false}
+            <PrefetchLink
               key={i}
               href={`/${r.subdir}/${r.id}`}
               className="group -mx-1 flex cursor-pointer flex-col justify-start gap-0.5 rounded-md px-1 py-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 focus:bg-zinc-100 focus:text-zinc-800 focus:outline-none"
@@ -349,7 +349,7 @@ function Results({
               <div className="ml-[22px] text-xxs font-semibold text-zinc-400">
                 {r.type.toUpperCase()}
               </div>
-            </Link>
+            </PrefetchLink>
           ))
         )}
       </div>

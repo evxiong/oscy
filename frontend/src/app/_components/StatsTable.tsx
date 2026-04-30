@@ -1,13 +1,13 @@
 "use client";
 
 import { IconCaretDownFilled, IconCaretUpFilled } from "@tabler/icons-react";
-import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   EntityStatsType,
   StatsType,
   TitleStatsType,
 } from "../ceremony/[iteration]/types";
+import PrefetchLink from "./PrefetchLink";
 
 interface StatsTableColumn {
   name: string;
@@ -232,8 +232,7 @@ function TableRow<
           {
             // @ts-expect-error: sortKey does exist on T2
             c.sortKey === searchKey ? (
-              <Link
-                prefetch={false}
+              <PrefetchLink
                 title={
                   Array.isArray(stat[searchKey])
                     ? (stat[searchKey] as string[]).join(", ")
@@ -245,7 +244,7 @@ function TableRow<
                 {Array.isArray(stat[searchKey])
                   ? (stat[searchKey] as string[])[0]
                   : (stat[searchKey] as string)}
-              </Link>
+              </PrefetchLink>
             ) : (
               // @ts-expect-error: sortKey does exist on T2
               stat[c.sortKey]
