@@ -44,7 +44,7 @@ export default function AwardNavigator({
         href={`/${subdir}/${option.id}`}
         className={`${go ? "visible opacity-100" : "invisible opacity-0"} group absolute -right-1 -top-0.5 cursor-pointer p-1 transition-all duration-300 ease-in-out`}
       >
-        <IconArrowRight className="size-4 stroke-zinc-500 group-hover:stroke-gold" />
+        <IconArrowRight className="size-4 stroke-secondary group-hover:stroke-gold" />
       </PrefetchLink>
     </div>
   );

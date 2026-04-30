@@ -7,7 +7,7 @@ interface Breadcrumb {
 
 export default function Breadcrumbs({ crumbs }: { crumbs: Breadcrumb[] }) {
   return (
-    <div className="flex flex-row gap-1 text-xs font-medium leading-5">
+    <div className="flex flex-row gap-1 text-xs/5 font-medium">
       {crumbs.map((c, i) => {
         const isFinal = c.link === "" || i === crumbs.length - 1;
         return (
@@ -17,12 +17,12 @@ export default function Breadcrumbs({ crumbs }: { crumbs: Breadcrumb[] }) {
               href={c.link}
               aria-disabled={isFinal}
               tabIndex={isFinal ? -1 : undefined}
-              className={`${isFinal ? "pointer-events-none text-zinc-500" : "text-zinc-400 hover:text-gold focus:text-gold"}`}
+              className={`${isFinal ? "pointer-events-none text-secondary" : "text-tertiary hover:text-gold focus:text-gold"}`}
             >
               {c.name}
             </Link>
             {i !== crumbs.length - 1 && (
-              <div className="select-none text-zinc-300">/</div>
+              <div className="select-none text-underline">/</div>
             )}
           </div>
         );

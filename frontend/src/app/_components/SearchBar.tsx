@@ -321,11 +321,11 @@ function Results({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex items-center justify-between text-xxs/4 font-semibold text-zinc-500">
+      <div className="flex items-center justify-between text-xxs/4 font-semibold text-secondary">
         <div className="uppercase">Results</div>
         {loading && <IconLoader className="size-4 animate-spin" />}
       </div>
-      <div className="flex flex-col text-base font-medium leading-5">
+      <div className="flex flex-col text-base/5 font-medium">
         {results.length === 0 ? (
           <div className="flex w-full items-center justify-center py-2.5 font-medium text-secondary">
             No results found.
@@ -335,18 +335,18 @@ function Results({
             <PrefetchLink
               key={i}
               href={`/${r.subdir}/${r.id}`}
-              className="group -mx-1 flex cursor-pointer flex-col justify-start gap-0.5 rounded-md px-1 py-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 focus:bg-zinc-100 focus:text-zinc-800 focus:outline-none"
+              className="group -mx-1 flex cursor-pointer flex-col justify-start gap-0.5 rounded-md px-1 py-1.5 text-secondary hover:bg-hover hover:text-primary focus:bg-hover focus:text-primary focus:outline-none"
               onClick={() => closeResults()}
             >
               <div className="flex flex-row items-center gap-2">
-                <IconArrowRight className="size-3.5 flex-shrink-0" />
+                <IconArrowRight className="size-3.5 shrink-0" />
                 <div
-                  className={`${r.type === "title" ? "italic" : ""} truncate pr-1 text-zinc-600 group-hover:text-zinc-800 group-focus:text-zinc-800`}
+                  className={`${r.type === "title" ? "italic" : ""} truncate pr-1 text-subtitle group-hover:text-primary group-focus:text-primary`}
                 >
                   {r.name}
                 </div>
               </div>
-              <div className="ml-[22px] text-xxs font-semibold text-zinc-400">
+              <div className="ml-[22px] text-xxs font-semibold text-tertiary">
                 {r.type.toUpperCase()}
               </div>
             </PrefetchLink>
@@ -380,7 +380,7 @@ function QuickLinks({
   ];
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex items-center justify-between text-xxs/4 font-semibold text-zinc-500">
+      <div className="flex items-center justify-between text-xxs/4 font-semibold text-secondary">
         <div className="uppercase">Quick Links</div>
         {loading && <IconLoader className="size-4 animate-spin" />}
       </div>
@@ -389,18 +389,18 @@ function QuickLinks({
           <Link
             key={i}
             href={p.url}
-            className="group -mx-1 flex cursor-pointer flex-row items-center justify-between gap-2 rounded-md px-1 py-1 pr-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 focus:bg-zinc-100 focus:text-zinc-800 focus:outline-none"
+            className="group -mx-1 flex cursor-pointer flex-row items-center justify-between gap-2 rounded-md px-1 py-1 pr-2 text-secondary hover:bg-hover hover:text-primary focus:bg-hover focus:text-primary focus:outline-none"
             onClick={() => closeResults()}
           >
             <div className="flex flex-row items-center gap-2">
-              <IconArrowRight className="size-3 flex-shrink-0" />
+              <IconArrowRight className="size-3 shrink-0" />
               <div
-                className={`${p.type === "title" ? "italic" : ""} line-clamp-1 text-zinc-600 group-hover:text-zinc-800 group-focus:text-zinc-800`}
+                className={`${p.type === "title" ? "italic" : ""} line-clamp-1 text-subtitle group-hover:text-primary group-focus:text-primary`}
               >
                 {p.name}
               </div>
             </div>
-            <div className="text-xxs font-semibold text-zinc-400">
+            <div className="text-xxs font-semibold text-tertiary">
               {p.type.toUpperCase()}
             </div>
           </Link>

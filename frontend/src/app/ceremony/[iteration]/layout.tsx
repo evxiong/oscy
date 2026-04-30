@@ -57,10 +57,10 @@ export default async function CeremonyLayout({
       </nav>
       <div className="mx-auto flex w-full flex-row items-center justify-between px-6 md:w-[768px]">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-medium leading-7 text-zinc-800">
+          <h1 className="text-2xl/7 font-medium text-primary">
             {ordinal} Academy Awards
           </h1>
-          <h2 className="text-sm font-medium leading-4 text-zinc-500">
+          <h2 className="text-sm/4 font-medium text-secondary">
             <span>{dateToString(currentEdition.ceremony_date)}</span>
             <span className="select-none">&#32;·&#32;</span>
             <span>Honoring films from {currentEdition.official_year}</span>
@@ -74,7 +74,7 @@ export default async function CeremonyLayout({
             className={merge(
               disablePrevLink
                 ? "bg-overlay-disabled pointer-events-none opacity-50"
-                : "cursor-pointer hover:bg-zinc-200",
+                : "cursor-pointer hover:bg-active",
               "flex size-8 items-center justify-center rounded-full bg-overlay",
             )}
           >
@@ -87,7 +87,7 @@ export default async function CeremonyLayout({
             className={merge(
               disableNextLink
                 ? "bg-overlay-disabled pointer-events-none opacity-50"
-                : "cursor-pointer hover:bg-zinc-200",
+                : "cursor-pointer hover:bg-active",
               "flex size-8 items-center justify-center rounded-full bg-overlay",
             )}
           >

@@ -80,7 +80,7 @@ export default async function Ceremony({
 
   return (
     <>
-      <div className="flex w-full flex-col overflow-x-auto bg-gradient-to-r from-white to-zinc-100 py-5 md:items-center">
+      <div className="flex w-full flex-col overflow-x-auto bg-gradient-to-r from-background to-overlay py-5 md:items-center">
         {topFive ? (
           <div className="w-fit px-6 md:w-[768px]">
             <div className="flex flex-row gap-[11.25px]">
@@ -103,8 +103,8 @@ export default async function Ceremony({
           </div>
         ) : (
           <div className="flex min-h-56 items-center justify-center px-6 md:w-[768px]">
-            <div className="flex select-none flex-row items-center gap-2 rounded-md border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-400">
-              <IconLaurelWreath className="size-5" />
+            <div className="flex select-none flex-row items-center gap-2 rounded-full border border-underline px-4 py-2 text-sm font-medium text-secondary">
+              <IconLaurelWreath className="size-[1.125rem] stroke-tertiary" />
               <div>Winners TBD</div>
             </div>
           </div>

@@ -75,10 +75,10 @@ export default async function CategoryLayout({
       </nav>
       <div className="mx-auto flex w-full flex-row items-center justify-between px-6 md:w-[768px]">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-medium leading-7 text-zinc-800">
+          <h1 className="text-2xl/7 font-medium text-primary">
             {categoryName}
           </h1>
-          <h2 className="text-sm font-medium leading-4 text-zinc-500">
+          <h2 className="text-sm/4 font-medium text-secondary">
             {categoryGroup !== "Other" && (
               <span>
                 <span>{categoryGroup}</span>

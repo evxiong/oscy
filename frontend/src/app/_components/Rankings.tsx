@@ -65,29 +65,29 @@ export default function Rankings({
         )}
       </div>
 
-      <div className="flex flex-col gap-6 text-zinc-800 sm:flex-row sm:gap-6">
+      <div className="flex flex-col gap-6 text-primary sm:flex-row sm:gap-6">
         <table className="w-full border-collapse">
-          <thead className="text-xxs text-zinc-800">
+          <thead className="text-xxs text-primary">
             <tr className="h-10 border-b border-border align-middle">
-              <th scope="col" className="text-left font-semibold">
-                STAT
+              <th scope="col" className="text-left font-semibold uppercase">
+                Stat
               </th>
               <th
                 scope="col"
-                className="text-center font-semibold sm:w-20 sm:min-w-16"
+                className="text-center font-semibold uppercase sm:w-20 sm:min-w-16"
               >
-                COUNT
+                Count
               </th>
               <th
                 scope="col"
-                className="text-center font-semibold sm:w-20 sm:min-w-16"
+                className="text-center font-semibold uppercase sm:w-20 sm:min-w-16"
               >
-                RANK
+                Rank
               </th>
             </tr>
           </thead>
           <tbody className="text-lg">
-            <tr className="border-b border-zinc-200">
+            <tr className="border-b border-border">
               <th className="py-6 text-left font-medium">Nominations</th>
               <td className="text-center text-xl font-medium">
                 {option.name === options[0].name
@@ -96,7 +96,7 @@ export default function Rankings({
                     ? categoryOption.category_noms
                     : categoryGroupOption.category_group_noms}
               </td>
-              <td className="text-center text-xl font-medium text-zinc-500">
+              <td className="text-center text-xl font-medium text-secondary">
                 {option.name === options[0].name
                   ? overallRankings.overall_noms_rank
                   : option.name === options[1].name
@@ -104,7 +104,7 @@ export default function Rankings({
                     : categoryGroupOption.category_group_noms_rank}
               </td>
             </tr>
-            <tr className="border-b border-zinc-200">
+            <tr className="border-b border-border">
               <th className="py-6 text-left font-medium">Wins</th>
               <td className="text-center text-xl font-medium">
                 {option.name === options[0].name
@@ -113,7 +113,7 @@ export default function Rankings({
                     ? categoryOption.category_wins
                     : categoryGroupOption.category_group_wins}
               </td>
-              <td className="text-center text-xl font-medium text-zinc-500">
+              <td className="text-center text-xl font-medium text-secondary">
                 {option.name === options[0].name
                   ? overallRankings.overall_wins_rank
                   : option.name === options[1].name

@@ -2,6 +2,7 @@ import Nominations from "@/app/_components/Nominations";
 import TopFiveCard from "@/app/_components/TopFiveCard";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@/app/_ui/Tabs";
 import { fetchApi, fetchVersion } from "@/app/_utils/fetch";
+import merge from "@/app/_utils/merge";
 import { categoriesToTopFive, topFiveToImageUrls } from "@/app/_utils/topFive";
 import {
   categoryNamesToTimeline,
@@ -87,7 +88,7 @@ export default async function Category({
 
   return (
     <>
-      <div className="flex w-full flex-col overflow-x-auto bg-gradient-to-r from-white to-zinc-100 py-5 md:items-center">
+      <div className="flex w-full flex-col overflow-x-auto bg-gradient-to-r from-background to-overlay py-5 md:items-center">
         <div className="w-fit px-6 md:w-[768px]">
           <div className="flex flex-row gap-[11.25px]">
             {topFive.map((topFiveCard, i) => (
@@ -149,19 +150,28 @@ export default async function Category({
                   {timeline.map((t, i) => (
                     <div key={i} className="relative ml-4">
                       <div
-                        className={`${t.start_iteration === 1 ? "before:border-none" : i < timeline.length - 1 && t.start_iteration === timeline[i + 1].end_iteration + 1 ? "before:border-solid" : "before:border-dashed"} w-full pb-6 before:absolute before:bottom-0 before:left-0 before:top-0 before:border-l-2 before:border-zinc-300 before:content-['']`}
+                        className={merge(
+                          t.start_iteration === 1
+                            ? "before:border-none"
+                            : i < timeline.length - 1 &&
+                                t.start_iteration ===
+                                  timeline[i + 1].end_iteration + 1
+                              ? "before:border-solid"
+                              : "before:border-dashed",
+                          "w-full pb-6 before:absolute before:bottom-0 before:left-0 before:top-0 before:border-l-2 before:border-underline before:content-['']",
+                        )}
                       >
                         <div
-                          className={`${t.end_iteration === currentEdition ? "border-4 border-gold" : "border-2 border-zinc-300"} absolute -left-[5px] top-0 size-3 rounded-full bg-white`}
+                          className={`${t.end_iteration === currentEdition ? "border-4 border-gold" : "border-2 border-underline"} absolute -left-[5px] top-0 size-3 rounded-full bg-background`}
                         ></div>
                         <div className="-mt-1 flex flex-col gap-0.5 pl-6">
                           <div
-                            className={`${t.end_iteration === currentEdition ? "text-zinc-800" : "text-zinc-600"} text-base leading-5`}
+                            className={`${t.end_iteration === currentEdition ? "text-primary" : "text-subtitle"} text-base/5`}
                           >
                             {t.name}
                           </div>
                           <div
-                            className={`${t.end_iteration === currentEdition ? "text-zinc-800" : "text-zinc-500"} text-sm font-normal`}
+                            className={`${t.end_iteration === currentEdition ? "text-primary" : "text-secondary"} text-sm font-normal`}
                           >
                             {t.end_iteration === currentEdition
                               ? t.start_year + "-present"

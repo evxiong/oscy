@@ -8,10 +8,7 @@ export default function CeremonyLoading() {
         <div className="w-fit px-6 md:w-[768px]">
           <div className="flex flex-row gap-[11.25px]">
             {[...Array(5)].map((_, i) => (
-              <div
-                key={i}
-                className="flex w-[135px] flex-shrink-0 flex-col gap-2"
-              >
+              <div key={i} className="flex w-[135px] shrink-0 flex-col gap-2">
                 <Skeleton className="h-3 w-20" />
                 <Skeleton className="relative h-[200px] overflow-hidden rounded-[0.25rem]" />
                 <div className="flex flex-col gap-1">
@@ -52,7 +49,7 @@ export default function CeremonyLoading() {
           {[...Array(4)].map((_, i) => (
             <Fragment key={i}>
               <div className="flex flex-col gap-1 py-6 sm:flex-row sm:gap-6">
-                <div className="sticky top-[--nominations-header-height-mobile] z-10 w-full flex-1 bg-white pb-4 sm:top-[--nominations-header-height] sm:pb-0">
+                <div className="sticky top-[--nominations-header-height-mobile] z-10 w-full flex-1 bg-background pb-4 sm:top-[--nominations-header-height] sm:pb-0">
                   <div className="sticky top-[--nominations-header-height-mobile] z-10 sm:top-[--nominations-header-height]">
                     <Skeleton className="h-6 w-60" />
                   </div>

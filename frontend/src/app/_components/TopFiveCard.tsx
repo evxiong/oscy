@@ -27,14 +27,14 @@ export default function TopFiveCard({
     category.short_name === "Dance Direction";
   const titleWinners = nominee.titles.filter((t) => t.title_winner);
   return (
-    <div className="flex w-[135px] flex-shrink-0 flex-col gap-2">
+    <div className="flex w-[135px] shrink-0 flex-col gap-2">
       <PrefetchLink
         href={
           showCeremony
             ? `/ceremony/${ceremonyId}`
             : `/category/${category.category_id}`
         }
-        className="w-fit max-w-full cursor-pointer truncate text-xxs font-semibold text-zinc-800 hover:text-gold"
+        className="w-fit max-w-full cursor-pointer truncate text-xxs font-semibold text-primary hover:text-gold"
         title={
           showCeremony
             ? ceremony
@@ -50,7 +50,7 @@ export default function TopFiveCard({
             : "Best " + category.short_name
         ).toUpperCase()}
       </PrefetchLink>
-      <div className="relative h-[200px] overflow-hidden rounded-[0.25rem] border border-zinc-300 bg-transparent">
+      <div className="relative h-[200px] overflow-hidden rounded-[0.25rem] border border-underline bg-transparent">
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -65,10 +65,10 @@ export default function TopFiveCard({
             className="object-cover"
           />
         ) : (
-          <div className="flex h-full w-full select-none items-center justify-center text-zinc-300">
+          <div className="flex h-full w-full select-none items-center justify-center text-underline">
             <div className="flex flex-col items-center gap-2">
               <IconLibraryPhoto />
-              <div className="text-center text-sm font-semibold leading-4">
+              <div className="text-center text-sm/4 font-semibold">
                 NO IMAGE AVAILABLE
               </div>
             </div>
@@ -79,13 +79,13 @@ export default function TopFiveCard({
         className={`${personFirst ? "flex-col" : "flex-col-reverse"} flex gap-1`}
       >
         <div
-          className={`${personFirst ? "text-sm font-medium leading-4 text-zinc-800" : "text-xs font-normal leading-[0.875rem] text-zinc-500"} `}
+          className={`${personFirst ? "text-sm/4 font-medium text-primary" : "text-xs font-normal leading-[0.875rem] text-secondary"} `}
         >
           {nominee.people.map((n, i) => (
             <span key={i}>
               <PrefetchLink
                 href={`/entity/${n.id}`}
-                className="w-fit cursor-pointer underline decoration-zinc-200 underline-offset-2 hover:text-gold"
+                className="w-fit cursor-pointer underline decoration-border underline-offset-2 hover:text-gold"
               >
                 {n.name}
               </PrefetchLink>
@@ -94,7 +94,7 @@ export default function TopFiveCard({
           ))}
         </div>
         <div
-          className={`${!personFirst ? "text-sm font-medium leading-4 text-zinc-800" : "text-xs leading-[0.875rem] text-zinc-500"} `}
+          className={`${!personFirst ? "text-sm/4 font-medium text-primary" : "text-xs leading-[0.875rem] text-secondary"} `}
         >
           {detailsFirst
             ? nominee.titles[0].detail.map((d, i) => (
@@ -107,7 +107,7 @@ export default function TopFiveCard({
                 <span key={i}>
                   <PrefetchLink
                     href={`/title/${t.id}`}
-                    className="w-fit cursor-pointer italic underline decoration-zinc-200 underline-offset-2 hover:text-gold"
+                    className="w-fit cursor-pointer italic underline decoration-border underline-offset-2 hover:text-gold"
                   >
                     {t.title}
                   </PrefetchLink>

@@ -42,7 +42,7 @@ export default function EntityTitle({
             {validImdbId && (
               <ExternalLink
                 href={imdbUrl}
-                className="group flex cursor-pointer flex-row items-center text-xs font-medium text-zinc-500 underline decoration-zinc-300 underline-offset-4 hover:text-zinc-600 hover:decoration-zinc-400"
+                className="group flex cursor-pointer flex-row items-center text-xs font-medium text-secondary underline decoration-underline underline-offset-4 hover:text-subtitle hover:decoration-tertiary"
               >
                 <div>IMDb</div>
                 <IconArrowUpRight className="size-3.5" />
@@ -51,15 +51,15 @@ export default function EntityTitle({
           </nav>
         </div>
       </div>
-      <div className="flex w-full flex-col items-center bg-gradient-to-r from-white to-zinc-100 py-7">
+      <div className="flex w-full flex-col items-center bg-gradient-to-r from-background to-overlay py-7">
         <div className="flex w-full flex-col gap-6 px-6 sm:flex-row sm:items-center md:w-[768px]">
           <div className="flex flex-1 flex-col gap-0.5">
             <h1
-              className={`${isTitle ? "italic" : ""} text-2xl font-medium leading-7 text-zinc-800 sm:pr-4`}
+              className={`${isTitle ? "italic" : ""} text-2xl/7 font-medium text-primary sm:pr-4`}
             >
               {entityOrTitle.name}
             </h1>
-            <h2 className="text-sm font-medium text-zinc-500">
+            <h2 className="text-sm font-medium text-secondary">
               <span>
                 {entityOrTitle.total_noms}&nbsp;
                 {entityOrTitle.total_noms !== 1 ? "nominations" : "nomination"}
@@ -71,10 +71,10 @@ export default function EntityTitle({
           </div>
           <div className="flex flex-1 flex-row gap-4">
             <div className="flex flex-1 flex-col gap-1">
-              <div className="text-xxs font-semibold text-zinc-800">
+              <div className="text-xxs font-semibold text-primary">
                 ACADEMY AWARDS
               </div>
-              <div className="flex flex-col gap-0 text-xl font-medium leading-6 text-zinc-500">
+              <div className="flex flex-col gap-0 text-xl/6 font-medium text-secondary">
                 <div>
                   {entityOrTitle.total_noms}{" "}
                   {entityOrTitle.total_noms !== 1 ? "noms" : "nom"}
@@ -92,8 +92,8 @@ export default function EntityTitle({
       {!isTitle && aliases.length > 0 && (
         <div className="flex w-full flex-col items-center">
           <div className="flex w-full flex-col gap-4 px-6 pb-4 md:w-[768px]">
-            <div className="flex w-full flex-col gap-2 border-zinc-200 font-medium sm:flex-row sm:gap-6">
-              <div className="flex-1 text-sm font-medium leading-4 text-zinc-500">
+            <div className="flex w-full flex-col gap-2 border-border font-medium sm:flex-row sm:gap-6">
+              <div className="flex-1 text-sm/4 font-medium text-secondary">
                 <p className="mb-1 font-semibold">Also known as</p>
                 <p>
                   {aliases.map((a, i) => (
@@ -143,7 +143,7 @@ export function EntityTitleLoading() {
     <div className="flex flex-col gap-5">
       <div className="flex w-full flex-col items-center">
         <div className="flex w-full flex-col gap-4 px-6 pt-5 md:w-[768px]">
-          <nav className="flex flex-row justify-between text-xs">
+          <nav className="flex flex-row justify-between">
             <div className="flex h-5 items-center">
               <Skeleton className="h-3 w-16" />
             </div>
@@ -153,7 +153,7 @@ export function EntityTitleLoading() {
           </nav>
         </div>
       </div>
-      <div className="flex w-full flex-col items-center bg-gradient-to-r from-white to-overlay py-7">
+      <div className="flex w-full flex-col items-center bg-gradient-to-r from-background to-overlay py-7">
         <div className="flex w-full flex-col gap-6 px-6 sm:flex-row sm:items-center md:w-[768px]">
           <div className="flex flex-1 flex-col gap-0.5">
             <div className="flex h-7 items-center sm:pr-4">
@@ -168,7 +168,7 @@ export function EntityTitleLoading() {
               <div className="flex h-3 items-center">
                 <Skeleton className="h-2.5 w-20" />
               </div>
-              <div className="flex flex-col gap-0">
+              <div className="flex flex-col">
                 <div className="flex h-6 items-center">
                   <Skeleton className="h-5 w-14" />
                 </div>
@@ -183,7 +183,7 @@ export function EntityTitleLoading() {
       </div>
       <div className="flex w-full flex-col items-center">
         <div className="flex w-full flex-col gap-4 px-6 pb-4 md:w-[768px]">
-          <div className="flex w-full flex-col gap-2 border-zinc-200 font-medium sm:flex-row sm:gap-6">
+          <div className="flex w-full flex-col gap-2 border-border sm:flex-row sm:gap-6">
             <div className="flex-1">
               <div className="mb-1 flex h-4 items-center">
                 <Skeleton className="h-3.5 w-24" />
@@ -210,7 +210,7 @@ export function EntityTitleLoading() {
           {[...Array(4)].map((_, i) => (
             <Fragment key={i}>
               <div className="flex flex-col gap-1 py-6 sm:flex-row sm:gap-6">
-                <div className="sticky top-[--nominations-header-height-mobile] z-10 w-full flex-1 bg-white pb-4 sm:top-[--nominations-header-height] sm:pb-0">
+                <div className="sticky top-[--nominations-header-height-mobile] z-10 w-full flex-1 bg-background pb-4 sm:top-[--nominations-header-height] sm:pb-0">
                   <div className="sticky top-[--nominations-header-height-mobile] z-10 sm:top-[--nominations-header-height]">
                     <Skeleton className="h-6 w-24" />
                     <div className="mt-1 flex h-4 items-center">
@@ -238,7 +238,7 @@ export function EntityTitleLoading() {
             </Fragment>
           ))}
         </div>
-      </div>{" "}
+      </div>
     </div>
   );
 }

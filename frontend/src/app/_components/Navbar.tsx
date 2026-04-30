@@ -12,7 +12,7 @@ export default async function Navbar() {
         <div className="flex-1 select-none pb-1 pl-6 text-2xl">
           <Link
             href="/"
-            className="w-fit cursor-pointer tracking-tight text-zinc-800 hover:text-gold focus:outline-none focus-visible:text-gold"
+            className="w-fit cursor-pointer tracking-tight text-primary hover:text-gold focus:outline-none focus-visible:text-gold"
           >
             oscy
           </Link>
@@ -21,15 +21,15 @@ export default async function Navbar() {
         <div className="flex flex-1 flex-row justify-end gap-2 pr-6">
           <ExternalLink
             href="/api/docs"
-            className="group flex h-8 w-8 cursor-pointer items-center justify-center focus:outline-none"
+            className="group flex size-8 cursor-pointer items-center justify-center focus:outline-none"
           >
-            <IconApi className="h-5 w-5 stroke-zinc-500 group-hover:stroke-gold group-focus-visible:stroke-gold" />
+            <IconApi className="size-5 stroke-secondary group-hover:stroke-gold group-focus-visible:stroke-gold" />
           </ExternalLink>
           <ExternalLink
             href="https://github.com/evxiong/oscy"
-            className="group flex h-8 w-8 cursor-pointer items-center justify-center focus:outline-none"
+            className="group flex size-8 cursor-pointer items-center justify-center focus:outline-none"
           >
-            <IconBrandGithub className="h-5 w-5 stroke-zinc-500 group-hover:stroke-gold group-focus-visible:stroke-gold" />
+            <IconBrandGithub className="size-5 stroke-secondary group-hover:stroke-gold group-focus-visible:stroke-gold" />
           </ExternalLink>
         </div>
       </div>

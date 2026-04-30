@@ -14,7 +14,7 @@ export default function NotFound() {
       <section className="mb-10 flex w-full flex-col items-center gap-8 py-16">
         <div className="flex w-full flex-col items-center gap-8 px-6 md:w-[768px]">
           <div>
-            <h1 className="text-title text-center text-4xl font-medium tracking-tight">
+            <h1 className="text-center text-4xl font-medium tracking-tight text-title">
               We couldn&rsquo;t find that page&hellip;
             </h1>
             <h3 className="mt-3 text-center text-xl/6 font-normal tracking-tight text-secondary">
@@ -24,7 +24,7 @@ export default function NotFound() {
           <div className="flex flex-row gap-4">
             <Link href="/" className={buttonVariants({ variant: "primary" })}>
               <IconArrowBackUp />
-              <span className="xxs:block hidden">Back to home</span>
+              <span className="hidden xxs:block">Back to home</span>
               <span className="xxs:hidden">Home</span>
             </Link>
             <ExploreButton id="explore-not-found">

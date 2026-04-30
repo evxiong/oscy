@@ -55,7 +55,7 @@ export default async function Home() {
                 href={`/ceremony/${currentEdition}`}
                 className="group/link cursor-pointer"
               >
-                <IconLaurelWreath className="inline-flex size-4 shrink-0 text-tertiary" />
+                <IconLaurelWreath className="inline-flex size-4 shrink-0 stroke-tertiary" />
                 &nbsp;
                 <span className="underline decoration-border underline-offset-4 group-hover/link:decoration-secondary">
                   {`${currentOrdinal} Academy Awards`}
@@ -155,7 +155,7 @@ export default async function Home() {
 
 function Card({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col rounded-md border border-border-light bg-gradient-to-b from-background to-light p-4 shadow-sm">
+    <div className="flex flex-col rounded-md border border-overlay bg-gradient-to-b from-background to-light p-4 shadow-sm">
       {children}
     </div>
   );

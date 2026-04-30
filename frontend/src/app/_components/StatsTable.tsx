@@ -111,9 +111,9 @@ export default function StatsTable<
   return (
     <div className="h-[90vh] overflow-x-auto xs:h-auto xs:overflow-x-visible">
       <table className="w-full border-collapse">
-        <thead className="sticky top-0 h-10 select-none bg-white align-middle text-xxs text-zinc-800">
-          <tr className="h-10 border-b-2 border-zinc-300">
-            <th scope="col" className="w-8 pt-1 text-zinc-500" title="Rank">
+        <thead className="sticky top-0 h-10 select-none bg-background align-middle text-xxs text-primary">
+          <tr className="h-10 border-b-2 border-underline">
+            <th scope="col" className="w-8 pt-1 text-secondary" title="Rank">
               #
             </th>
             {cols.map((c, i) => (
@@ -144,7 +144,7 @@ export default function StatsTable<
           ) : (
             <tr>
               <td colSpan={cols.length + 1}>
-                <div className="flex h-20 w-full select-none items-center justify-center text-xl text-zinc-500">
+                <div className="flex h-20 w-full select-none items-center justify-center text-xl text-secondary">
                   <div>No results found</div>
                 </div>
               </td>
@@ -191,9 +191,9 @@ function TableHeader({
           </div>
           {selected &&
             (desc ? (
-              <IconCaretDownFilled className="h-3 w-3 fill-gold" />
+              <IconCaretDownFilled className="size-3 fill-gold" />
             ) : (
-              <IconCaretUpFilled className="h-3 w-3 fill-gold" />
+              <IconCaretUpFilled className="size-3 fill-gold" />
             ))}
         </div>
       </div>
@@ -217,17 +217,17 @@ function TableRow<
   searchKey: T3;
 }) {
   return (
-    <tr className="h-fit border-b border-zinc-200 text-base leading-5">
+    <tr className="h-fit border-b border-border text-base/5">
       <th
         scope="row"
-        className="select-none text-xs font-semibold text-zinc-500"
+        className="select-none text-xs font-semibold text-secondary"
       >
         {row}
       </th>
       {cols.map((c, i) => (
         <td
           key={i}
-          className={`${c.align === "left" ? "py-3 pl-3" : "px-3 text-center font-medium"} ${"minor" in c && c.minor ? "font-normal text-zinc-500" : ""}`}
+          className={`${c.align === "left" ? "py-3 pl-3" : "px-3 text-center font-medium"} ${"minor" in c && c.minor ? "font-normal text-secondary" : ""}`}
         >
           {
             // @ts-expect-error: sortKey does exist on T2
@@ -239,7 +239,7 @@ function TableRow<
                     : (stat[searchKey] as string)
                 }
                 href={`/${(searchKey as string) === "aliases" ? "entity" : "title"}/${stat.id}`}
-                className={`${(searchKey as string) === "aliases" ? "" : "italic"} line-clamp-2 cursor-pointer font-medium text-zinc-800 underline decoration-zinc-200 underline-offset-2 hover:text-gold`}
+                className={`${(searchKey as string) === "aliases" ? "" : "italic"} line-clamp-2 cursor-pointer font-medium text-primary underline decoration-underline underline-offset-2 hover:text-gold`}
               >
                 {Array.isArray(stat[searchKey])
                   ? (stat[searchKey] as string[])[0]

@@ -40,11 +40,8 @@ export function Tab({ className, children, ...props }: AriaTabProps) {
     <AriaTab
       className={merge(
         "group relative inline-flex cursor-pointer justify-center whitespace-nowrap py-1 text-base font-medium",
-        /* Focus Visible */
         "data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2",
-        /* Disabled */
         "data-[hovered]:text-primary data-[hovered]:transition-none",
-        /* Selected */
         "transition-colors duration-200 data-[selected]:text-primary",
         className,
       )}
@@ -67,7 +64,6 @@ export function TabPanel({ className, ...props }: AriaTabPanelProps) {
     <AriaTabPanel
       className={merge(
         "data-[inert]:hidden",
-        /* Focus Visible */
         "data-[focus-visible]:outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2",
         className,
       )}

@@ -105,8 +105,8 @@ function Category({
 }) {
   return (
     <>
-      <div className="flex flex-col gap-1 py-6 text-zinc-800 sm:flex-row sm:gap-6">
-        <div className="sticky top-[--nominations-header-height-mobile] z-10 w-full flex-1 bg-white pb-4 sm:top-[--nominations-header-height] sm:pb-0">
+      <div className="flex flex-col gap-1 py-6 text-primary sm:flex-row sm:gap-6">
+        <div className="sticky top-[--nominations-header-height-mobile] z-10 w-full flex-1 bg-background pb-4 sm:top-[--nominations-header-height] sm:pb-0">
           <div className="sticky top-[--nominations-header-height-mobile] z-10 sm:top-[--nominations-header-height]">
             <PrefetchLink
               href={
@@ -114,14 +114,14 @@ function Category({
                   ? `/ceremony/${categoryInfo.ceremony_id}`
                   : `/category/${categoryInfo.category_id}`
               }
-              className="w-fit cursor-pointer text-xl font-medium leading-6 hover:text-gold sm:text-lg sm:leading-6"
+              className="w-fit cursor-pointer text-xl/6 font-medium hover:text-gold sm:text-lg/6"
             >
               {showCeremony
                 ? categoryInfo.year_and_ordinal
                 : categoryInfo.common_name}
             </PrefetchLink>
             {showCeremony && (
-              <div className="mt-1 text-sm font-medium leading-4 text-zinc-500">
+              <div className="mt-1 text-sm/4 font-medium text-secondary">
                 {categoryInfo.common_name}
               </div>
             )}
@@ -156,20 +156,20 @@ export function Nominee({
   return (
     <div className="flex flex-row gap-2.5">
       <IconStarFilled
-        className={`${nomineeInfo.winner ? "visible" : "invisible"} mt-[3px] h-4 w-4 flex-shrink-0 fill-gold`}
+        className={`${nomineeInfo.winner ? "visible" : "invisible"} mt-[3px] size-4 shrink-0 fill-gold`}
       />
       <div
         className={`${personFirst ? "flex-col" : "flex-col-reverse"} flex gap-1`}
       >
         {nomineeInfo.people.length > 0 && (
           <div
-            className={`${personFirst ? "text-base font-medium leading-5 text-zinc-800" : "text-sm font-normal leading-4 text-zinc-500"}`}
+            className={`${personFirst ? "text-base/5 font-medium text-primary" : "text-sm/4 font-normal text-secondary"}`}
           >
             {nomineeInfo.people.map((p, i) => (
               <span key={i}>
                 <PrefetchLink
                   href={`/entity/${p.id}`}
-                  className="w-fit cursor-pointer underline decoration-zinc-300 underline-offset-2 hover:text-gold"
+                  className="w-fit cursor-pointer underline decoration-underline underline-offset-2 hover:text-gold"
                 >
                   {p.name}
                 </PrefetchLink>
@@ -183,7 +183,7 @@ export function Nominee({
         )}
         {nomineeInfo.titles.length > 0 && (
           <div
-            className={`${!personFirst ? "text-base font-medium leading-5 text-zinc-800" : "text-sm font-normal leading-4 text-zinc-500"}`}
+            className={`${!personFirst ? "text-base/5 font-medium text-primary" : "text-sm/4 font-normal text-secondary"}`}
           >
             {nomineeInfo.titles.map((t, i) => {
               return (
@@ -202,7 +202,7 @@ export function Nominee({
                   <span>
                     <PrefetchLink
                       href={`/title/${t.id}`}
-                      className="w-fit cursor-pointer italic underline decoration-zinc-300 underline-offset-2 hover:text-gold"
+                      className="w-fit cursor-pointer italic underline decoration-underline underline-offset-2 hover:text-gold"
                     >
                       {t.title}
                     </PrefetchLink>

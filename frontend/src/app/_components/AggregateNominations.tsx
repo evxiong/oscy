@@ -100,16 +100,16 @@ function Edition({
   const query = search.toLowerCase().trim();
   return (
     <>
-      <div className="flex flex-col gap-1 py-6 text-zinc-800 sm:flex-row sm:gap-6">
-        <div className="sticky top-[--nominations-header-height-mobile] z-10 w-full flex-1 bg-white pb-4 sm:top-[--nominations-header-height] sm:pb-0">
+      <div className="flex flex-col gap-1 py-6 text-primary sm:flex-row sm:gap-6">
+        <div className="sticky top-[--nominations-header-height-mobile] z-10 w-full flex-1 bg-background pb-4 sm:top-[--nominations-header-height] sm:pb-0">
           <div className="sticky top-[--nominations-header-height-mobile] z-10 sm:top-[--nominations-header-height]">
             <PrefetchLink
               href={`/ceremony/${editionInfo.iteration}`}
-              className="w-fit cursor-pointer text-xl font-medium leading-6 hover:text-gold sm:text-lg sm:leading-6"
+              className="w-fit cursor-pointer text-xl/6 font-medium hover:text-gold sm:text-lg/6"
             >
               {iterationToOrdinal(editionInfo.iteration) + " Academy Awards"}
             </PrefetchLink>
-            <div className="mt-1 text-sm font-medium leading-4 text-zinc-500">
+            <div className="mt-1 text-sm/4 font-medium text-secondary">
               {dateToString(editionInfo.ceremony_date)}
               <span className="select-none">
                 &thinsp;&thinsp;·&thinsp;&thinsp;
@@ -138,7 +138,7 @@ function Edition({
                   <PrefetchLink
                     title={c.common_name}
                     href={`/category/${c.category_id}`}
-                    className="cursor-pointer text-xs font-semibold text-zinc-800 hover:text-gold sm:text-xxs"
+                    className="cursor-pointer text-xs font-semibold text-primary hover:text-gold sm:text-xxs"
                   >
                     {c.common_name.toUpperCase()}
                   </PrefetchLink>

@@ -31,7 +31,7 @@ export default function Error({
       <section className="mb-10 flex w-full flex-col items-center gap-8 py-16">
         <div className="flex w-full flex-col items-center gap-8 px-6 md:w-[768px]">
           <div>
-            <h1 className="text-title text-center text-4xl font-medium tracking-tight">
+            <h1 className="text-center text-4xl font-medium tracking-tight text-title">
               Something went wrong&hellip;
             </h1>
             <h3 className="mt-3 text-center text-xl/6 font-normal tracking-tight text-secondary">
