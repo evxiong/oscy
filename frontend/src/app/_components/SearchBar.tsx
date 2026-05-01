@@ -232,7 +232,7 @@ export default function SearchBar({
             "data-[focus-within]:outline data-[focus-within]:outline-2 data-[focus-within]:-outline-offset-2 data-[focus-within]:outline-gold",
           )}
         >
-          <IconSearch className="size-4 shrink-0 stroke-tertiary" />
+          <IconSearch aria-hidden className="size-4 shrink-0 stroke-tertiary" />
           <AriaInput
             placeholder="Search for people, titles, categories, or ceremonies"
             className="min-w-0 flex-1 bg-overlay p-1.5 text-primary outline-none placeholder:text-tertiary [&::-webkit-search-cancel-button]:hidden"
@@ -335,19 +335,19 @@ function Results({
             <PrefetchLink
               key={i}
               href={`/${r.subdir}/${r.id}`}
-              className="group -mx-1 flex cursor-pointer flex-col justify-start gap-0.5 rounded-md px-1 py-1.5 text-secondary hover:bg-hover hover:text-primary focus:bg-hover focus:text-primary focus:outline-none"
+              className="group -mx-1 flex cursor-pointer flex-col justify-start gap-0.5 rounded-md px-1 py-1.5 text-secondary hover:bg-hover hover:text-primary focus:bg-hover focus:text-primary"
               onClick={() => closeResults()}
             >
               <div className="flex flex-row items-center gap-2">
-                <IconArrowRight className="size-3.5 shrink-0" />
+                <IconArrowRight aria-hidden className="size-3.5 shrink-0" />
                 <div
                   className={`${r.type === "title" ? "italic" : ""} truncate pr-1 text-subtitle group-hover:text-primary group-focus:text-primary`}
                 >
                   {r.name}
                 </div>
               </div>
-              <div className="ml-[22px] text-xxs font-semibold text-tertiary">
-                {r.type.toUpperCase()}
+              <div className="ml-[22px] text-xxs font-semibold uppercase text-secondary">
+                {r.type}
               </div>
             </PrefetchLink>
           ))
@@ -389,19 +389,19 @@ function QuickLinks({
           <Link
             key={i}
             href={p.url}
-            className="group -mx-1 flex cursor-pointer flex-row items-center justify-between gap-2 rounded-md px-1 py-1 pr-2 text-secondary hover:bg-hover hover:text-primary focus:bg-hover focus:text-primary focus:outline-none"
+            className="group -mx-1 flex cursor-pointer flex-row items-center justify-between gap-2 rounded-md px-1 py-1 pr-2 text-secondary hover:bg-hover hover:text-primary focus:bg-hover focus:text-primary"
             onClick={() => closeResults()}
           >
             <div className="flex flex-row items-center gap-2">
-              <IconArrowRight className="size-3 shrink-0" />
+              <IconArrowRight aria-hidden className="size-3 shrink-0" />
               <div
                 className={`${p.type === "title" ? "italic" : ""} line-clamp-1 text-subtitle group-hover:text-primary group-focus:text-primary`}
               >
                 {p.name}
               </div>
             </div>
-            <div className="text-xxs font-semibold text-tertiary">
-              {p.type.toUpperCase()}
+            <div className="text-xxs font-semibold uppercase text-secondary">
+              {p.type}
             </div>
           </Link>
         ))}

@@ -68,6 +68,7 @@ export default async function CeremonyLayout({
         </div>
         <div className="hidden flex-row gap-2 sm:flex">
           <Link
+            aria-label="Previous ceremony"
             href={`/ceremony/${disablePrevLink ? currentEdition.iteration : currentEdition.iteration - 1}`}
             tabIndex={disablePrevLink ? -1 : 0}
             aria-disabled={disablePrevLink}
@@ -78,9 +79,10 @@ export default async function CeremonyLayout({
               "flex size-8 items-center justify-center rounded-full bg-overlay",
             )}
           >
-            <IconArrowLeft className="size-5 stroke-secondary" />
+            <IconArrowLeft aria-hidden className="size-5 stroke-secondary" />
           </Link>
           <Link
+            aria-label="Next ceremony"
             href={`/ceremony/${disableNextLink ? currentEdition.iteration : currentEdition.iteration + 1}`}
             tabIndex={disableNextLink ? -1 : 0}
             aria-disabled={disableNextLink}
@@ -91,7 +93,7 @@ export default async function CeremonyLayout({
               "flex size-8 items-center justify-center rounded-full bg-overlay",
             )}
           >
-            <IconArrowRight className="size-5 stroke-secondary" />
+            <IconArrowRight aria-hidden className="size-5 stroke-secondary" />
           </Link>
         </div>
       </div>

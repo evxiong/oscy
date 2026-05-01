@@ -55,7 +55,10 @@ export default async function Home() {
                 href={`/ceremony/${currentEdition}`}
                 className="group/link cursor-pointer"
               >
-                <IconLaurelWreath className="inline-flex size-4 shrink-0 stroke-tertiary" />
+                <IconLaurelWreath
+                  aria-hidden
+                  className="inline-flex size-4 shrink-0 stroke-tertiary"
+                />
                 &nbsp;
                 <span className="underline decoration-border underline-offset-4 group-hover/link:decoration-secondary">
                   {`${currentOrdinal} Academy Awards`}
@@ -77,7 +80,7 @@ export default async function Home() {
                 href="https://github.com/evxiong/oscy"
                 className={buttonVariants({ variant: "primary" })}
               >
-                <IconBrandGithub />
+                <IconBrandGithub aria-hidden />
                 <span className="hidden xs:block">View on GitHub</span>
                 <span className="xs:hidden">GitHub</span>
               </ExternalLink>
@@ -106,14 +109,14 @@ export default async function Home() {
         <div className="px-6 md:w-[768px]">
           <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
             <Card>
-              <IconTableHeart className="stroke-subtitle" />
+              <IconTableHeart aria-hidden className="stroke-subtitle" />
               <CardTitle>Curated data</CardTitle>
               <CardDescription>
                 Database records have been painstakingly reviewed for accuracy.
               </CardDescription>
             </Card>
             <Card>
-              <IconBlendMode className="stroke-subtitle" />
+              <IconBlendMode aria-hidden className="stroke-subtitle" />
               <CardTitle>Nominees matched to IMDb IDs</CardTitle>
               <CardDescription>
                 Extend oscy as you see fit, including with{" "}
@@ -127,14 +130,14 @@ export default async function Home() {
               </CardDescription>
             </Card>
             <Card>
-              <IconAdjustments className="stroke-subtitle" />
+              <IconAdjustments aria-hidden className="stroke-subtitle" />
               <CardTitle>Powered by PostgreSQL</CardTitle>
               <CardDescription>
                 Discover superlatives, streaks, and more with advanced queries.
               </CardDescription>
             </Card>
             <Card>
-              <IconSparkles className="stroke-subtitle" />
+              <IconSparkles aria-hidden className="stroke-subtitle" />
               <CardTitle>No SQL, no problem</CardTitle>
               <CardDescription>
                 <ExternalLink

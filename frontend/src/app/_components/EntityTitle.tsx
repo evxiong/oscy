@@ -44,8 +44,8 @@ export default function EntityTitle({
                 href={imdbUrl}
                 className="group flex cursor-pointer flex-row items-center text-xs font-medium text-secondary underline decoration-underline underline-offset-4 hover:text-subtitle hover:decoration-tertiary"
               >
-                <div>IMDb</div>
-                <IconArrowUpRight className="size-3.5" />
+                <span>IMDb</span>
+                <IconArrowUpRight aria-hidden className="size-3.5" />
               </ExternalLink>
             )}
           </nav>

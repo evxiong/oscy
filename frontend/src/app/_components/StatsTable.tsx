@@ -178,25 +178,31 @@ function TableHeader({
       scope="col"
       className={`${align === "left" ? "pl-3" : "w-9 px-2"} pt-1`}
     >
-      <div
-        className={`${align === "left" ? "justify-start" : "justify-center"} flex cursor-pointer items-center hover:opacity-75`}
+      <button
+        className={`${align === "left" ? "justify-start" : "justify-center"} -m-0.5 flex cursor-pointer items-center p-0.5 hover:opacity-75`}
         title={fullName}
         onClick={() => setParams(colInd)}
       >
         <div
           className={`${selected ? "underline" : ""} flex flex-row items-center gap-0.5 decoration-gold underline-offset-2`}
         >
-          <div className="flex items-center justify-center font-semibold">
+          <div className="flex items-center justify-center font-semibold uppercase">
             {name}
           </div>
           {selected &&
             (desc ? (
-              <IconCaretDownFilled className="size-3 fill-gold" />
+              <IconCaretDownFilled
+                aria-label="descending"
+                className="size-3 fill-gold"
+              />
             ) : (
-              <IconCaretUpFilled className="size-3 fill-gold" />
+              <IconCaretUpFilled
+                aria-label="ascending"
+                className="size-3 fill-gold"
+              />
             ))}
         </div>
-      </div>
+      </button>
     </th>
   );
 }

@@ -21,7 +21,7 @@ export default function ExploreButton({
         ref?.current?.focus();
       }}
     >
-      <IconSearch />
+      <IconSearch aria-hidden />
       {children}
     </Button>
   );

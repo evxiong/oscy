@@ -37,8 +37,14 @@ export default function RootLayout({
     <html lang="en" className={`${figtree.variable} antialiased`}>
       <body className="min-h-screen scroll-smooth font-sans text-primary">
         <SearchRefContextProvider>
+          <a
+            href="#content"
+            className="absolute left-0 top-0 z-50 -translate-x-full rounded-br-md bg-title px-2 py-1 text-sm font-medium text-background outline-offset-2 focus-visible:translate-x-0"
+          >
+            Skip to content
+          </a>
           <Navbar />
-          <main>{children}</main>
+          <main id="content">{children}</main>
         </SearchRefContextProvider>
       </body>
     </html>

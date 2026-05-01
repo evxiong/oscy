@@ -12,7 +12,7 @@ export default async function Navbar() {
         <div className="flex-1 select-none pb-1 pl-6 text-2xl">
           <Link
             href="/"
-            className="w-fit cursor-pointer tracking-tight text-primary hover:text-gold focus:outline-none focus-visible:text-gold"
+            className="w-fit cursor-pointer tracking-tight text-primary transition-colors hover:text-gold focus-visible:text-gold"
           >
             oscy
           </Link>
@@ -20,16 +20,24 @@ export default async function Navbar() {
         <SearchBar currentEdition={currentEdition} />
         <div className="flex flex-1 flex-row justify-end gap-2 pr-6">
           <ExternalLink
+            aria-label="API docs"
             href="/api/docs"
-            className="group flex size-8 cursor-pointer items-center justify-center focus:outline-none"
+            className="group flex size-8 cursor-pointer items-center justify-center"
           >
-            <IconApi className="size-5 stroke-secondary group-hover:stroke-gold group-focus-visible:stroke-gold" />
+            <IconApi
+              aria-hidden
+              className="size-5 stroke-secondary transition-colors group-hover:stroke-gold group-focus-visible:stroke-gold"
+            />
           </ExternalLink>
           <ExternalLink
+            aria-label="GitHub repo"
             href="https://github.com/evxiong/oscy"
-            className="group flex size-8 cursor-pointer items-center justify-center focus:outline-none"
+            className="group flex size-8 cursor-pointer items-center justify-center"
           >
-            <IconBrandGithub className="size-5 stroke-secondary group-hover:stroke-gold group-focus-visible:stroke-gold" />
+            <IconBrandGithub
+              aria-hidden
+              className="size-5 stroke-secondary transition-colors group-hover:stroke-gold group-focus-visible:stroke-gold"
+            />
           </ExternalLink>
         </div>
       </div>

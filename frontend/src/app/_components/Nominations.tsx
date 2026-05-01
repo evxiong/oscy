@@ -2,6 +2,12 @@
 
 import { IconStarFilled } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
+import {
+  Button as AriaButton,
+  DialogTrigger as AriaDialogTrigger,
+  OverlayArrow as AriaOverlayArrow,
+  Popover as AriaPopover,
+} from "react-aria-components";
 import Switch from "../_ui/Switch";
 import { iterationToOrdinal } from "../_utils/utils";
 import {
@@ -156,6 +162,7 @@ export function Nominee({
   return (
     <div className="flex flex-row gap-2.5">
       <IconStarFilled
+        aria-label="Winner"
         className={`${nomineeInfo.winner ? "visible" : "invisible"} mt-[3px] size-4 shrink-0 fill-gold`}
       />
       <div
@@ -185,34 +192,32 @@ export function Nominee({
           <div
             className={`${!personFirst ? "text-base/5 font-medium text-primary" : "text-sm/4 font-normal text-secondary"}`}
           >
-            {nomineeInfo.titles.map((t, i) => {
-              return (
-                <span key={i}>
-                  {t.detail.map((d, j) => (
-                    <span key={j}>
-                      <span className="w-fit">
-                        {category === "Original Song" ||
-                        category === "Dance Direction"
-                          ? "“" + d + "”"
-                          : d}
-                      </span>
-                      {", "}
+            {nomineeInfo.titles.map((t, i) => (
+              <span key={i}>
+                {t.detail.map((d, j) => (
+                  <span key={j}>
+                    <span className="w-fit">
+                      {category === "Original Song" ||
+                      category === "Dance Direction"
+                        ? "“" + d + "”"
+                        : d}
                     </span>
-                  ))}
-                  <span>
-                    <PrefetchLink
-                      href={`/title/${t.id}`}
-                      className="w-fit cursor-pointer italic underline decoration-underline underline-offset-2 hover:text-gold"
-                    >
-                      {t.title}
-                    </PrefetchLink>
-                    {i !== nomineeInfo.titles.length - 1 && (
-                      <span className="select-none">&nbsp;&thinsp;·&nbsp;</span>
-                    )}
+                    {", "}
                   </span>
+                ))}
+                <span>
+                  <PrefetchLink
+                    href={`/title/${t.id}`}
+                    className="w-fit cursor-pointer italic underline decoration-underline underline-offset-2 hover:text-gold"
+                  >
+                    {t.title}
+                  </PrefetchLink>
+                  {i !== nomineeInfo.titles.length - 1 && (
+                    <span className="select-none">&nbsp;&thinsp;·&nbsp;</span>
+                  )}
                 </span>
-              );
-            })}
+              </span>
+            ))}
             {!nomineeInfo.is_person &&
               nomineeInfo.titles.length !== 0 &&
               nomineeInfo.note && <Note text={nomineeInfo.note} />}
@@ -224,15 +229,44 @@ export function Nominee({
 }
 
 function Note({ text }: { text: string }) {
+  let popoverText = text;
+  if (popoverText.startsWith("[NOTE: ")) {
+    popoverText = popoverText.slice(7);
+  }
+  if (popoverText.endsWith("]")) {
+    popoverText = popoverText.slice(0, -1);
+  }
   return (
-    <span className="select-none">
+    <span>
       &nbsp;
-      <span
-        className="group/note relative z-0 cursor-pointer align-top text-xs font-medium text-gold"
-        title={text}
-      >
-        <span className="z-0 group-hover/note:underline">N</span>
-      </span>
+      <AriaDialogTrigger>
+        <AriaButton
+          aria-label="Note"
+          className="align-top text-xxs font-semibold text-gold transition-colors hover:text-secondary focus-visible:text-secondary data-[pressed]:text-secondary"
+        >
+          <span title={text}>[N]</span>
+        </AriaButton>
+        <AriaPopover
+          placement="top"
+          className="max-w-96 rounded-md border border-border bg-background p-2.5 outline-none drop-shadow-md transition-opacity duration-300 data-[entering]:opacity-0"
+        >
+          <AriaOverlayArrow className="group/arrow">
+            <svg
+              width={12}
+              height={12}
+              viewBox="0 0 12 12"
+              className="block fill-background stroke-border stroke-1 group-data-[placement='bottom']/arrow:rotate-180 group-data-[placement='left']/arrow:-rotate-90 group-data-[placement='right']/arrow:rotate-90"
+            >
+              <path d="M0 0 L6 6 L12 0" />
+            </svg>
+          </AriaOverlayArrow>
+          <h2 className="text-xxs font-semibold uppercase text-title">Note</h2>
+          <hr className="my-1.5 border-border" />
+          <p className="mt-1 text-sm leading-[18px] text-subtitle">
+            {popoverText}
+          </p>
+        </AriaPopover>
+      </AriaDialogTrigger>
     </span>
   );
 }

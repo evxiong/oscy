@@ -30,7 +30,7 @@ export default function SearchField({
           "data-[focus-within]:outline data-[focus-within]:outline-1 data-[focus-within]:outline-gold",
         )}
       >
-        <IconListSearch className="size-4 stroke-tertiary" />
+        <IconListSearch aria-hidden className="size-4 stroke-tertiary" />
         <AriaInput
           placeholder={placeholder}
           className="min-w-0 flex-1 bg-background p-1.5 text-primary outline-none placeholder:text-tertiary [&::-webkit-search-cancel-button]:hidden"

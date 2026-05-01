@@ -27,7 +27,7 @@ export function TabList<T extends object>({
   return (
     <AriaTabList
       className={merge(
-        "hide-scrollbar inline-flex w-full items-center gap-6 overflow-x-auto border-border text-secondary",
+        "hide-scrollbar -mx-1 inline-flex w-full items-center gap-6 overflow-x-auto border-border px-1 text-secondary",
         className,
       )}
       {...props}
@@ -39,8 +39,8 @@ export function Tab({ className, children, ...props }: AriaTabProps) {
   return (
     <AriaTab
       className={merge(
-        "group relative inline-flex cursor-pointer justify-center whitespace-nowrap py-1 text-base font-medium",
-        "data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2",
+        "group relative my-1 inline-flex cursor-pointer justify-center whitespace-nowrap text-base font-medium",
+        "outline-offset-2 data-[focus-visible]:outline data-[focus-visible]:outline-2 data-[focus-visible]:outline-ring",
         "data-[hovered]:text-primary data-[hovered]:transition-none",
         "transition-colors duration-200 data-[selected]:text-primary",
         className,
@@ -50,7 +50,7 @@ export function Tab({ className, children, ...props }: AriaTabProps) {
       {composeRenderProps(children, (children) => (
         <>
           {children}
-          <div className="invisible absolute bottom-0 left-1/2 right-1/2 h-0.5 rounded-b-full bg-gold transition-all duration-200 ease-in-out group-data-[selected]:visible group-data-[selected]:left-0 group-data-[selected]:right-0"></div>
+          <div className="invisible absolute -bottom-1 left-1/2 right-1/2 h-0.5 rounded-b-full bg-gold transition-all duration-200 ease-in-out group-data-[selected]:visible group-data-[selected]:left-0 group-data-[selected]:right-0"></div>
         </>
       ))}
     </AriaTab>
