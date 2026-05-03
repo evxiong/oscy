@@ -35,13 +35,38 @@ export const metadata: Metadata = {
   },
 };
 
+interface HomeData {
+  currentEdition: number;
+  currentYear: number;
+  currentOrdinal: string;
+  updateMonth: string;
+}
+
 export default async function Home() {
-  const currentVersion = await fetchVersion();
-  const currentEdition = currentVersion.iteration;
-  const currentYear = 1927 + currentEdition;
-  const currentOrdinal = iterationToOrdinal(currentEdition);
-  const updateDate = new Date(currentVersion.updated_at);
-  const updateMonth = updateDate.toLocaleDateString("en-US", { month: "long" });
+  let data: HomeData | undefined = undefined;
+  try {
+    const currentVersion = await fetchVersion();
+    const currentEdition = currentVersion.iteration;
+    const currentYear = 1927 + currentEdition;
+    const currentOrdinal = iterationToOrdinal(currentEdition);
+    const updateDate = new Date(currentVersion.updated_at);
+    const updateMonth = updateDate.toLocaleDateString("en-US", {
+      month: "long",
+    });
+
+    data = {
+      currentEdition,
+      currentYear,
+      currentOrdinal,
+      updateMonth,
+    };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    } else {
+      console.error(error);
+    }
+  }
 
   const bestPictureImages = await getBestPictureImages();
   return (
@@ -49,22 +74,24 @@ export default async function Home() {
       <section className="flex w-full flex-col items-center bg-gradient-to-b from-background to-light pb-12 pt-10">
         <div className="w-full md:w-[768px]">
           <div className="flex flex-col items-center gap-6 px-6">
-            <div className="w-fit rounded-full text-sm font-medium text-secondary">
-              <span>{updateMonth} update:</span>&ensp;
-              <PrefetchLink
-                href={`/ceremony/${currentEdition}`}
-                className="group/link cursor-pointer"
-              >
-                <IconLaurelWreath
-                  aria-hidden
-                  className="inline-flex size-4 shrink-0 stroke-tertiary"
-                />
-                &nbsp;
-                <span className="underline decoration-border underline-offset-4 group-hover/link:decoration-secondary">
-                  {`${currentOrdinal} Academy Awards`}
-                </span>
-              </PrefetchLink>
-            </div>
+            {data && (
+              <div className="w-fit rounded-full text-sm font-medium text-secondary">
+                <span>{data.updateMonth} update:</span>&ensp;
+                <PrefetchLink
+                  href={`/ceremony/${data.currentEdition}`}
+                  className="group/link cursor-pointer"
+                >
+                  <IconLaurelWreath
+                    aria-hidden
+                    className="inline-flex size-4 shrink-0 stroke-tertiary"
+                  />
+                  &nbsp;
+                  <span className="underline decoration-border underline-offset-4 group-hover/link:decoration-secondary">
+                    {`${data.currentOrdinal} Academy Awards`}
+                  </span>
+                </PrefetchLink>
+              </div>
+            )}
             <div>
               <h1 className="text-balance text-center text-4xl font-medium tracking-tight text-title">
                 An{" "}
@@ -90,7 +117,7 @@ export default async function Home() {
               </ExploreButton>
             </div>
           </div>
-          {bestPictureImages && (
+          {data && bestPictureImages && (
             <>
               <div className="mt-4 h-64 w-full">
                 <Carousel
@@ -98,7 +125,7 @@ export default async function Home() {
                 />
               </div>
               <div className="flex w-full flex-col items-center justify-center text-xxs font-semibold uppercase text-tertiary">
-                <p>{`${currentYear} (${currentOrdinal}) Academy Awards`}</p>
+                <p>{`${data.currentYear} (${data.currentOrdinal}) Academy Awards`}</p>
                 <p>Best Picture &mdash; Nominees</p>
               </div>
             </>

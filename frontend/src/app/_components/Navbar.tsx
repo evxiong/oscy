@@ -5,7 +5,18 @@ import ExternalLink from "./ExternalLink";
 import SearchBar from "./SearchBar";
 
 export default async function Navbar() {
-  const currentEdition = (await fetchVersion()).iteration;
+  let currentEdition: number | undefined = undefined;
+  try {
+    const currentVersion = await fetchVersion();
+    currentEdition = currentVersion.iteration;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    } else {
+      console.error(error);
+    }
+  }
+
   return (
     <header className="flex h-20 w-full select-none flex-row justify-center">
       <div className="flex w-full flex-row items-center gap-6">

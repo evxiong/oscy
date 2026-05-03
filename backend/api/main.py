@@ -16,7 +16,7 @@ from .routers import (
 from .services.version import get_current_version
 
 ALLOWED_ORIGIN_REGEX = (
-    r"http:\/\/localhost:\d+|https://oscy.vercel.app|https://oscy.evanxiong.com"
+    r"http://localhost:\d+|https://oscy.vercel.app|https://oscy.evanxiong.com"
 )
 
 

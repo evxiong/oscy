@@ -13,12 +13,12 @@ services:
       db:
         condition: service_healthy
   db:
-    image: postgres
+    image: postgres:17
     restart: always
     user: postgres
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ./data/db.sql:/data/db.sql
+      - ./data/db.dump:/data/db.dump
       - ./init.sh:/docker-entrypoint-initdb.d/init.sh
     env_file:
       - .env
@@ -35,13 +35,22 @@ services:
     env_file:
       - .env
     environment:
-      - API_HOST=api
+      - LOCAL_API_HOST=api
     build:
       context: ./frontend
+      args:
+        - BUILD_LOCAL_API_HOST=api # overrides value in .env
+      secrets:
+        - build_env
     ports:
       - 3000:3000
     depends_on:
       api:
         condition: service_started
+
+secrets:
+  build_env:
+    file: .env
+
 volumes:
   db-data:

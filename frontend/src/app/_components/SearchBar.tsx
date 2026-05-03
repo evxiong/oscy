@@ -98,7 +98,7 @@ export interface CeremonyResult {
 export default function SearchBar({
   currentEdition,
 }: {
-  currentEdition: number;
+  currentEdition?: number;
 }) {
   const searchRef = useRef(null);
   const inputRef = useContext(SearchRefContext);
@@ -281,7 +281,7 @@ function ResultsBox({
   results,
   closeResults,
 }: {
-  currentEdition: number;
+  currentEdition?: number;
   open: boolean;
   loading: boolean;
   results: Result[] | undefined;
@@ -362,18 +362,20 @@ function QuickLinks({
   loading,
   closeResults,
 }: {
-  currentEdition: number;
+  currentEdition?: number;
   loading: boolean;
   closeResults: () => void;
 }) {
-  const currentYear = 1927 + currentEdition;
-  const currentOrdinal = iterationToOrdinal(currentEdition);
   const pages = [
-    {
-      url: `/ceremony/${currentEdition}`,
-      name: `${currentYear} (${currentOrdinal}) Academy Awards`,
-      type: "ceremony",
-    },
+    ...(currentEdition !== undefined
+      ? [
+          {
+            url: `/ceremony/${currentEdition}`,
+            name: `${1927 + currentEdition} (${iterationToOrdinal(currentEdition)}) Academy Awards`,
+            type: "ceremony",
+          },
+        ]
+      : []),
     { url: "/category/46", name: "Best Picture", type: "category" },
     { url: "/category/1", name: "Best Actor", type: "category" },
     { url: "/category/3", name: "Best Actress", type: "category" },
