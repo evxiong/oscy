@@ -28,7 +28,6 @@ import shutil
 import subprocess
 from collections import defaultdict
 from collections.abc import Callable
-from enum import Enum
 from typing import Literal
 
 from dotenv import load_dotenv
@@ -36,6 +35,7 @@ from rapidfuzz import fuzz, process
 
 from . import db, match, parse, scrape
 from .data import MatchedCategory, MatchedNominee, OfficialCategory
+from .enums import UpdateType
 
 load_dotenv(override=True)
 
@@ -1090,12 +1090,6 @@ def dispatch_delete(item: NomineeItem, nominee_id: int, imdb_id: str):
         db.delete_nominee_title(nominee_id=nominee_id, imdb_id=imdb_id)
     else:
         db.delete_nominee_entity(nominee_id=nominee_id, imdb_id=imdb_id)
-
-
-class UpdateType(str, Enum):
-    nominations = "nominations"
-    unofficial = "unofficial"
-    official = "official"
 
 
 def main():

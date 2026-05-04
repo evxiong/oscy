@@ -34,7 +34,7 @@ from tqdm import tqdm
 
 from . import match, scrape
 from .data import MatchedCategory, MatchedNominee
-from .update import UpdateType
+from .enums import UpdateType
 
 load_dotenv(override=True)
 
