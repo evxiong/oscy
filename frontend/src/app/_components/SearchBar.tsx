@@ -27,6 +27,12 @@ import merge from "../_utils/merge";
 import { iterationToOrdinal } from "../_utils/utils";
 import PrefetchLink from "./PrefetchLink";
 
+export interface QuickLink {
+  name: string;
+  url: string;
+  type: string;
+}
+
 export interface SearchResults {
   titles: SearchGroup;
   entities: SearchGroup;
@@ -95,11 +101,7 @@ export interface CeremonyResult {
   dist: number;
 }
 
-export default function SearchBar({
-  currentEdition,
-}: {
-  currentEdition?: number;
-}) {
+export default function SearchBar({ quickLinks }: { quickLinks: QuickLink[] }) {
   const searchRef = useRef(null);
   const inputRef = useContext(SearchRefContext);
   const [openResults, setOpenResults] = useState(false);
@@ -250,7 +252,7 @@ export default function SearchBar({
       </AriaSearchField>
 
       <ResultsBox
-        currentEdition={currentEdition}
+        quickLinks={quickLinks}
         open={openResults}
         loading={loading}
         results={results}
@@ -275,13 +277,13 @@ function useDebounce(
 }
 
 function ResultsBox({
-  currentEdition,
+  quickLinks,
   open,
   loading,
   results,
   closeResults,
 }: {
-  currentEdition?: number;
+  quickLinks: QuickLink[];
   open: boolean;
   loading: boolean;
   results: Result[] | undefined;
@@ -294,7 +296,7 @@ function ResultsBox({
       <div className="flex flex-col gap-4">
         {results === undefined ? (
           <QuickLinks
-            currentEdition={currentEdition}
+            quickLinks={quickLinks}
             loading={loading}
             closeResults={closeResults}
           />
@@ -358,28 +360,14 @@ function Results({
 }
 
 function QuickLinks({
-  currentEdition,
+  quickLinks,
   loading,
   closeResults,
 }: {
-  currentEdition?: number;
+  quickLinks: QuickLink[];
   loading: boolean;
   closeResults: () => void;
 }) {
-  const pages = [
-    ...(currentEdition !== undefined
-      ? [
-          {
-            url: `/ceremony/${currentEdition}`,
-            name: `${1927 + currentEdition} (${iterationToOrdinal(currentEdition)}) Academy Awards`,
-            type: "ceremony",
-          },
-        ]
-      : []),
-    { url: "/category/46", name: "Best Picture", type: "category" },
-    { url: "/category/1", name: "Best Actor", type: "category" },
-    { url: "/category/3", name: "Best Actress", type: "category" },
-  ];
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between text-xxs/4 font-semibold text-secondary">
@@ -387,23 +375,23 @@ function QuickLinks({
         {loading && <IconLoader className="size-4 animate-spin" />}
       </div>
       <div className="flex flex-col text-sm font-medium">
-        {pages.map((p, i) => (
+        {quickLinks.map((quickLink, i) => (
           <Link
             key={i}
-            href={p.url}
+            href={quickLink.url}
             className="group -mx-1 flex cursor-pointer flex-row items-center justify-between gap-2 rounded-md px-1 py-1 pr-2 text-secondary hover:bg-hover hover:text-primary focus:bg-hover focus:text-primary"
             onClick={() => closeResults()}
           >
             <div className="flex flex-row items-center gap-2">
               <IconArrowRight aria-hidden className="size-3 shrink-0" />
               <div
-                className={`${p.type === "title" ? "italic" : ""} line-clamp-1 text-subtitle group-hover:text-primary group-focus:text-primary`}
+                className={`${quickLink.type === "title" ? "italic" : ""} line-clamp-1 text-subtitle group-hover:text-primary group-focus:text-primary`}
               >
-                {p.name}
+                {quickLink.name}
               </div>
             </div>
             <div className="text-xxs font-semibold uppercase text-secondary">
-              {p.type}
+              {quickLink.type}
             </div>
           </Link>
         ))}

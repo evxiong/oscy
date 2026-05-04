@@ -92,7 +92,6 @@ export function categoriesToTopFive(categories: CategoryType[]): TopFiveCard[] {
     const category = categories[categoryInd];
 
     if (category.nominees[0].pending) {
-      categoryInd += 1;
       continue;
     }
 

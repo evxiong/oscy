@@ -1,21 +1,12 @@
 import { IconApi, IconBrandGithub } from "@tabler/icons-react";
 import Link from "next/link";
-import { fetchVersion } from "../_utils/fetch";
+import { getQuickLinks } from "../_utils/utils";
 import ExternalLink from "./ExternalLink";
 import SearchBar from "./SearchBar";
 
 export default async function Navbar() {
-  let currentEdition: number | undefined = undefined;
-  try {
-    const currentVersion = await fetchVersion();
-    currentEdition = currentVersion.iteration;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error(error.message);
-    } else {
-      console.error(error);
-    }
-  }
+  const quickLinksCategories = ["Picture", "Actor", "Actress"];
+  const quickLinks = await getQuickLinks(quickLinksCategories);
 
   return (
     <header className="flex h-20 w-full select-none flex-row justify-center">
@@ -28,7 +19,7 @@ export default async function Navbar() {
             oscy
           </Link>
         </div>
-        <SearchBar currentEdition={currentEdition} />
+        <SearchBar quickLinks={quickLinks} />
         <div className="flex flex-1 flex-row justify-end gap-2 pr-6">
           <ExternalLink
             aria-label="API docs"

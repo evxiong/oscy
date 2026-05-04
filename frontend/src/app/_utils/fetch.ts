@@ -17,7 +17,8 @@ export async function fetchApi(relativeUrl: string) {
 
     const res = await fetch(fullUrl);
     if (!res.ok) {
-      throw new Error(`HTTP error: ${res.status}`);
+      console.error(`fetchApi("${relativeUrl}"): HTTP ${res.status} error`);
+      return null;
     }
 
     return res.json();

@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
-import { CategoryName } from "../category/[id]/types";
+import type { QuickLink } from "../_components/SearchBar";
+import { CategoryName, type CategoryGroupInfo } from "../category/[id]/types";
 import { NominationsType } from "../ceremony/[iteration]/types";
 import { fetchApi, fetchImageUrl, fetchVersion } from "./fetch";
 
@@ -72,7 +73,7 @@ export const getBestPictureImages = unstable_cache(
         `/ceremonies/${currentVersion.iteration}`,
       );
       const category = currentEdition.editions[0].categories.find(
-        (c) => c.category_id === 46,
+        (c) => c.short_name === "Picture",
       )!;
       const imdbIds = category.nominees.map((n) => n.titles[0].imdb_id);
       const titles = category.nominees.map((n) => n.titles[0].title);
@@ -98,6 +99,54 @@ export const getBestPictureImages = unstable_cache(
         console.error(error);
       }
       return null;
+    }
+  },
+  undefined,
+  {
+    revalidate: false,
+    tags: ["version"],
+  },
+);
+
+export const getQuickLinks = unstable_cache(
+  async (categories: string[]) => {
+    try {
+      const currentVersion = await fetchVersion();
+      const currentEdition = currentVersion.iteration;
+
+      const categoryGroups: CategoryGroupInfo[] = await fetchApi("/categories");
+      const categoryToId = new Map<string, number>(
+        categoryGroups.flatMap((cg) =>
+          cg.categories.map((c) => [c.category, c.category_id]),
+        ),
+      );
+
+      const quickLinks: QuickLink[] = [
+        {
+          name: `${1927 + currentEdition} (${iterationToOrdinal(currentEdition)}) Academy Awards`,
+          url: `/ceremony/${currentEdition}`,
+          type: "ceremony",
+        },
+      ];
+
+      for (const c of categories) {
+        if (categoryToId.has(c)) {
+          quickLinks.push({
+            name: `Best ${c}`,
+            url: `/category/${categoryToId.get(c)!}`,
+            type: "category",
+          });
+        }
+      }
+
+      return quickLinks;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      } else {
+        console.error(error);
+      }
+      return [];
     }
   },
   undefined,
