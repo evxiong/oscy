@@ -1,7 +1,8 @@
 import asyncio
 import os
-import psycopg
 from contextlib import asynccontextmanager
+
+import psycopg
 from dotenv import load_dotenv
 from psycopg_pool import AsyncConnectionPool
 

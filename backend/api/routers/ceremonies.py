@@ -1,10 +1,10 @@
+from fastapi import APIRouter
+from psycopg.rows import class_row, dict_row
+
 from ..dependencies import connect
 from ..models.ceremony import CeremonyInfo
 from ..models.nominations import Nominations
 from .nominations import get_nominations
-from fastapi import APIRouter
-from psycopg.rows import class_row, dict_row
-
 
 router = APIRouter(prefix="/ceremonies", tags=["ceremonies"])
 

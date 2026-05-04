@@ -1,5 +1,6 @@
-from .nominations import Edition
 from pydantic import BaseModel
+
+from .nominations import Edition
 
 
 class CategoryRankings(BaseModel):

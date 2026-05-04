@@ -1,16 +1,17 @@
+from fastapi import APIRouter
+from psycopg.rows import class_row
+
 from ..dependencies import connect
 from ..models.entity_title import (
-    EntityOrTitle,
-    Rankings,
-    OverallRankings,
     CategoryGroupRankings,
     CategoryRankings,
+    EntityOrTitle,
+    OverallRankings,
+    Rankings,
     RankingsRow,
 )
 from ..models.nominations import EditionRow
 from .nominations import edition_rows_to_editions
-from fastapi import APIRouter
-from psycopg.rows import class_row
 
 router = APIRouter(tags=["entities and titles"])
 
