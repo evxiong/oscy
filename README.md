@@ -6,12 +6,12 @@ _Open-source Oscars database and API, designed for querying nomination stats_
 
 <!-- 🎭 _pronounced OS-kee, a portmanteau of Oscar and Emmy_ 🎭 -->
 
-**Data last updated Apr. 3, 2026 (includes 98th Oscars results)**
+**Data last updated Apr. 30, 2026 (includes 98th Oscars results)**
 
-[Website](https://oscy.vercel.app)&nbsp;&nbsp;·&nbsp;&nbsp;
-[Running locally](#running-locally)&nbsp;&nbsp;·&nbsp;&nbsp;
-[API docs](https://oscy.vercel.app/api/docs)&nbsp;&nbsp;·&nbsp;&nbsp;
-[Database docs](https://github.com/evxiong/oscy/wiki/Database)
+[Website](https://oscy.evanxiong.com)&nbsp;&nbsp;·&nbsp;&nbsp;
+[Usage](#usage)&nbsp;&nbsp;·&nbsp;&nbsp;
+[API docs](https://oscy.evanxiong.com/api/docs)&nbsp;&nbsp;·&nbsp;&nbsp;
+[Database docs](/DATABASE.md)
 
 </div>
 
@@ -25,14 +25,14 @@ of this database as needed (including with
 
 > \* Primetime Emmy nominations will be added in the near future
 
-See oscy in action at [oscy.vercel.app](https://oscy.vercel.app).
+See oscy in action at [oscy.evanxiong.com](https://oscy.evanxiong.com).
 
 This database will be updated (at least) on an annual basis. Data has been
 manually verified to the best of my ability, though there may be some
 discrepancies or errors. See [What's in the database](#whats-in-the-database)
 for more details about the nominations included in the database.
 
-## What's in this repo
+## In this repo
 
 [`data/`](/data/)
 
@@ -43,9 +43,9 @@ for more details about the nominations included in the database.
 
 [`backend/db/`](/backend/db/)
 
-- Python modules used to scrape data and construct the database; this code
-  should NOT be used to copy the database -- see
-  [Running locally](#database-only)
+- Python modules and scripts used to scrape data, construct the database, and
+  update it; this code should NOT be used to copy the database -- see
+  [Usage](#database-only)
 
 [`backend/api/`](/backend/api/)
 
@@ -54,7 +54,7 @@ for more details about the nominations included in the database.
 [`frontend/`](/frontend/)
 
 - Next.js web app - an Oscars ceremony explorer, which also serves as an example
-  of what you can do with the oscy API.
+  of what you can do with the oscy API
 
 ## What's in the database
 
@@ -68,8 +68,7 @@ for more details about the nominations included in the database.
 ### How to query
 
 For more information on how the database is structured and how to use it
-(including example queries),
-[visit the wiki page](https://github.com/evxiong/oscy/wiki/Database).
+(including example queries), see [DATABASE.md](/DATABASE.md).
 
 ### Data sources
 
@@ -83,20 +82,20 @@ provide structured JSON for use in other applications. Complex or one-off
 queries should be run directly against the database using SQL.
 
 The API docs are located at
-[oscy.vercel.app/api/docs](https://oscy.vercel.app/api/docs). They can also be
-accessed at [localhost:8000/docs](http://localhost:8000/docs) when running
-locally.
+[oscy.evanxiong.com/api/docs](https://oscy.evanxiong.com/api/docs). They can
+also be accessed at [localhost:8000/docs](http://localhost:8000/docs) when
+running locally.
 
 If you want to use the oscy API in your own project, you should self-host the
 database and API, or host via a cloud provider. The API endpoints used by the
 example docs and web app are not designed to handle large amounts of traffic.
 
-## Running locally
+## Usage
 
 ### Database only
 
 **If you are only interested in the database** and you already have Postgres 13+
-installed, download [`data/db.dump`](data/db.dump) and run the following
+installed, download [`data/db.dump`](/data/db.dump) and run the following
 commands to create a new database called `oscy` containing the data:
 
 ```shell
@@ -111,7 +110,7 @@ pg_restore -O -1 -U <username> -d oscy <path to db.dump>
 
 This will create three containers: one for the Postgres database, one for the
 API, and one for the Next.js frontend. The total size of the container images
-will be ~1.1 GB.
+will be ~950 MB.
 
 #### Requirements
 
@@ -126,7 +125,7 @@ will be ~1.1 GB.
    ```
 
 2. Copy `.env.example` to a new file called `.env` and fill in the missing
-   values. `TMDB_API_KEY` is optional (used to fetch images in the web app).
+   values.
 
 3. Uncomment line 8 in [`frontend/next.config.ts`](/frontend/next.config.ts) so
    that `output` is set to `"standalone"`.
@@ -161,7 +160,7 @@ API, web app) should now be running and accessible from outside the containers:
    ```
 
 2. Copy `.env.example` to a new file called `.env` and fill in the missing
-   values. `TMDB_API_KEY` is optional (used to fetch images in the web app).
+   values.
 
 3. Run the following commands to create the database:
 
@@ -173,21 +172,7 @@ API, web app) should now be running and accessible from outside the containers:
    pg_restore -O -1 -U <username> -d oscy data/db.dump
    ```
 
-4. Run the following commands to set up the frontend:
-
-   ```shell
-   cd frontend
-
-   # Install dependencies
-   npm ci
-
-   # Create optimized build
-   npm run build
-
-   cd ..
-   ```
-
-5. Run the following commands to set up the backend:
+4. Run the following commands to set up the backend:
 
    ```shell
    cd backend
@@ -203,16 +188,35 @@ API, web app) should now be running and accessible from outside the containers:
    # Install required packages
    pip install -r requirements.txt
 
+   # Run API server
+   fastapi run api/main.py
+
    cd ..
    ```
 
-All three components (database, API, web app) can now be run:
+5. Run the following commands to set up the frontend:
+
+   ```shell
+   cd frontend
+
+   # Install dependencies
+   npm ci
+
+   # Create optimized build
+   # note: during the build process, the API server must be running
+   npm run build
+
+   # Run web app
+   npm run start
+
+   cd ..
+   ```
+
+All three components (database, API, web app) are now accessible:
 
 - To connect to Postgres db: `psql -U <username> -d oscy`
-- To run API (accessible at `localhost:8000`):
-  `cd backend && fastapi run api/main.py`
-- To run web app (accessible at `localhost:3000`):
-  `cd frontend && npm run start`
+- API accessible at `localhost:8000`
+- Web app accessible at `localhost:3000`
 
 ## Future direction
 

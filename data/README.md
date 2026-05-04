@@ -18,8 +18,7 @@ pg_restore -O -1 -U <username> -d oscy <path to db.dump>
 A CSV containing all joined Oscar nomination data. One row per unique
 nomination/entity/title combination.
 
-For more info about these fields, read the
-[database documentation in the wiki](https://github.com/evxiong/oscy/wiki/Database).
+For more info about these fields, read the [database docs](../DATABASE.md).
 
 | field          | description                                                                                                   |
 | -------------- | ------------------------------------------------------------------------------------------------------------- |
@@ -38,10 +37,10 @@ For more info about these fields, read the
 | stat           | whether nomination counts toward aggregate nomination stats                                                   |
 | statement_name | entity name as listed in the official statement (may be alias)                                                |
 | statement_ind  | start index of entity name in official statement                                                              |
-| entity_imdb_id | IMDb id of entity; may not be a real IMDb id - see wiki for details                                           |
+| entity_imdb_id | IMDb id of entity; may not be a real IMDb id - see docs for details                                           |
 | entity_type    | person, company, or country                                                                                   |
 | name           | entity name                                                                                                   |
-| title_imdb_id  | IMDb id of title; may not be a real IMDb id - see wiki for details                                            |
+| title_imdb_id  | IMDb id of title; may not be a real IMDb id - see docs for details                                            |
 | title          | title name                                                                                                    |
 | detail         | characters, songs, or dance numbers associated with this title                                                |
 | title_winner   | whether this particular title within the nomination won                                                       |

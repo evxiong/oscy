@@ -37,7 +37,8 @@ description = """
 
 The oscy API is designed to abstract away most common types of nomination
 queries, and provide structured responses. More complex queries should be [run
-directly against the database](https://github.com/evxiong/oscy/wiki/Database).
+directly against the
+database](https://github.com/evxiong/oscy/blob/main/DATABASE.md).
 
 ### Nominations
 * Get nominations and aggregate stats across multiple consecutive ceremonies,
