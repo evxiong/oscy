@@ -1,0 +1,6 @@
+# Requirements for running /api only
+
+fastapi[standard-no-fastapi-cloud-cli]
+psycopg[binary]
+psycopg[pool]
+pydantic

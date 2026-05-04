@@ -1,0 +1,16 @@
+# Requirements for running both /api and /db
+
+-r requirements.in
+-c requirements.txt
+
+lxml
+minify-html
+numpy
+playwright
+# psycopg[binary] # already in requirements.in
+python-dotenv
+pyyaml
+rapidfuzz
+requests
+seleniumbase
+tqdm

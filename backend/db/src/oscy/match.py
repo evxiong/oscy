@@ -442,12 +442,12 @@ def match_ids(
     #   split by ",", "and", "&"
     #   ignore/replace phrases
 
-    names = set()
+    names_set: set[str] = set()
     nom = official.nomination
 
     for e in SPLIT_EXCEPTIONS:
         if e in nom:
-            names.add(e)
+            names_set.add(e)
             nom = nom.replace(e, "")
 
     groups = re.sub(r"\s\([^)]*\)", "", nom)
@@ -468,18 +468,18 @@ def match_ids(
                         if subsubsubgroup != "" and subsubsubgroup[-1] == ")":
                             subsubsubgroup = subsubsubgroup[:-1]
                         if subsubsubgroup == "Roderick Jaynes":
-                            names.add("Joel Coen")
-                            names.add("Ethan Coen")
+                            names_set.add("Joel Coen")
+                            names_set.add("Ethan Coen")
                             continue
                         if (
                             subsubsubgroup != ""
                             and subsubsubgroup not in titles_to_ignore
                             and "Music Department" not in subsubsubgroup
                         ):
-                            names.add(subsubsubgroup)
+                            names_set.add(subsubsubgroup)
 
     # add missing studios to imdb people
-    names = list(names)
+    names = list(names_set)
     for name in names:
         if name in STUDIOS and len(imdb.people) < len(names):
             imdb.people.append((name, STUDIOS[name]))
